@@ -1,8 +1,15 @@
 package com.etsy.profiler;
 
+import com.etsy.profiler.memory.MemoryProfiler;
+import com.etsy.profiler.worker.ProfilerWorkerThread;
+import com.timgroup.statsd.NonBlockingStatsDClient;
+import com.timgroup.statsd.StatsDClient;
+
 import java.lang.instrument.Instrumentation;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * javaagent profiler using StatsD as a backend
@@ -37,6 +44,24 @@ public class Agent {
      * @param instrumentation Instrumentation agent
      */
     public static void premain(final String args, final Instrumentation instrumentation) {
+        Map<String, String> argMap = parseArgs(args);
+        String statsdServer = argMap.get("server");
+        int statsdPort = Integer.valueOf(argMap.get("port"));
+        String prefix = argMap.get("prefix");
 
+        StatsDClient client = new NonBlockingStatsDClient(prefix, statsdServer, statsdPort);
+        Collection<Profiler> profilers = new ArrayList<>();
+        profilers.add(new MemoryProfiler(client));
+
+        scheduleProfilers(profilers);
+    }
+
+    private static void scheduleProfilers(Collection<Profiler> profilers) {
+        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(profilers.size());
+
+        for (Profiler profiler : profilers) {
+            ProfilerWorkerThread thread = new ProfilerWorkerThread(profiler);
+            scheduledExecutorService.scheduleAtFixedRate(thread, 1, 1, TimeUnit.SECONDS);
+        }
     }
 }
