@@ -45,7 +45,7 @@ public class CPUProfiler extends Profiler {
         }
 
         for (Map.Entry<String, Long> entry : methodCounts.entrySet()) {
-            recordExecutionTime("cpu.method." + entry.getKey(), entry.getValue());
+            recordGaugeDelta("cpu.method." + entry.getKey(), entry.getValue());
         }
     }
 

@@ -30,6 +30,16 @@ public abstract class Profiler {
     }
 
     /**
+     * Record a gauge delta in StatsD
+     *
+     * @param key The key for the gauge
+     * @param delta The delta of the gauge
+     */
+    protected void recordGaugeDelta(String key, long delta) {
+        client.recordGaugeDelta(key, delta);
+    }
+
+    /**
      * Record execution time in StatsD
      *
      * @param key The key for the timer
