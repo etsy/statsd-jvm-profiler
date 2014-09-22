@@ -25,10 +25,10 @@ public class MemoryProfiler implements Profiler {
         gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
     }
 
-    @Override
     /**
      * Profile memory usage and GC statistics
      */
+    @Override
     public void profile() {
         int finalizationPendingCount = memoryMXBean.getObjectPendingFinalizationCount();
         MemoryUsage heap = memoryMXBean.getHeapMemoryUsage();
