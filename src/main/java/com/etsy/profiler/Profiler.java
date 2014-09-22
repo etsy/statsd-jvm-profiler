@@ -33,9 +33,9 @@ public abstract class Profiler {
      * Record execution time in StatsD
      *
      * @param key The key for the timer
-     * @param increment The execution time to record
+     * @param ms The execution time to record
      */
-    protected void recordExecutionTime(String key, long increment) {
-        client.recordExecutionTime(key, increment * 1000);
+    protected void recordExecutionTime(String key, long ms) {
+        client.recordExecutionTime(key, ms);
     }
 }

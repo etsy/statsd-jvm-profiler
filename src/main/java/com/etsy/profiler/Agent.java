@@ -18,6 +18,8 @@ import java.util.concurrent.TimeUnit;
  * @author Andrew Johnson
  */
 public class Agent {
+    public static final long PERIOD = 100;
+
     /**
      * Parses profiler arguments into a map
      *
@@ -63,7 +65,7 @@ public class Agent {
 
         for (Profiler profiler : profilers) {
             ProfilerWorkerThread thread = new ProfilerWorkerThread(profiler);
-            scheduledExecutorService.scheduleAtFixedRate(thread, 1, 1, TimeUnit.SECONDS);
+            scheduledExecutorService.scheduleAtFixedRate(thread, 10, PERIOD, TimeUnit.MILLISECONDS);
         }
     }
 }

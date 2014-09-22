@@ -1,5 +1,6 @@
 package com.etsy.profiler.profilers;
 
+import com.etsy.profiler.Agent;
 import com.etsy.profiler.Profiler;
 import com.timgroup.statsd.StatsDClient;
 
@@ -31,12 +32,14 @@ public class CPUProfiler extends Profiler {
         for (ThreadInfo thread : threads) {
             for (StackTraceElement element : thread.getStackTrace()) {
                 String methodKey = formatStackTraceElement(element);
-                Long count = methodCounts.get(methodKey);
-                if (count == null) {
-                    methodCounts.put(methodKey, 1L);
-                }
-                else {
-                    methodCounts.put(methodKey, ++count);
+                // exclude other profilers from reportings
+                if (!methodKey.startsWith("com.etsy.profiler")) {
+                    Long count = methodCounts.get(methodKey);
+                    if (count == null) {
+                        methodCounts.put(methodKey, Agent.PERIOD);
+                    } else {
+                        methodCounts.put(methodKey, count + Agent.PERIOD);
+                    }
                 }
             }
         }
