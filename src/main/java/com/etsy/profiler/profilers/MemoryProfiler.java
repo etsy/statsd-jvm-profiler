@@ -1,4 +1,4 @@
-package com.etsy.profiler.memory;
+package com.etsy.profiler.profilers;
 
 import com.etsy.profiler.Profiler;
 import com.timgroup.statsd.StatsDClient;
@@ -14,13 +14,12 @@ import java.util.List;
  *
  * @author Andrew Johnson
  */
-public class MemoryProfiler implements Profiler {
-    private StatsDClient client;
+public class MemoryProfiler extends Profiler {
     private MemoryMXBean memoryMXBean;
     private List<GarbageCollectorMXBean> gcMXBeans;
 
     public MemoryProfiler(StatsDClient client) {
-        this.client = client;
+        super(client);
         memoryMXBean = ManagementFactory.getMemoryMXBean();
         gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
     }
@@ -34,13 +33,13 @@ public class MemoryProfiler implements Profiler {
         MemoryUsage heap = memoryMXBean.getHeapMemoryUsage();
         MemoryUsage nonHeap = memoryMXBean.getNonHeapMemoryUsage();
 
-        client.recordGaugeValue("pending-finalization-count", finalizationPendingCount);
+        recordGaugeValue("pending-finalization-count", finalizationPendingCount);
         recordMemoryUsage("heap", heap);
         recordMemoryUsage("nonheap", nonHeap);
 
         for (GarbageCollectorMXBean gcMXBean : gcMXBeans) {
-            client.recordGaugeValue("gc." + gcMXBean.getName() + ".count", gcMXBean.getCollectionCount());
-            client.recordGaugeValue("gc." + gcMXBean.getName() + ".time", gcMXBean.getCollectionTime());
+            recordGaugeValue("gc." + gcMXBean.getName() + ".count", gcMXBean.getCollectionCount());
+            recordGaugeValue("gc." + gcMXBean.getName() + ".time", gcMXBean.getCollectionTime());
         }
     }
 
@@ -51,9 +50,9 @@ public class MemoryProfiler implements Profiler {
      * @param memory The MemoryUsage object containing the memory usage info
      */
     private void recordMemoryUsage(String prefix, MemoryUsage memory) {
-        client.recordGaugeValue(prefix + ".init", memory.getInit());
-        client.recordGaugeValue(prefix + ".used", memory.getUsed());
-        client.recordGaugeValue(prefix + ".committed", memory.getCommitted());
-        client.recordGaugeValue(prefix + ".max", memory.getMax());
+        recordGaugeValue(prefix + ".init", memory.getInit());
+        recordGaugeValue(prefix + ".used", memory.getUsed());
+        recordGaugeValue(prefix + ".committed", memory.getCommitted());
+        recordGaugeValue(prefix + ".max", memory.getMax());
     }
 }

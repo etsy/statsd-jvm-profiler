@@ -1,6 +1,7 @@
 package com.etsy.profiler;
 
-import com.etsy.profiler.memory.MemoryProfiler;
+import com.etsy.profiler.profilers.CPUProfiler;
+import com.etsy.profiler.profilers.MemoryProfiler;
 import com.etsy.profiler.worker.ProfilerWorkerThread;
 import com.timgroup.statsd.NonBlockingStatsDClient;
 import com.timgroup.statsd.StatsDClient;
@@ -52,6 +53,7 @@ public class Agent {
         StatsDClient client = new NonBlockingStatsDClient(prefix, statsdServer, statsdPort);
         Collection<Profiler> profilers = new ArrayList<>();
         profilers.add(new MemoryProfiler(client));
+        profilers.add(new CPUProfiler(client));
 
         scheduleProfilers(profilers);
     }
