@@ -38,7 +38,7 @@ public class MemoryProfiler extends Profiler {
         recordMemoryUsage("nonheap", nonHeap);
 
         for (GarbageCollectorMXBean gcMXBean : gcMXBeans) {
-            recordGaugeValue("gc." + gcMXBean.getName() + ".recordExecutionTime", gcMXBean.getCollectionCount());
+            recordGaugeValue("gc." + gcMXBean.getName() + ".count", gcMXBean.getCollectionCount());
             recordGaugeValue("gc." + gcMXBean.getName() + ".time", gcMXBean.getCollectionTime());
         }
     }

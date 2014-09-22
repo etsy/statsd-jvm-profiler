@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  * @author Andrew Johnson
  */
 public class Agent {
-    public static final long PERIOD = 100;
+    public static final long PERIOD = 1;
 
     /**
      * Parses profiler arguments into a map
