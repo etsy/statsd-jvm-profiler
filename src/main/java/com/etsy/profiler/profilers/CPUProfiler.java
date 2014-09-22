@@ -53,7 +53,7 @@ public class CPUProfiler extends Profiler {
      * @return A String representing the given StackTraceElement
      */
     private String formatStackTraceElement(StackTraceElement element) {
-        return String.format("%s.%s (%s)", element.getClassName(), element.getMethodName(), element.getFileName());
+        return String.format("%s-%s-%s", element.getClassName(), element.getMethodName(), element.getFileName());
     }
 
     /**
