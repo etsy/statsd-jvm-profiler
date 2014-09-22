@@ -33,12 +33,12 @@ public class MemoryProfiler extends Profiler {
         MemoryUsage heap = memoryMXBean.getHeapMemoryUsage();
         MemoryUsage nonHeap = memoryMXBean.getNonHeapMemoryUsage();
 
-        recordGaugeValue("pending-finalization-count", finalizationPendingCount);
+        recordGaugeValue("pending-finalization-recordExecutionTime", finalizationPendingCount);
         recordMemoryUsage("heap", heap);
         recordMemoryUsage("nonheap", nonHeap);
 
         for (GarbageCollectorMXBean gcMXBean : gcMXBeans) {
-            recordGaugeValue("gc." + gcMXBean.getName() + ".count", gcMXBean.getCollectionCount());
+            recordGaugeValue("gc." + gcMXBean.getName() + ".recordExecutionTime", gcMXBean.getCollectionCount());
             recordGaugeValue("gc." + gcMXBean.getName() + ".time", gcMXBean.getCollectionTime());
         }
     }

@@ -30,12 +30,12 @@ public abstract class Profiler {
     }
 
     /**
-     * Increment a count value in StatsD
+     * Record execution time in StatsD
      *
-     * @param key The key for the count
-     * @param increment The value by which to increment the count
+     * @param key The key for the timer
+     * @param increment The execution time to record
      */
-    protected void count(String key, long increment) {
-        client.count(key, increment);
+    protected void recordExecutionTime(String key, long increment) {
+        client.recordExecutionTime(key, increment * 1000);
     }
 }

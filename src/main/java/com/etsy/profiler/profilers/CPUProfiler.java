@@ -42,7 +42,7 @@ public class CPUProfiler extends Profiler {
         }
 
         for (Map.Entry<String, Long> entry : methodCounts.entrySet()) {
-            count("cpu.method." + entry.getKey(), entry.getValue());
+            recordExecutionTime("cpu.method." + entry.getKey(), entry.getValue());
         }
     }
 
@@ -53,7 +53,7 @@ public class CPUProfiler extends Profiler {
      * @return A String representing the given StackTraceElement
      */
     private String formatStackTraceElement(StackTraceElement element) {
-        return String.format("%s-%s-%s", element.getClassName(), element.getMethodName(), element.getFileName());
+        return String.format("%s.%s", element.getClassName(), element.getMethodName());
     }
 
     /**
