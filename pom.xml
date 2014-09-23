@@ -55,7 +55,7 @@
                     <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                             <manifestEntries>
-                                <Premain-Class>com.etsy.profiler.Agent</Premain-Class>
+                                <Premain-Class>com.etsy.statsd.profiler.Agent</Premain-Class>
                             </manifestEntries>
                         </transformer>
                     </transformers>

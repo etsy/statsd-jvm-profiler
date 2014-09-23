@@ -1,4 +1,4 @@
-package com.etsy.profiler;
+package com.etsy.statsd.profiler;
 
 import com.timgroup.statsd.StatsDClient;
 
@@ -47,5 +47,9 @@ public abstract class Profiler {
      */
     protected void recordExecutionTime(String key, long ms) {
         client.recordExecutionTime(key, ms);
+    }
+
+    protected void count(String key, long increment) {
+        client.count(key, increment);
     }
 }

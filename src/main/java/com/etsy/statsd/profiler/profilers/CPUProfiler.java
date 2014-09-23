@@ -1,7 +1,7 @@
-package com.etsy.profiler.profilers;
+package com.etsy.statsd.profiler.profilers;
 
-import com.etsy.profiler.Agent;
-import com.etsy.profiler.Profiler;
+import com.etsy.statsd.profiler.Agent;
+import com.etsy.statsd.profiler.Profiler;
 import com.timgroup.statsd.StatsDClient;
 
 import java.lang.management.ManagementFactory;
@@ -19,21 +19,23 @@ import java.util.Map;
  */
 public class CPUProfiler extends Profiler {
     private ThreadMXBean threadMXBean;
+    Map<String, Long> methodCounts;
 
     public CPUProfiler(StatsDClient client) {
         super(client);
         threadMXBean = ManagementFactory.getThreadMXBean();
+        methodCounts = new HashMap<>();
     }
 
     @Override
     public void profile() {
         List<ThreadInfo> threads = getAllRunnableThreads();
-        Map<String, Long> methodCounts = new HashMap<>();
+
         for (ThreadInfo thread : threads) {
             for (StackTraceElement element : thread.getStackTrace()) {
                 String methodKey = formatStackTraceElement(element);
-                // exclude other profilers from reportings
-                if (!methodKey.startsWith("com.etsy.profiler")) {
+                // exclude other profilers from reporting
+                if (!(methodKey.startsWith("com.etsy.statsd.profiler") || methodKey.startsWith("com.timgroup.statsd"))) {
                     Long count = methodCounts.get(methodKey);
                     if (count == null) {
                         methodCounts.put(methodKey, Agent.PERIOD);
@@ -45,7 +47,7 @@ public class CPUProfiler extends Profiler {
         }
 
         for (Map.Entry<String, Long> entry : methodCounts.entrySet()) {
-            recordGaugeDelta("cpu.method." + entry.getKey(), entry.getValue());
+            recordGaugeValue("cpu.method." + entry.getKey(), entry.getValue());
         }
     }
 

@@ -1,6 +1,6 @@
-package com.etsy.profiler.worker;
+package com.etsy.statsd.profiler.worker;
 
-import com.etsy.profiler.Profiler;
+import com.etsy.statsd.profiler.Profiler;
 
 /**
  * Worker thread for executing a profiler

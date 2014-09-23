@@ -1,6 +1,6 @@
-package com.etsy.profiler.profilers;
+package com.etsy.statsd.profiler.profilers;
 
-import com.etsy.profiler.Profiler;
+import com.etsy.statsd.profiler.Profiler;
 import com.timgroup.statsd.StatsDClient;
 
 import java.lang.management.GarbageCollectorMXBean;
@@ -33,7 +33,7 @@ public class MemoryProfiler extends Profiler {
         MemoryUsage heap = memoryMXBean.getHeapMemoryUsage();
         MemoryUsage nonHeap = memoryMXBean.getNonHeapMemoryUsage();
 
-        recordGaugeValue("pending-finalization-recordExecutionTime", finalizationPendingCount);
+        recordGaugeValue("pending-finalization-count", finalizationPendingCount);
         recordMemoryUsage("heap", heap);
         recordMemoryUsage("nonheap", nonHeap);
 

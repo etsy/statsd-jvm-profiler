@@ -1,8 +1,8 @@
-package com.etsy.profiler;
+package com.etsy.statsd.profiler;
 
-import com.etsy.profiler.profilers.CPUProfiler;
-import com.etsy.profiler.profilers.MemoryProfiler;
-import com.etsy.profiler.worker.ProfilerWorkerThread;
+import com.etsy.statsd.profiler.profilers.CPUProfiler;
+import com.etsy.statsd.profiler.profilers.MemoryProfiler;
+import com.etsy.statsd.profiler.worker.ProfilerWorkerThread;
 import com.timgroup.statsd.NonBlockingStatsDClient;
 import com.timgroup.statsd.StatsDClient;
 
