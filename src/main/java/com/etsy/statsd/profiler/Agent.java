@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
  * @author Andrew Johnson
  */
 public class Agent {
-    public static final int NUM_EXECUTOR_THREADS = 2;
     public static final int EXECUTOR_DELAY = 0;
 
 
@@ -78,7 +77,7 @@ public class Agent {
      * @param profilers Collection of profilers to schedule
      */
     private static void scheduleProfilers(Collection<Profiler> profilers) {
-        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(NUM_EXECUTOR_THREADS);
+        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(profilers.size());
 
         for (Profiler profiler : profilers) {
             ProfilerWorkerThread worker = new ProfilerWorkerThread(profiler);
