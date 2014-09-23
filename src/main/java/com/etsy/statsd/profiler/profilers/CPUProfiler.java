@@ -1,6 +1,5 @@
 package com.etsy.statsd.profiler.profilers;
 
-import com.etsy.statsd.profiler.Agent;
 import com.etsy.statsd.profiler.Profiler;
 import com.timgroup.statsd.StatsDClient;
 
@@ -18,17 +17,25 @@ import java.util.Map;
  * @author Andrew Johnson
  */
 public class CPUProfiler extends Profiler {
+    public static final long PERIOD = 1;
+
     private ThreadMXBean threadMXBean;
-    Map<String, Long> methodCounts;
+    private Map<String, Long> methodCounts;
+    private int profileCount;
 
     public CPUProfiler(StatsDClient client) {
         super(client);
         threadMXBean = ManagementFactory.getThreadMXBean();
         methodCounts = new HashMap<>();
+        profileCount = 0;
     }
 
+    /**
+     * Profile CPU time by method call
+     */
     @Override
     public void profile() {
+        profileCount++;
         List<ThreadInfo> threads = getAllRunnableThreads();
 
         for (ThreadInfo thread : threads) {
@@ -38,14 +45,37 @@ public class CPUProfiler extends Profiler {
                 if (!(methodKey.startsWith("com.etsy.statsd.profiler") || methodKey.startsWith("com.timgroup.statsd"))) {
                     Long count = methodCounts.get(methodKey);
                     if (count == null) {
-                        methodCounts.put(methodKey, Agent.PERIOD);
+                        methodCounts.put(methodKey, PERIOD);
                     } else {
-                        methodCounts.put(methodKey, count + Agent.PERIOD);
+                        methodCounts.put(methodKey, count + PERIOD);
                     }
                 }
             }
         }
 
+        // To keep from overwhelming StatsD, we only report statistics every second
+        if (profileCount % 1000 == 0) {
+            recordMethodCounts();
+        }
+    }
+
+    /**
+     * Flush methodCounts data on shutdown
+     */
+    @Override
+    public void flushData() {
+        recordMethodCounts();
+    }
+
+    @Override
+    public long getPeriod() {
+        return PERIOD;
+    }
+
+    /**
+     * Records method CPU time in StatsD
+     */
+    private void recordMethodCounts() {
         for (Map.Entry<String, Long> entry : methodCounts.entrySet()) {
             recordGaugeValue("cpu.method." + entry.getKey(), entry.getValue());
         }

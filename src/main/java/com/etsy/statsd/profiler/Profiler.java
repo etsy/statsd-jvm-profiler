@@ -20,6 +20,18 @@ public abstract class Profiler {
     public abstract void profile();
 
     /**
+     * Hook to flush any remaining data cached by the profiler at JVM shutdown
+     */
+    public abstract void flushData();
+
+    /**
+     * Get the period to use for this profiler in the ScheduledExecutorService
+     *
+     * @return The ScheduledExecutorThread period for this profiler
+     */
+    public abstract long getPeriod();
+
+    /**
      * Record a gauge value in StatsD
      *
      * @param key The key for the gauge
@@ -27,29 +39,5 @@ public abstract class Profiler {
      */
     protected void recordGaugeValue(String key, long value) {
         client.recordGaugeValue(key, value);
-    }
-
-    /**
-     * Record a gauge delta in StatsD
-     *
-     * @param key The key for the gauge
-     * @param delta The delta of the gauge
-     */
-    protected void recordGaugeDelta(String key, long delta) {
-        client.recordGaugeDelta(key, delta);
-    }
-
-    /**
-     * Record execution time in StatsD
-     *
-     * @param key The key for the timer
-     * @param ms The execution time to record
-     */
-    protected void recordExecutionTime(String key, long ms) {
-        client.recordExecutionTime(key, ms);
-    }
-
-    protected void count(String key, long increment) {
-        client.count(key, increment);
     }
 }

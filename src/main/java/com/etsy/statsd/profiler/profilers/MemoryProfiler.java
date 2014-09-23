@@ -15,6 +15,8 @@ import java.util.List;
  * @author Andrew Johnson
  */
 public class MemoryProfiler extends Profiler {
+    public static final long PERIOD = 100;
+
     private MemoryMXBean memoryMXBean;
     private List<GarbageCollectorMXBean> gcMXBeans;
 
@@ -41,6 +43,17 @@ public class MemoryProfiler extends Profiler {
             recordGaugeValue("gc." + gcMXBean.getName() + ".count", gcMXBean.getCollectionCount());
             recordGaugeValue("gc." + gcMXBean.getName() + ".time", gcMXBean.getCollectionTime());
         }
+    }
+
+    /**
+     * MemoryProfiler doesn't do any caching, so flushData is a nop
+     */
+    @Override
+    public void flushData() { }
+
+    @Override
+    public long getPeriod() {
+        return PERIOD;
     }
 
     /**
