@@ -55,11 +55,7 @@ public class Agent {
         Map<String, String> argMap = parseArgs(args);
         String statsdServer = argMap.get("server");
         int statsdPort = Integer.valueOf(argMap.get("port"));
-        String user = argMap.get("user");
-        String flowId = argMap.get("flowid");
-        String stepId = argMap.get("stepid");
-        String prePrefix = argMap.get("prefix");
-        String prefix = String.format("%s.%s.%s.%s", prePrefix, user, flowId, stepId);
+        String prefix = argMap.get("prefix");
 
         StatsDClient client = new NonBlockingStatsDClient(prefix, statsdServer, statsdPort);
 
