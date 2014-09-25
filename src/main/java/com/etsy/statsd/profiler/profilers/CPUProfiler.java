@@ -40,15 +40,16 @@ public class CPUProfiler extends Profiler {
         List<ThreadInfo> threads = getAllRunnableThreads();
 
         for (ThreadInfo thread : threads) {
-            for (StackTraceElement element : thread.getStackTrace()) {
-                String methodKey = formatStackTraceElement(element);
+            // certain threads do not have stack traces
+            if (thread.getStackTrace().length > 0) {
+                String traceKey = formatStackTrace(thread.getStackTrace());
                 // exclude other profilers from reporting
-                if (!(methodKey.startsWith("com.etsy.statsd.profiler") || methodKey.startsWith("com.timgroup.statsd"))) {
-                    Long count = methodCounts.get(methodKey);
+                if (!traceKey.contains("com-etsy-statsd-profiler")) {
+                    Long count = methodCounts.get(traceKey);
                     if (count == null) {
-                        methodCounts.put(methodKey, PERIOD);
+                        methodCounts.put(traceKey, PERIOD);
                     } else {
-                        methodCounts.put(methodKey, count + PERIOD);
+                        methodCounts.put(traceKey, count + PERIOD);
                     }
                 }
             }
@@ -94,7 +95,27 @@ public class CPUProfiler extends Profiler {
      * @return A String representing the given StackTraceElement
      */
     private String formatStackTraceElement(StackTraceElement element) {
-        return String.format("%s.%s", element.getClassName(), element.getMethodName());
+        return String.format("%s:%s", element.getClassName().replace(".", "-"), element.getMethodName());
+    }
+
+    /**
+     * Formats an entire stack trace as a String
+     *
+     * @param stack The stack trace to format
+     * @return A String representing the given stack trace
+     */
+    private String formatStackTrace(StackTraceElement[] stack) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < stack.length; i++) {
+            StackTraceElement element = stack[i];
+            String formatted = formatStackTraceElement(element);
+            builder.append(formatted);
+            if (i != stack.length - 1) {
+                builder.append(".");
+            }
+        }
+
+        return builder.toString();
     }
 
     /**
