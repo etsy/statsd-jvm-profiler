@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * javaagent profiler using StatsD as a backend
@@ -24,7 +23,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class Agent {
     public static final int EXECUTOR_DELAY = 0;
-
 
     /**
      * Parses profiler arguments into a map
@@ -79,7 +77,7 @@ public class Agent {
 
         for (Profiler profiler : profilers) {
             ProfilerWorkerThread worker = new ProfilerWorkerThread(profiler);
-            scheduledExecutorService.scheduleAtFixedRate(worker, EXECUTOR_DELAY, profiler.getPeriod(), TimeUnit.MILLISECONDS);
+            scheduledExecutorService.scheduleAtFixedRate(worker, EXECUTOR_DELAY, profiler.getPeriod(), profiler.getTimeUnit());
         }
     }
 

@@ -2,6 +2,8 @@ package com.etsy.statsd.profiler;
 
 import com.timgroup.statsd.StatsDClient;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Interface for profilers
  *
@@ -30,6 +32,13 @@ public abstract class Profiler {
      * @return The ScheduledExecutorThread period for this profiler
      */
     public abstract long getPeriod();
+
+    /**
+     * Get the unit of time that corresponds to the period for this profiler
+     *
+     * @return A TimeUnit corresponding the the period for this profiler
+     */
+    public abstract TimeUnit getTimeUnit();
 
     /**
      * Record a gauge value in StatsD

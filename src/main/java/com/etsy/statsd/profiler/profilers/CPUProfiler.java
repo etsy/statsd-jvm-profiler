@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Profiles CPU time spent in each method
@@ -71,6 +72,11 @@ public class CPUProfiler extends Profiler {
     @Override
     public long getPeriod() {
         return PERIOD;
+    }
+
+    @Override
+    public TimeUnit getTimeUnit() {
+        return TimeUnit.MILLISECONDS;
     }
 
     /**

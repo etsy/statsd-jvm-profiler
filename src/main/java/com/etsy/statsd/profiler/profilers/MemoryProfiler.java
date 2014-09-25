@@ -8,6 +8,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Profiles memory usage and GC statistics
@@ -15,7 +16,7 @@ import java.util.List;
  * @author Andrew Johnson
  */
 public class MemoryProfiler extends Profiler {
-    public static final long PERIOD = 100;
+    public static final long PERIOD = 1;
 
     private MemoryMXBean memoryMXBean;
     private List<GarbageCollectorMXBean> gcMXBeans;
@@ -54,6 +55,11 @@ public class MemoryProfiler extends Profiler {
     @Override
     public long getPeriod() {
         return PERIOD;
+    }
+
+    @Override
+    public TimeUnit getTimeUnit() {
+        return TimeUnit.SECONDS;
     }
 
     /**
