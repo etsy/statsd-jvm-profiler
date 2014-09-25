@@ -42,11 +42,14 @@ public class CPUProfiler extends Profiler {
         for (ThreadInfo thread : threads) {
             for (StackTraceElement element : thread.getStackTrace()) {
                 String methodKey = formatStackTraceElement(element);
-                Long count = methodCounts.get(methodKey);
-                if (count == null) {
-                    methodCounts.put(methodKey, PERIOD);
-                } else {
-                    methodCounts.put(methodKey, count + PERIOD);
+                // exclude other profilers from reporting
+                if (!(methodKey.startsWith("com.etsy.statsd.profiler") || methodKey.startsWith("com.timgroup.statsd"))) {
+                    Long count = methodCounts.get(methodKey);
+                    if (count == null) {
+                        methodCounts.put(methodKey, PERIOD);
+                    } else {
+                        methodCounts.put(methodKey, count + PERIOD);
+                    }
                 }
             }
         }
