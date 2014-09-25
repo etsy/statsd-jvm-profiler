@@ -14,6 +14,7 @@ import java.util.Map;
  */
 public class MockStatsDClient extends ConvenienceMethodProvidingStatsDClient {
     public static final String PREFIX = "mock.";
+    public static final String DUMMY = "dummy";
 
     private Map<String, Long> messages = new HashMap<>();
 
@@ -22,27 +23,27 @@ public class MockStatsDClient extends ConvenienceMethodProvidingStatsDClient {
 
     @Override
     public void count(String aspect, long delta, double sampleRate) {
-        record(messageFor(aspect, "dummy", "c", sampleRate));
+        record(messageFor(aspect, DUMMY, "c", sampleRate));
     }
 
     @Override
     public void recordGaugeValue(String aspect, long value) {
-        recordGaugeCommon(aspect, "dummy", value < 0, false);
+        recordGaugeCommon(aspect, DUMMY, value < 0, false);
     }
 
     @Override
     public void recordGaugeValue(String aspect, double value) {
-        recordGaugeCommon(aspect, "dummy", value < 0, false);
+        recordGaugeCommon(aspect, DUMMY, value < 0, false);
     }
 
     @Override
     public void recordGaugeDelta(String aspect, long value) {
-        recordGaugeCommon(aspect, "dummy", value < 0, true);
+        recordGaugeCommon(aspect, DUMMY, value < 0, true);
     }
 
     @Override
     public void recordGaugeDelta(String aspect, double value) {
-        recordGaugeCommon(aspect, "dummy", value < 0, true);
+        recordGaugeCommon(aspect, DUMMY, value < 0, true);
     }
 
     @Override
@@ -52,7 +53,7 @@ public class MockStatsDClient extends ConvenienceMethodProvidingStatsDClient {
 
     @Override
     public void recordExecutionTime(String aspect, long timeInMs, double sampleRate) {
-        record(messageFor(aspect, "dummy", "ms", sampleRate));
+        record(messageFor(aspect, DUMMY, "ms", sampleRate));
     }
 
     public Map<String, Long> getMessages() {

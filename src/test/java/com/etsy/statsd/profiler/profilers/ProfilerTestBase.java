@@ -6,6 +6,7 @@ import org.junit.BeforeClass;
 
 import java.util.Map;
 
+import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -31,4 +32,15 @@ public class ProfilerTestBase {
         assertEquals(expected, client.getMessages());
     }
 
+    protected void assertMessageTypes(Map<String, Long> expectedTypeCount) {
+        for (Map.Entry<String, Long> entry : client.getMessages().entrySet()) {
+            String[] tokens = entry.getKey().split("\\|");
+            if (tokens.length != 2) {
+                fail("Invalid message type: " + entry.getKey());
+            }
+
+            String type = tokens[1];
+            assertEquals(expectedTypeCount.get(type), entry.getValue());
+        }
+    }
 }
