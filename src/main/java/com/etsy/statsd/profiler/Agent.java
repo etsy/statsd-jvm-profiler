@@ -87,7 +87,7 @@ public class Agent {
      * @param profilers The profilers to flush at shutdown
      */
     private static void registerShutdownHook(Collection<Profiler> profilers) {
-        Thread shutdownHook = new ProfilerThreadFactory().newThread(new ProfilerShutdownHookWorker(profilers));
+        Thread shutdownHook = new Thread(new ProfilerShutdownHookWorker(profilers));
         Runtime.getRuntime().addShutdownHook(shutdownHook);
     }
 }
