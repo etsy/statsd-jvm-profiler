@@ -1,6 +1,7 @@
 package com.etsy.statsd.profiler.profilers;
 
 import com.etsy.statsd.profiler.Profiler;
+import com.etsy.statsd.profiler.worker.ProfilerThreadFactory;
 import com.timgroup.statsd.StatsDClient;
 
 import java.lang.management.ManagementFactory;
@@ -41,14 +42,11 @@ public class CPUProfiler extends Profiler {
         for (ThreadInfo thread : threads) {
             for (StackTraceElement element : thread.getStackTrace()) {
                 String methodKey = formatStackTraceElement(element);
-                // exclude other profilers from reporting
-                if (!(methodKey.startsWith("com.etsy.statsd.profiler") || methodKey.startsWith("com.timgroup.statsd"))) {
-                    Long count = methodCounts.get(methodKey);
-                    if (count == null) {
-                        methodCounts.put(methodKey, PERIOD);
-                    } else {
-                        methodCounts.put(methodKey, count + PERIOD);
-                    }
+                Long count = methodCounts.get(methodKey);
+                if (count == null) {
+                    methodCounts.put(methodKey, PERIOD);
+                } else {
+                    methodCounts.put(methodKey, count + PERIOD);
                 }
             }
         }
@@ -99,8 +97,8 @@ public class CPUProfiler extends Profiler {
     private List<ThreadInfo> getAllRunnableThreads() {
         List<ThreadInfo> threads = new ArrayList<>();
         for (ThreadInfo t : threadMXBean.dumpAllThreads(false, false)) {
-            // We will sample all runnable threads that are not this one
-            if (t.getThreadState() == Thread.State.RUNNABLE && t.getThreadId() != Thread.currentThread().getId()) {
+            // We will sample all runnable threads that are not profiler threads
+            if (t.getThreadState() == Thread.State.RUNNABLE && !t.getThreadName().startsWith(ProfilerThreadFactory.NAME_PREFIX) ) {
                 threads.add(t);
             }
         }
