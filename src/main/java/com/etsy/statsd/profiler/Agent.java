@@ -72,8 +72,7 @@ public class Agent {
      * @param profilers Collection of profilers to schedule
      */
     private static void scheduleProfilers(Collection<Profiler> profilers) {
-        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(profilers.size(),
-                new ProfilerThreadFactory());
+        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(profilers.size());
 
         for (Profiler profiler : profilers) {
             ProfilerWorkerThread worker = new ProfilerWorkerThread(profiler);
