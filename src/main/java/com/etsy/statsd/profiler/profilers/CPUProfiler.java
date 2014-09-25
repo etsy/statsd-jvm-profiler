@@ -1,7 +1,6 @@
 package com.etsy.statsd.profiler.profilers;
 
 import com.etsy.statsd.profiler.Profiler;
-import com.etsy.statsd.profiler.worker.ProfilerThreadFactory;
 import com.timgroup.statsd.StatsDClient;
 
 import java.lang.management.ManagementFactory;
@@ -106,8 +105,8 @@ public class CPUProfiler extends Profiler {
     private List<ThreadInfo> getAllRunnableThreads() {
         List<ThreadInfo> threads = new ArrayList<>();
         for (ThreadInfo t : threadMXBean.dumpAllThreads(false, false)) {
-            // We will sample all runnable threads that are not profiler threads
-            if (t.getThreadState() == Thread.State.RUNNABLE && !t.getThreadName().startsWith(ProfilerThreadFactory.NAME_PREFIX) ) {
+            // We will sample all runnable threads that are not the current thread
+            if (t.getThreadState() == Thread.State.RUNNABLE && t.getThreadId() != Thread.currentThread().getId()) {
                 threads.add(t);
             }
         }
