@@ -106,11 +106,11 @@ public class CPUProfiler extends Profiler {
      */
     private String formatStackTrace(StackTraceElement[] stack) {
         StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < stack.length; i++) {
+        for (int i = stack.length - 1; i >= 0; i--) {
             StackTraceElement element = stack[i];
             String formatted = formatStackTraceElement(element);
             builder.append(formatted);
-            if (i != stack.length - 1) {
+            if (i != 0) {
                 builder.append(".");
             }
         }
