@@ -3,6 +3,7 @@ package com.etsy.statsd.profiler;
 import com.etsy.statsd.profiler.profilers.CPUProfiler;
 import com.etsy.statsd.profiler.profilers.MemoryProfiler;
 import com.etsy.statsd.profiler.worker.ProfilerShutdownHookWorker;
+import com.etsy.statsd.profiler.worker.ProfilerThreadFactory;
 import com.etsy.statsd.profiler.worker.ProfilerWorkerThread;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.timgroup.statsd.NonBlockingStatsDClient;
@@ -73,7 +74,7 @@ public class Agent {
      */
     private static void scheduleProfilers(Collection<Profiler> profilers) {
         ScheduledExecutorService scheduledExecutorService = MoreExecutors.getExitingScheduledExecutorService(
-                (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(profilers.size()));
+                (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(profilers.size(), new ProfilerThreadFactory()));
 
         for (Profiler profiler : profilers) {
             ProfilerWorkerThread worker = new ProfilerWorkerThread(profiler);

@@ -1,6 +1,7 @@
 package com.etsy.statsd.profiler.profilers;
 
 import com.etsy.statsd.profiler.Profiler;
+import com.etsy.statsd.profiler.worker.ProfilerThreadFactory;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -62,24 +63,22 @@ public class CPUProfiler extends Profiler {
             if (thread.getStackTrace().length > 0) {
                 String traceKey = formatStackTrace(thread.getStackTrace());
                 // exclude other profilers from reporting
-                if (!traceKey.contains("com-etsy-statsd-profiler")) {
-                    if (!seenTraces.contains(traceKey)) {
-                        Matcher m = filterPattern.matcher(traceKey);
-                        if (m.matches()) {
-                            emitted++;
-                        } else {
-                            filtered++;
-                        }
-
-                        seenTraces.add(traceKey);
+                if (!seenTraces.contains(traceKey)) {
+                    Matcher m = filterPattern.matcher(traceKey);
+                    if (m.matches()) {
+                        emitted++;
+                    } else {
+                        filtered++;
                     }
+
+                    seenTraces.add(traceKey);
+                }
 //                    Long count = methodCounts.get(traceKey);
 //                    if (count == null) {
 //                        methodCounts.put(traceKey, PERIOD);
 //                    } else {
 //                        methodCounts.put(traceKey, count + PERIOD);
 //                    }
-                }
             }
         }
 
@@ -156,8 +155,8 @@ public class CPUProfiler extends Profiler {
     private List<ThreadInfo> getAllRunnableThreads() {
         List<ThreadInfo> threads = new ArrayList<>();
         for (ThreadInfo t : threadMXBean.dumpAllThreads(false, false)) {
-            // We will sample all runnable threads that are not the current thread
-            if (t.getThreadState() == Thread.State.RUNNABLE && t.getThreadId() != Thread.currentThread().getId()) {
+            // We will sample all runnable threads that are not profiler threads
+            if (t.getThreadState() == Thread.State.RUNNABLE && !t.getThreadName().startsWith(ProfilerThreadFactory.NAME_PREFIX)) {
                 threads.add(t);
             }
         }
