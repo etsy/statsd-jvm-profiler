@@ -123,7 +123,7 @@ public class CPUProfiler extends Profiler {
         ArrayUtils.reverse(stack); // reverse in place
         List<String> lines = new ArrayList<>();
         for (StackTraceElement element : stack) {
-            if (lines.size() == 5) {
+            if (lines.size() == 10) {
                 break;
             }
             lines.add(formatStackTraceElement(element));
