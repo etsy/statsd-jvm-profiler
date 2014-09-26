@@ -3,12 +3,12 @@ package com.etsy.statsd.profiler.profilers;
 import com.etsy.statsd.profiler.Profiler;
 import com.etsy.statsd.profiler.util.StackTraceFilter;
 import com.etsy.statsd.profiler.util.StackTraceFormatter;
+import com.etsy.statsd.profiler.util.ThreadDumper;
 import com.etsy.statsd.profiler.worker.ProfilerThreadFactory;
+import com.google.common.base.Predicate;
 import com.timgroup.statsd.StatsDClient;
 
-import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
-import java.lang.management.ThreadMXBean;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -21,7 +21,6 @@ public class CPUProfiler extends Profiler {
     public static final long PERIOD = 1;
     public static final List<String> EXCLUDE_PACKAGES = Arrays.asList("com.etsy.statsd.profiler", "com.timgroup.statsd");
 
-    private ThreadMXBean threadMXBean;
     private Map<String, Long> methodCounts;
     private int profileCount;
     private StackTraceFilter filter;
@@ -29,7 +28,6 @@ public class CPUProfiler extends Profiler {
 
     public CPUProfiler(StatsDClient client, List<String> filterPackages) {
         super(client);
-        threadMXBean = ManagementFactory.getThreadMXBean();
         methodCounts = new HashMap<>();
         profileCount = 0;
         filter = new StackTraceFilter(filterPackages, EXCLUDE_PACKAGES);
@@ -41,9 +39,8 @@ public class CPUProfiler extends Profiler {
     @Override
     public void profile() {
         profileCount++;
-        List<ThreadInfo> threads = getAllRunnableThreads();
 
-        for (ThreadInfo thread : threads) {
+        for (ThreadInfo thread : getAllRunnableThreads()) {
             // certain threads do not have stack traces
             if (thread.getStackTrace().length > 0) {
                 String traceKey = StackTraceFormatter.formatStackTrace(thread.getStackTrace());
@@ -92,19 +89,16 @@ public class CPUProfiler extends Profiler {
     }
 
     /**
-     * Gets all runnable threads, excluding the current thread
+     * Gets all runnable threads, excluding profiler threads
      *
-     * @return A List<ThreadInfo>
+     * @return A Collection<ThreadInfo> representing current thread state
      */
-    private List<ThreadInfo> getAllRunnableThreads() {
-        List<ThreadInfo> threads = new ArrayList<>();
-        for (ThreadInfo t : threadMXBean.dumpAllThreads(false, false)) {
-            // We will sample all runnable threads that are not profiler threads
-            if (t.getThreadState() == Thread.State.RUNNABLE && !t.getThreadName().startsWith(ProfilerThreadFactory.NAME_PREFIX)) {
-                threads.add(t);
+    private Collection<ThreadInfo> getAllRunnableThreads() {
+        return ThreadDumper.filterAllThreadsInState(false, false, Thread.State.RUNNABLE, new Predicate<ThreadInfo>() {
+            @Override
+            public boolean apply(ThreadInfo input) {
+                return !input.getThreadName().startsWith(ProfilerThreadFactory.NAME_PREFIX);
             }
-        }
-
-        return threads;
+        });
     }
 }
