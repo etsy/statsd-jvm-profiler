@@ -4,6 +4,7 @@ import com.etsy.statsd.profiler.profilers.CPUProfiler;
 import com.etsy.statsd.profiler.profilers.MemoryProfiler;
 import com.etsy.statsd.profiler.worker.ProfilerShutdownHookWorker;
 import com.etsy.statsd.profiler.worker.ProfilerWorkerThread;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.timgroup.statsd.NonBlockingStatsDClient;
 import com.timgroup.statsd.StatsDClient;
 
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
  * javaagent profiler using StatsD as a backend
@@ -61,8 +63,8 @@ public class Agent {
         Profiler cpuProfiler = new CPUProfiler(client);
         Collection<Profiler> profilers = Arrays.asList(memoryProfiler, cpuProfiler);
 
-        ScheduledExecutorService scheduledExecutorService = scheduleProfilers(profilers);
-//        registerShutdownHook(profilers, scheduledExecutorService);
+        scheduleProfilers(profilers);
+        registerShutdownHook(profilers);
     }
 
     /**
@@ -70,15 +72,14 @@ public class Agent {
      *
      * @param profilers Collection of profilers to schedule
      */
-    private static ScheduledExecutorService scheduleProfilers(Collection<Profiler> profilers) {
-        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(profilers.size());
+    private static void scheduleProfilers(Collection<Profiler> profilers) {
+        ScheduledExecutorService scheduledExecutorService = MoreExecutors.getExitingScheduledExecutorService(
+                (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(profilers.size()));
 
         for (Profiler profiler : profilers) {
             ProfilerWorkerThread worker = new ProfilerWorkerThread(profiler);
             scheduledExecutorService.scheduleAtFixedRate(worker, EXECUTOR_DELAY, profiler.getPeriod(), profiler.getTimeUnit());
         }
-
-        return scheduledExecutorService;
     }
 
     /**
@@ -86,8 +87,8 @@ public class Agent {
      *
      * @param profilers The profilers to flush at shutdown
      */
-    private static void registerShutdownHook(Collection<Profiler> profilers, ScheduledExecutorService scheduledExecutorService) {
-        Thread shutdownHook = new Thread(new ProfilerShutdownHookWorker(profilers, scheduledExecutorService));
+    private static void registerShutdownHook(Collection<Profiler> profilers) {
+        Thread shutdownHook = new Thread(new ProfilerShutdownHookWorker(profilers));
         Runtime.getRuntime().addShutdownHook(shutdownHook);
     }
 }

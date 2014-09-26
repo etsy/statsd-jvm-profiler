@@ -12,16 +12,13 @@ import java.util.concurrent.ScheduledExecutorService;
  */
 public class ProfilerShutdownHookWorker implements Runnable {
     private Collection<Profiler> profilers;
-    private ScheduledExecutorService scheduledExecutorService;
 
-    public ProfilerShutdownHookWorker(Collection<Profiler> profilers, ScheduledExecutorService scheduledExecutorService) {
-        this.scheduledExecutorService = scheduledExecutorService;
+    public ProfilerShutdownHookWorker(Collection<Profiler> profilers) {
         this.profilers = profilers;
     }
 
     @Override
     public void run() {
-        scheduledExecutorService.shutdownNow();
         for (Profiler p : profilers) {
             p.flushData();
         }

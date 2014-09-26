@@ -68,11 +68,9 @@ public class CPUProfiler extends Profiler {
         }
 
         // To keep from overwhelming StatsD, we only report statistics every second
-        if (profileCount % 1000 == 0) {
+//        if (profileCount % 1000 == 0) {
 //            recordMethodCounts();
-            recordGaugeValue("filtered", filtered);
-            recordGaugeValue("emitted", emitted);
-        }
+//        }
     }
 
     /**
