@@ -123,7 +123,7 @@ public class CPUProfiler extends Profiler {
      * @return A String representing the given stack trace
      */
     private String formatStackTrace(StackTraceElement[] stack) {
-        ArrayUtils.reverse(stack); // reverse in place
+//        ArrayUtils.reverse(stack); // reverse in place
         List<String> lines = new ArrayList<>();
         for (StackTraceElement element : stack) {
 //            if (lines.size() == maxTraceDepth) {
