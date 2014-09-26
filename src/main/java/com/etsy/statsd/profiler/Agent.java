@@ -62,7 +62,7 @@ public class Agent {
         Collection<Profiler> profilers = Arrays.asList(memoryProfiler, cpuProfiler);
 
         ScheduledExecutorService scheduledExecutorService = scheduleProfilers(profilers);
-        registerShutdownHook(profilers, scheduledExecutorService);
+//        registerShutdownHook(profilers, scheduledExecutorService);
     }
 
     /**
