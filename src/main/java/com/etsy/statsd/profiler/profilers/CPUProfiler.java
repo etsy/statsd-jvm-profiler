@@ -5,13 +5,14 @@ import com.timgroup.statsd.StatsDClient;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -25,12 +26,16 @@ public class CPUProfiler extends Profiler {
     private ThreadMXBean threadMXBean;
     private Map<String, Long> methodCounts;
     private int profileCount;
+    private Set<String> seenTraces;
+    private long filtered = 0L;
+    private long emitted = 0L;
 
     public CPUProfiler(StatsDClient client) {
         super(client);
         threadMXBean = ManagementFactory.getThreadMXBean();
         methodCounts = new HashMap<>();
         profileCount = 0;
+        seenTraces = new HashSet<>();
     }
 
     /**
@@ -47,20 +52,29 @@ public class CPUProfiler extends Profiler {
                 String traceKey = formatStackTrace(thread.getStackTrace());
                 // exclude other profilers from reporting
                 if (!traceKey.contains("com-etsy-statsd-profiler")) {
-                    Long count = methodCounts.get(traceKey);
-                    if (count == null) {
-                        methodCounts.put(traceKey, PERIOD);
-                    } else {
-                        methodCounts.put(traceKey, count + PERIOD);
+                    if (!seenTraces.contains(traceKey)) {
+                        if (traceKey.contains("com-etsy")) {
+                            emitted++;
+                        } else {
+                            filtered++;
+                        }
+
+                        seenTraces.add(traceKey);
                     }
+//                    Long count = methodCounts.get(traceKey);
+//                    if (count == null) {
+//                        methodCounts.put(traceKey, PERIOD);
+//                    } else {
+//                        methodCounts.put(traceKey, count + PERIOD);
+//                    }
                 }
             }
         }
 
         // To keep from overwhelming StatsD, we only report statistics every second
-        if (profileCount % 1000 == 0) {
-            recordMethodCounts();
-        }
+//        if (profileCount % 1000 == 0) {
+//            recordMethodCounts();
+//        }
     }
 
     /**
@@ -68,7 +82,15 @@ public class CPUProfiler extends Profiler {
      */
     @Override
     public void flushData() {
-        recordMethodCounts();
+        File f = new File("/tmp/profiler.txt");
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(f))) {
+            writer.write("Emitted: " + emitted);
+            writer.write("Filtered: " + filtered);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+//        recordMethodCounts();
     }
 
     @Override
