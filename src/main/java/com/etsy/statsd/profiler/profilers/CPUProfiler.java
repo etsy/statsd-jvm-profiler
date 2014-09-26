@@ -1,23 +1,16 @@
 package com.etsy.statsd.profiler.profilers;
 
 import com.etsy.statsd.profiler.Profiler;
+import com.etsy.statsd.profiler.util.StackTraceFilter;
 import com.etsy.statsd.profiler.util.StackTraceFormatter;
 import com.etsy.statsd.profiler.worker.ProfilerThreadFactory;
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import com.timgroup.statsd.StatsDClient;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Profiles CPU time spent in each method
@@ -26,11 +19,12 @@ import java.util.regex.Pattern;
  */
 public class CPUProfiler extends Profiler {
     public static final long PERIOD = 1;
+    public static final List<String> EXCLUDE_PACKAGES = Arrays.asList("com.etsy.statsd.profiler", "com.timgroup.statsd");
 
     private ThreadMXBean threadMXBean;
     private Map<String, Long> methodCounts;
     private int profileCount;
-    private Pattern filterPattern;
+    private StackTraceFilter filter;
 
 
     public CPUProfiler(StatsDClient client, List<String> filterPackages) {
@@ -38,13 +32,7 @@ public class CPUProfiler extends Profiler {
         threadMXBean = ManagementFactory.getThreadMXBean();
         methodCounts = new HashMap<>();
         profileCount = 0;
-        filterPattern = Pattern.compile(String.format(".*\\.(%s).*",
-                Joiner.on("|").join(Lists.transform(filterPackages, new Function<String, String>() {
-                    @Override
-                    public String apply(String s) {
-                        return s.replace(".", "-");
-                    }
-                }))));
+        filter = new StackTraceFilter(filterPackages, EXCLUDE_PACKAGES);
     }
 
     /**
@@ -59,8 +47,7 @@ public class CPUProfiler extends Profiler {
             // certain threads do not have stack traces
             if (thread.getStackTrace().length > 0) {
                 String traceKey = StackTraceFormatter.formatStackTrace(thread.getStackTrace());
-                Matcher m = filterPattern.matcher(traceKey);
-                if (m.matches()) {
+                if (filter.includeStackTrace(traceKey)) {
                     Long count = methodCounts.get(traceKey);
                     if (count == null) {
                         methodCounts.put(traceKey, PERIOD);
