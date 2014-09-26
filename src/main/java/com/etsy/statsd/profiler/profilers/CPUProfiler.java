@@ -40,12 +40,13 @@ public class CPUProfiler extends Profiler {
         methodCounts = new HashMap<>();
         profileCount = 0;
         this.maxTraceDepth = maxTraceDepth;
-        filterPattern = Pattern.compile(String.format(".*\\.(%s).*", Joiner.on("|").join(Lists.transform(filterPackages, new Function<String, String>() {
-            @Override
-            public String apply(String s) {
-                return s.replace(".", "-");
-            }
-        }))));
+        filterPattern = Pattern.compile(String.format(".*\\.(%s).*",
+                Joiner.on("|").join(Lists.transform(filterPackages, new Function<String, String>() {
+                    @Override
+                    public String apply(String s) {
+                        return s.replace(".", "-");
+                    }
+                }))));
     }
 
     /**
