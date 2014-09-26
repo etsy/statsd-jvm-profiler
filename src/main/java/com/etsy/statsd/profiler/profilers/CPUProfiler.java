@@ -99,7 +99,7 @@ public class CPUProfiler extends Profiler {
      */
     private void recordMethodCounts() {
         for (Map.Entry<String, Long> entry : methodCounts.entrySet()) {
-            recordGaugeValue("cpu.method." + entry.getKey(), entry.getValue());
+            recordGaugeValue("cpu.trace." + entry.getKey(), entry.getValue());
         }
     }
 
