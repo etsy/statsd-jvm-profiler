@@ -5,10 +5,6 @@ import com.timgroup.statsd.StatsDClient;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
@@ -82,13 +78,8 @@ public class CPUProfiler extends Profiler {
      */
     @Override
     public void flushData() {
-        File f = new File("/tmp/profiler.txt");
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(f))) {
-            writer.write("Emitted: " + emitted);
-            writer.write("Filtered: " + filtered);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        recordGaugeValue("filtered", filtered);
+        recordGaugeValue("emitted", emitted);
 
 //        recordMethodCounts();
     }
