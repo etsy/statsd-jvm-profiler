@@ -49,7 +49,7 @@ public class CPUProfiler extends Profiler {
                 // exclude other profilers from reporting
                 if (!traceKey.contains("com-etsy-statsd-profiler")) {
                     if (!seenTraces.contains(traceKey)) {
-                        if (traceKey.contains("com-etsy")) {
+                        if (traceKey.contains("com-etsy") || traceKey.contains("com-twitter-scalding") || traceKey.contains("cascading-")) {
                             emitted++;
                         } else {
                             filtered++;
