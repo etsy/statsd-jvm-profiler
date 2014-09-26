@@ -3,6 +3,7 @@ package com.etsy.statsd.profiler.worker;
 import com.etsy.statsd.profiler.Profiler;
 
 import java.util.Collection;
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * Worker thread for profiler shutdown hook
@@ -12,7 +13,8 @@ import java.util.Collection;
 public class ProfilerShutdownHookWorker implements Runnable {
     private Collection<Profiler> profilers;
 
-    public ProfilerShutdownHookWorker(Collection<Profiler> profilers) {
+    public ProfilerShutdownHookWorker(Collection<Profiler> profilers, ScheduledExecutorService scheduledExecutorService) {
+        scheduledExecutorService.shutdownNow();
         this.profilers = profilers;
     }
 

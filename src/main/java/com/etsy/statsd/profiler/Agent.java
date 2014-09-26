@@ -61,8 +61,8 @@ public class Agent {
         Profiler cpuProfiler = new CPUProfiler(client);
         Collection<Profiler> profilers = Arrays.asList(memoryProfiler, cpuProfiler);
 
-        scheduleProfilers(profilers);
-        registerShutdownHook(profilers);
+        ScheduledExecutorService scheduledExecutorService = scheduleProfilers(profilers);
+        registerShutdownHook(profilers, scheduledExecutorService);
     }
 
     /**
@@ -70,13 +70,15 @@ public class Agent {
      *
      * @param profilers Collection of profilers to schedule
      */
-    private static void scheduleProfilers(Collection<Profiler> profilers) {
+    private static ScheduledExecutorService scheduleProfilers(Collection<Profiler> profilers) {
         ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(profilers.size());
 
         for (Profiler profiler : profilers) {
             ProfilerWorkerThread worker = new ProfilerWorkerThread(profiler);
             scheduledExecutorService.scheduleAtFixedRate(worker, EXECUTOR_DELAY, profiler.getPeriod(), profiler.getTimeUnit());
         }
+
+        return scheduledExecutorService;
     }
 
     /**
@@ -84,8 +86,8 @@ public class Agent {
      *
      * @param profilers The profilers to flush at shutdown
      */
-    private static void registerShutdownHook(Collection<Profiler> profilers) {
-        Thread shutdownHook = new Thread(new ProfilerShutdownHookWorker(profilers));
+    private static void registerShutdownHook(Collection<Profiler> profilers, ScheduledExecutorService scheduledExecutorService) {
+        Thread shutdownHook = new Thread(new ProfilerShutdownHookWorker(profilers, scheduledExecutorService));
         Runtime.getRuntime().addShutdownHook(shutdownHook);
     }
 }
