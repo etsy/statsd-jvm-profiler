@@ -55,12 +55,11 @@ public class Agent {
         int statsdPort = Integer.valueOf(argMap.get("port"));
         String prefix = argMap.get("prefix");
         List<String> filterPackages = Arrays.asList(argMap.get("filterPackages").split(":"));
-        int maxTraceDepth = Integer.valueOf(argMap.get("maxTraceDepth"));
 
         StatsDClient client = new NonBlockingStatsDClient(prefix, statsdServer, statsdPort);
 
         Profiler memoryProfiler = new MemoryProfiler(client);
-        Profiler cpuProfiler = new CPUProfiler(client, filterPackages, maxTraceDepth);
+        Profiler cpuProfiler = new CPUProfiler(client, filterPackages);
         Collection<Profiler> profilers = Arrays.asList(memoryProfiler, cpuProfiler);
 
         scheduleProfilers(profilers);

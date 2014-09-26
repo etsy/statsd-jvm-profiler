@@ -6,7 +6,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.timgroup.statsd.StatsDClient;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
@@ -30,16 +29,14 @@ public class CPUProfiler extends Profiler {
     private ThreadMXBean threadMXBean;
     private Map<String, Long> methodCounts;
     private int profileCount;
-    private int maxTraceDepth;
     private Pattern filterPattern;
 
 
-    public CPUProfiler(StatsDClient client, List<String> filterPackages, int maxTraceDepth) {
+    public CPUProfiler(StatsDClient client, List<String> filterPackages) {
         super(client);
         threadMXBean = ManagementFactory.getThreadMXBean();
         methodCounts = new HashMap<>();
         profileCount = 0;
-        this.maxTraceDepth = maxTraceDepth;
         filterPattern = Pattern.compile(String.format(".*\\.(%s).*",
                 Joiner.on("|").join(Lists.transform(filterPackages, new Function<String, String>() {
                     @Override
@@ -123,12 +120,8 @@ public class CPUProfiler extends Profiler {
      * @return A String representing the given stack trace
      */
     private String formatStackTrace(StackTraceElement[] stack) {
-//        ArrayUtils.reverse(stack); // reverse in place
         List<String> lines = new ArrayList<>();
         for (StackTraceElement element : stack) {
-//            if (lines.size() == maxTraceDepth) {
-//                break;
-//            }
             lines.add(formatStackTraceElement(element));
         }
 
