@@ -4,6 +4,7 @@ import com.etsy.statsd.profiler.profilers.CPUProfiler;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -29,7 +30,10 @@ public class StackTraceFilterTest {
     @Test
     public void testGetPackagePattern() {
         Pattern expected = Pattern.compile("(.*\\.|^)((com-etsy)|(com-twitter-scalding)).*");
-        assertEquals(expected.toString(), filter.getPackagePattern(includePackages).toString());
+        assertEquals(expected.toString(), filter.getPackagePattern(includePackages, StackTraceFilter.MATCH_EVERYTHING).toString());
+
+        assertEquals(StackTraceFilter.MATCH_EVERYTHING.toString(), filter.getPackagePattern(null, StackTraceFilter.MATCH_EVERYTHING).toString());
+        assertEquals(StackTraceFilter.MATCH_EVERYTHING.toString(), filter.getPackagePattern(new ArrayList<String>(), StackTraceFilter.MATCH_EVERYTHING).toString());
     }
 
     @Test

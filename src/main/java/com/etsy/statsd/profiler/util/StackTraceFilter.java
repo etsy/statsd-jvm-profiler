@@ -15,12 +15,15 @@ import java.util.regex.Pattern;
  * @author Andrew Johnson
  */
 public class StackTraceFilter {
+    public static final Pattern MATCH_EVERYTHING = Pattern.compile("^.*$");
+    public static final Pattern MATCH_NOTHING = Pattern.compile("$^");
+
     private Pattern includePattern;
     private Pattern excludePattern;
 
     public StackTraceFilter(List<String> includePackages, List<String> excludePackages) {
-        includePattern = getPackagePattern(includePackages);
-        excludePattern = getPackagePattern(excludePackages);
+        includePattern = getPackagePattern(includePackages, MATCH_EVERYTHING);
+        excludePattern = getPackagePattern(excludePackages, MATCH_NOTHING);
     }
 
     /**
@@ -64,13 +67,18 @@ public class StackTraceFilter {
      * @param filterPackages The packages to match in this Pattern
      * @return A Pattern object that matches any of the given packages
      */
-    public Pattern getPackagePattern(List<String> filterPackages) {
-        return Pattern.compile(String.format("(.*\\.|^)(%s).*",
-                Joiner.on("|").join(Lists.transform(filterPackages, new Function<String, String>() {
-                    @Override
-                    public String apply(String s) {
-                        return String.format("(%s)", s.replace(".", "-"));
-                    }
-                }))));
+    public Pattern getPackagePattern(List<String> filterPackages, Pattern defaultPattern) {
+        if (filterPackages == null || filterPackages.isEmpty()) {
+            return defaultPattern;
+        }
+        else {
+            return Pattern.compile(String.format("(.*\\.|^)(%s).*",
+                    Joiner.on("|").join(Lists.transform(filterPackages, new Function<String, String>() {
+                        @Override
+                        public String apply(String s) {
+                            return String.format("(%s)", s.replace(".", "-"));
+                        }
+                    }))));
+        }
     }
 }
