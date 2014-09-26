@@ -9,10 +9,7 @@ import com.timgroup.statsd.NonBlockingStatsDClient;
 import com.timgroup.statsd.StatsDClient;
 
 import java.lang.instrument.Instrumentation;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -56,11 +53,13 @@ public class Agent {
         String statsdServer = argMap.get("server");
         int statsdPort = Integer.valueOf(argMap.get("port"));
         String prefix = argMap.get("prefix");
+        List<String> filterPackages = Arrays.asList(argMap.get("filterPackages").split(":"));
+        int maxTraceDepth = Integer.valueOf(argMap.get("maxTraceDepth"));
 
         StatsDClient client = new NonBlockingStatsDClient(prefix, statsdServer, statsdPort);
 
         Profiler memoryProfiler = new MemoryProfiler(client);
-        Profiler cpuProfiler = new CPUProfiler(client);
+        Profiler cpuProfiler = new CPUProfiler(client, filterPackages, maxTraceDepth);
         Collection<Profiler> profilers = Arrays.asList(memoryProfiler, cpuProfiler);
 
         scheduleProfilers(profilers);

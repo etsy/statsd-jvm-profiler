@@ -1,6 +1,9 @@
 package com.etsy.statsd.profiler.profilers;
 
 import com.etsy.statsd.profiler.Profiler;
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.timgroup.statsd.StatsDClient;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +13,8 @@ import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Profiles CPU time spent in each method
@@ -22,15 +27,25 @@ public class CPUProfiler extends Profiler {
     private ThreadMXBean threadMXBean;
     private Map<String, Long> methodCounts;
     private int profileCount;
+    private int maxTraceDepth;
+    private Pattern filterPattern;
     private Set<String> seenTraces;
     private long filtered = 0L;
     private long emitted = 0L;
 
-    public CPUProfiler(StatsDClient client) {
+    public CPUProfiler(StatsDClient client, List<String> filterPackages, int maxTraceDepth) {
         super(client);
         threadMXBean = ManagementFactory.getThreadMXBean();
         methodCounts = new HashMap<>();
         profileCount = 0;
+        this.maxTraceDepth = maxTraceDepth;
+        filterPattern = Pattern.compile(String.format(".*\\.(%s).*", Joiner.on("|").join(Lists.transform(filterPackages, new Function<String, String>() {
+            @Override
+            public String apply(String s) {
+                return s.replace(".", "-");
+            }
+        }))));
+
         seenTraces = new HashSet<>();
     }
 
@@ -49,7 +64,8 @@ public class CPUProfiler extends Profiler {
                 // exclude other profilers from reporting
                 if (!traceKey.contains("com-etsy-statsd-profiler")) {
                     if (!seenTraces.contains(traceKey)) {
-                        if (traceKey.contains("com-etsy") || traceKey.contains("com-twitter-scalding") || traceKey.contains("cascading-")) {
+                        Matcher m = filterPattern.matcher(traceKey);
+                        if (m.matches()) {
                             emitted++;
                         } else {
                             filtered++;
@@ -123,13 +139,13 @@ public class CPUProfiler extends Profiler {
         ArrayUtils.reverse(stack); // reverse in place
         List<String> lines = new ArrayList<>();
         for (StackTraceElement element : stack) {
-            if (lines.size() == 10) {
+            if (lines.size() == maxTraceDepth) {
                 break;
             }
             lines.add(formatStackTraceElement(element));
         }
 
-        return StringUtils.join(lines, ".");
+        return Joiner.on(".").join(lines);
     }
 
     /**
