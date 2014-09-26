@@ -55,6 +55,8 @@ public class Agent {
      * @param profilers Collection of profilers to schedule
      */
     private static void scheduleProfilers(Collection<Profiler> profilers) {
+        // We need to convert to an ExitingScheduledExecutorService so the JVM shuts down
+        // when the main thread finishes
         ScheduledExecutorService scheduledExecutorService = MoreExecutors.getExitingScheduledExecutorService(
                 (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(profilers.size(), new ProfilerThreadFactory()));
 
