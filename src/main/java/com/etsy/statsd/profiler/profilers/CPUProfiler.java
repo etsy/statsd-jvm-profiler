@@ -1,6 +1,7 @@
 package com.etsy.statsd.profiler.profilers;
 
 import com.etsy.statsd.profiler.Profiler;
+import com.etsy.statsd.profiler.util.StackTraceFormatter;
 import com.etsy.statsd.profiler.worker.ProfilerThreadFactory;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -57,7 +58,7 @@ public class CPUProfiler extends Profiler {
         for (ThreadInfo thread : threads) {
             // certain threads do not have stack traces
             if (thread.getStackTrace().length > 0) {
-                String traceKey = formatStackTrace(thread.getStackTrace());
+                String traceKey = StackTraceFormatter.formatStackTrace(thread.getStackTrace());
                 Matcher m = filterPattern.matcher(traceKey);
                 if (m.matches()) {
                     Long count = methodCounts.get(traceKey);
@@ -101,31 +102,6 @@ public class CPUProfiler extends Profiler {
         for (Map.Entry<String, Long> entry : methodCounts.entrySet()) {
             recordGaugeValue("cpu.trace." + entry.getKey(), entry.getValue());
         }
-    }
-
-    /**
-     * Formats a StackTraceElement as a String, excluding the line number
-     *
-     * @param element The StackTraceElement to format
-     * @return A String representing the given StackTraceElement
-     */
-    private String formatStackTraceElement(StackTraceElement element) {
-        return String.format("%s-%s", element.getClassName().replace(".", "-"), element.getMethodName());
-    }
-
-    /**
-     * Formats an entire stack trace as a String
-     *
-     * @param stack The stack trace to format
-     * @return A String representing the given stack trace
-     */
-    private String formatStackTrace(StackTraceElement[] stack) {
-        List<String> lines = new ArrayList<>();
-        for (StackTraceElement element : stack) {
-            lines.add(formatStackTraceElement(element));
-        }
-
-        return Joiner.on(".").join(lines);
     }
 
     /**
