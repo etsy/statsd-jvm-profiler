@@ -7,12 +7,14 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.timgroup.statsd.StatsDClient;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,9 +32,7 @@ public class CPUProfiler extends Profiler {
     private int profileCount;
     private int maxTraceDepth;
     private Pattern filterPattern;
-    private Set<String> seenTraces;
-    private long filtered = 0L;
-    private long emitted = 0L;
+
 
     public CPUProfiler(StatsDClient client, List<String> filterPackages, int maxTraceDepth) {
         super(client);
@@ -46,8 +46,6 @@ public class CPUProfiler extends Profiler {
                 return s.replace(".", "-");
             }
         }))));
-
-        seenTraces = new HashSet<>();
     }
 
     /**
@@ -62,30 +60,22 @@ public class CPUProfiler extends Profiler {
             // certain threads do not have stack traces
             if (thread.getStackTrace().length > 0) {
                 String traceKey = formatStackTrace(thread.getStackTrace());
-                // exclude other profilers from reporting
-                if (!seenTraces.contains(traceKey)) {
-                    Matcher m = filterPattern.matcher(traceKey);
-                    if (m.matches()) {
-                        emitted++;
+                Matcher m = filterPattern.matcher(traceKey);
+                if (m.matches()) {
+                    Long count = methodCounts.get(traceKey);
+                    if (count == null) {
+                        methodCounts.put(traceKey, PERIOD);
                     } else {
-                        filtered++;
+                        methodCounts.put(traceKey, count + PERIOD);
                     }
-
-                    seenTraces.add(traceKey);
                 }
-//                    Long count = methodCounts.get(traceKey);
-//                    if (count == null) {
-//                        methodCounts.put(traceKey, PERIOD);
-//                    } else {
-//                        methodCounts.put(traceKey, count + PERIOD);
-//                    }
             }
         }
 
         // To keep from overwhelming StatsD, we only report statistics every second
-//        if (profileCount % 1000 == 0) {
-//            recordMethodCounts();
-//        }
+        if (profileCount % 1000 == 0) {
+            recordMethodCounts();
+        }
     }
 
     /**
@@ -93,10 +83,7 @@ public class CPUProfiler extends Profiler {
      */
     @Override
     public void flushData() {
-        recordGaugeValue("filtered", filtered);
-        recordGaugeValue("emitted", emitted);
-
-//        recordMethodCounts();
+        recordMethodCounts();
     }
 
     @Override
