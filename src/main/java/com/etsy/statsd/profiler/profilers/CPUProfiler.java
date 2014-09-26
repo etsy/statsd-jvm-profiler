@@ -126,9 +126,9 @@ public class CPUProfiler extends Profiler {
         ArrayUtils.reverse(stack); // reverse in place
         List<String> lines = new ArrayList<>();
         for (StackTraceElement element : stack) {
-            if (lines.size() == maxTraceDepth) {
-                break;
-            }
+//            if (lines.size() == maxTraceDepth) {
+//                break;
+//            }
             lines.add(formatStackTraceElement(element));
         }
 
