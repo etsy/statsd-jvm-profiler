@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * @author Andrew Johnson
  */
 public class MemoryProfiler extends Profiler {
-    public static final long PERIOD = 1;
+    public static final long PERIOD = 10;
 
     private MemoryMXBean memoryMXBean;
     private List<GarbageCollectorMXBean> gcMXBeans;
@@ -32,6 +32,28 @@ public class MemoryProfiler extends Profiler {
      */
     @Override
     public void profile() {
+        recordStats();
+    }
+
+    @Override
+    public void flushData() {
+        recordStats();
+    }
+
+    @Override
+    public long getPeriod() {
+        return PERIOD;
+    }
+
+    @Override
+    public TimeUnit getTimeUnit() {
+        return TimeUnit.SECONDS;
+    }
+
+    /**
+     * Records all memory statistics
+     */
+    private void recordStats() {
         int finalizationPendingCount = memoryMXBean.getObjectPendingFinalizationCount();
         MemoryUsage heap = memoryMXBean.getHeapMemoryUsage();
         MemoryUsage nonHeap = memoryMXBean.getNonHeapMemoryUsage();
@@ -44,22 +66,6 @@ public class MemoryProfiler extends Profiler {
             recordGaugeValue("gc." + gcMXBean.getName() + ".count", gcMXBean.getCollectionCount());
             recordGaugeValue("gc." + gcMXBean.getName() + ".time", gcMXBean.getCollectionTime());
         }
-    }
-
-    /**
-     * MemoryProfiler doesn't do any caching, so flushData is a nop
-     */
-    @Override
-    public void flushData() { }
-
-    @Override
-    public long getPeriod() {
-        return PERIOD;
-    }
-
-    @Override
-    public TimeUnit getTimeUnit() {
-        return TimeUnit.SECONDS;
     }
 
     /**

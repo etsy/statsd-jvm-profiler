@@ -55,8 +55,8 @@ public class CPUProfiler extends Profiler {
             }
         }
 
-        // To keep from overwhelming StatsD, we only report statistics every second
-        if (profileCount % 1000 == 0) {
+        // To keep from overwhelming StatsD, we only report statistics every ten seconds
+        if (profileCount % 10000 == 0) {
             recordMethodCounts();
         }
     }
