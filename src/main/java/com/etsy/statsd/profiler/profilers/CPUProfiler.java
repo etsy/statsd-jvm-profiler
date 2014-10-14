@@ -4,6 +4,7 @@ import com.etsy.statsd.profiler.Profiler;
 import com.etsy.statsd.profiler.util.StackTraceFilter;
 import com.etsy.statsd.profiler.util.StackTraceFormatter;
 import com.etsy.statsd.profiler.util.ThreadDumper;
+import com.etsy.statsd.profiler.util.TimeUtil;
 import com.etsy.statsd.profiler.worker.ProfilerThreadFactory;
 import com.google.common.base.Predicate;
 import com.timgroup.statsd.StatsDClient;
@@ -18,12 +19,14 @@ import java.util.concurrent.TimeUnit;
  * @author Andrew Johnson
  */
 public class CPUProfiler extends Profiler {
+    public static final long REPORTING_PERIOD = 10;
     public static final long PERIOD = 1;
     public static final List<String> EXCLUDE_PACKAGES = Arrays.asList("com.etsy.statsd.profiler", "com.timgroup.statsd");
 
     private Map<String, Long> methodCounts;
     private int profileCount;
     private StackTraceFilter filter;
+    private long reportingFrequency;
 
 
     public CPUProfiler(StatsDClient client, List<String> filterPackages) {
@@ -31,6 +34,7 @@ public class CPUProfiler extends Profiler {
         methodCounts = new HashMap<>();
         profileCount = 0;
         filter = new StackTraceFilter(filterPackages, EXCLUDE_PACKAGES);
+        reportingFrequency = TimeUtil.convertReportingPeriod(getPeriod(), getTimeUnit(), REPORTING_PERIOD, TimeUnit.SECONDS);
     }
 
     /**
@@ -56,7 +60,7 @@ public class CPUProfiler extends Profiler {
         }
 
         // To keep from overwhelming StatsD, we only report statistics every ten seconds
-        if (profileCount % 10000 == 0) {
+        if (profileCount % reportingFrequency == 0) {
             recordMethodCounts();
         }
     }
