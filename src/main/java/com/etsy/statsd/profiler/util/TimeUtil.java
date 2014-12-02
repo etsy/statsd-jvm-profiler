@@ -25,8 +25,7 @@ public class TimeUtil {
                 return standard != TimeUnit.MICROSECONDS && standard != TimeUnit.NANOSECONDS
                         && standard != TimeUnit.MILLISECONDS;
             case SECONDS:
-                return standard != TimeUnit.MICROSECONDS && standard != TimeUnit.NANOSECONDS
-                        && standard != TimeUnit.MILLISECONDS && standard != TimeUnit.SECONDS;
+                return standard == TimeUnit.MINUTES || standard == TimeUnit.HOURS || standard == TimeUnit.DAYS;
             case MINUTES:
                 return standard == TimeUnit.HOURS || standard == TimeUnit.DAYS;
             case HOURS:
