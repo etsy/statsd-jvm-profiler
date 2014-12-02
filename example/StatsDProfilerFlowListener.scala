@@ -12,9 +12,8 @@ import scala.collection.JavaConversions._
  */
 class StatsDProfilerFlowListener extends FlowListener {
   override def onStarting(flow: Flow[_]): Unit = {
-    val conf = flow.getConfig.asInstanceOf[JobConf]
-    val statsdHost = conf.get("statsd.host", "statsd.etsycorp.com")
-    val statsdPort = conf.getInt("statsd.port", 8125)
+    val statsdHost = "statsd"
+    val statsdPort = 8125
     val userName = System.getProperty("user.name")
     val flowId = flow.getID
     val jobName = flow.getName
