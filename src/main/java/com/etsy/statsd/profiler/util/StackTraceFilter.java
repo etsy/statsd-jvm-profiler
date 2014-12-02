@@ -44,9 +44,7 @@ public class StackTraceFilter {
      * @return True if it matches an included package, false otherwise
      */
     public boolean includeMatches(String formattedStackTrace) {
-        Matcher includeMatcher = includePattern.matcher(formattedStackTrace);
-
-        return includeMatcher.matches();
+        return matches(includePattern, formattedStackTrace);
     }
 
     /**
@@ -56,9 +54,20 @@ public class StackTraceFilter {
      * @return True if it matches an excluded package, false otherwise
      */
     public boolean excludeMatches(String formattedStackTrace) {
-        Matcher excludeMatcher = excludePattern.matcher(formattedStackTrace);
+        return matches(excludePattern, formattedStackTrace);
+    }
 
-        return excludeMatcher.matches();
+    /**
+     * Indicate if this stack trace matches the given pattern
+     *
+     * @param pattern The pattern to match against the stack trace
+     * @param formattedStackTrace The stack trace to check against the pattern
+     * @return True if the stack trace matches the pattern, false otherwise
+     */
+    private boolean matches(Pattern pattern, String formattedStackTrace) {
+        Matcher matcher = pattern.matcher(formattedStackTrace);
+
+        return matcher.matches();
     }
 
     /**
