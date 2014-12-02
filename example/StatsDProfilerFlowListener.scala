@@ -27,6 +27,8 @@ class StatsDProfilerFlowListener extends FlowListener {
       val numReduceTasks = conf.get("mapred.reduce.tasks")
 
       conf.setBoolean("mapred.task.profile", true)
+      // If you are using YARN you can use the map/reduce specific version of this property
+      // This would allow you to set different parameters if desired
       conf.set("mapred.task.profile.params", javaAgent)
       conf.set("mapred.task.profile.maps", getTaskToProfile(numMapTasks,
         String.format("statsd.profiler.map%s.task", stepNum), conf))
