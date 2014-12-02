@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 /**
  * Utility class for filtering stack traces
- * Assumes a string representation like tha produced by @link{com.etsy.statsd.profiler.util.StackTraceFormatter}
+ * Assumes a string representation like that produced by @link{com.etsy.statsd.profiler.util.StackTraceFormatter}
  *
  * @author Andrew Johnson
  */
@@ -50,7 +50,7 @@ public class StackTraceFilter {
     }
 
     /**
-     * Indicate if this stack trce matches one of the excluded packages
+     * Indicate if this stack trace matches one of the excluded packages
      *
      * @param formattedStackTrace The stack trace to check against the excluded packages
      * @return True if it matches an excluded package, false otherwise
