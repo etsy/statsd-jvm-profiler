@@ -9,35 +9,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class TimeUtil {
     /**
-     * Determine if one time unit is larger than another
-     *
-     * @param standard The TimeUnit for comparison
-     * @param toCompare The TimeUnit to compare against `standard`
-     * @return true if standard is a larger unit that toCompare, false otherwise
-     */
-    public static boolean isLargerUnit(TimeUnit standard, TimeUnit toCompare) {
-        switch (toCompare) {
-            case NANOSECONDS:
-                return standard != TimeUnit.NANOSECONDS;
-            case MICROSECONDS:
-                return standard != TimeUnit.MICROSECONDS && standard != TimeUnit.NANOSECONDS;
-            case MILLISECONDS:
-                return standard != TimeUnit.MICROSECONDS && standard != TimeUnit.NANOSECONDS
-                        && standard != TimeUnit.MILLISECONDS;
-            case SECONDS:
-                return standard == TimeUnit.MINUTES || standard == TimeUnit.HOURS || standard == TimeUnit.DAYS;
-            case MINUTES:
-                return standard == TimeUnit.HOURS || standard == TimeUnit.DAYS;
-            case HOURS:
-                return standard == TimeUnit.DAYS;
-            case DAYS:
-                return false;
-            default:
-                throw new IllegalArgumentException("Unknown TimeUnit " + toCompare);
-        }
-    }
-
-    /**
      * Convert a reporting period into the time scale of a profiling period
      *
      * @param profilePeriod The profiling period
@@ -53,7 +24,6 @@ public class TimeUtil {
         if (convertedReportingPeriod <= profilePeriod) {
             return 1;
         }
-
 
         return convertedReportingPeriod / profilePeriod;
     }
