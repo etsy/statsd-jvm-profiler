@@ -9,6 +9,13 @@
 
     <name>statsd-jvm-profiler</name>
     <url>http://maven.apache.org</url>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
