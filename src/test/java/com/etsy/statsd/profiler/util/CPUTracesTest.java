@@ -9,11 +9,11 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 
 public class CPUTracesTest {
-    private CPUTraces traces;
+    private Capitaliztion traces;
 
     @Before
     public void setup() {
-        traces = new CPUTraces();
+        traces = new Capitaliztion();
     }
 
     @Test
