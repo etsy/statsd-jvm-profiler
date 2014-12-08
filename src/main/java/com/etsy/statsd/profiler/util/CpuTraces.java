@@ -13,12 +13,10 @@ import java.util.*;
 public class CpuTraces {
     private Map<String, Long> traces;
     private Map<String, Long> deltas;
-    private Set<String> dirtyTraces;
 
     public CpuTraces() {
         traces = new HashMap<>();
         deltas = new HashMap<>();
-        dirtyTraces = new HashSet<>();
     }
 
     /**
@@ -29,7 +27,6 @@ public class CpuTraces {
      */
     public void increment(String traceKey, long inc) {
         setOrIncrementMap(deltas, traceKey, inc);
-        dirtyTraces.add(traceKey);
     }
 
     /**
