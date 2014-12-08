@@ -10,11 +10,11 @@ import java.util.*;
  *
  * @author Andrew Johnson
  */
-public class CpuTraces {
+public class CPUTraces {
     private Map<String, Long> traces;
     private Map<String, Long> deltas;
 
-    public CpuTraces() {
+    public CPUTraces() {
         traces = new HashMap<>();
         deltas = new HashMap<>();
     }
