@@ -52,6 +52,7 @@ public class CpuTraces {
 
     /**
      * Set a new value in a map or increment an existing value
+     *
      * @param map The map in which to modify the value
      * @param key The key for the map
      * @param inc The new value or increment for the given key
