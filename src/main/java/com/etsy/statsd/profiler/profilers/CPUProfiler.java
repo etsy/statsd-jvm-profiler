@@ -90,6 +90,7 @@ public class CPUProfiler extends Profiler {
         for (Map.Entry<String, Long> entry : methodCounts.entrySet()) {
             recordGaugeValue("cpu.trace." + entry.getKey(), entry.getValue());
         }
+        methodCounts.clear();
     }
 
     /**
