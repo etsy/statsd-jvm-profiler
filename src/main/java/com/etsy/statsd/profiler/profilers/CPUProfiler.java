@@ -20,7 +20,7 @@ public class CPUProfiler extends Profiler {
     public static final long PERIOD = 1;
     public static final List<String> EXCLUDE_PACKAGES = Arrays.asList("com.etsy.statsd.profiler", "com.timgroup.statsd");
 
-    private Capitaliztion traces;
+    private CPUTraces traces;
     private int profileCount;
     private StackTraceFilter filter;
     private long reportingFrequency;
@@ -28,7 +28,7 @@ public class CPUProfiler extends Profiler {
 
     public CPUProfiler(StatsDClient client, List<String> filterPackages) {
         super(client);
-        traces = new Capitaliztion();
+        traces = new CPUTraces();
         profileCount = 0;
         filter = new StackTraceFilter(filterPackages, EXCLUDE_PACKAGES);
         reportingFrequency = TimeUtil.convertReportingPeriod(getPeriod(), getTimeUnit(), REPORTING_PERIOD, TimeUnit.SECONDS);

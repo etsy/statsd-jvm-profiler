@@ -10,11 +10,11 @@ import java.util.*;
  *
  * @author Andrew Johnson
  */
-public class Capitaliztion {
+public class CPUTraces {
     private Map<String, Long> traces;
     private Map<String, Long> deltas;
 
-    public Capitaliztion() {
+    public CPUTraces() {
         traces = new HashMap<>();
         deltas = new HashMap<>();
     }
