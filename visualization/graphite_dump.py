@@ -30,7 +30,7 @@ def get_children(host, prefix):
 
     
 def get_max_metric(host, metric, start, end):
-    url = 'http://%s/render?target=%s&format=json&from=%s&until=%s' % (host, metric, start, end)
+    url = 'http://%s/render?target=keepLastValue(%s)&format=json&from=%s&until=%s' % (host, metric, start, end)
     json_url = urllib.urlopen(url)
     json_results = json.loads(json_url.read())
     max_metric = 0
