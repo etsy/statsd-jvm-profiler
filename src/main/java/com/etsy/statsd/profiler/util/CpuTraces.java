@@ -54,7 +54,7 @@ public class CPUTraces {
      * @param key The key for the map
      * @param inc The new value or increment for the given key
      */
-    private void setOrIncrementMap(Map<String, Long> map, String key, long inc) {
+    public void setOrIncrementMap(Map<String, Long> map, String key, long inc) {
         Long val = map.get(key);
         if (val == null) {
             map.put(key, inc);
