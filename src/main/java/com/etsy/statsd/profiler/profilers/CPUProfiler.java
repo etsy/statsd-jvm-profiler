@@ -1,10 +1,7 @@
 package com.etsy.statsd.profiler.profilers;
 
 import com.etsy.statsd.profiler.Profiler;
-import com.etsy.statsd.profiler.util.StackTraceFilter;
-import com.etsy.statsd.profiler.util.StackTraceFormatter;
-import com.etsy.statsd.profiler.util.ThreadDumper;
-import com.etsy.statsd.profiler.util.TimeUtil;
+import com.etsy.statsd.profiler.util.*;
 import com.etsy.statsd.profiler.worker.ProfilerThreadFactory;
 import com.google.common.base.Predicate;
 import com.timgroup.statsd.StatsDClient;
@@ -23,6 +20,7 @@ public class CPUProfiler extends Profiler {
     public static final long PERIOD = 1;
     public static final List<String> EXCLUDE_PACKAGES = Arrays.asList("com.etsy.statsd.profiler", "com.timgroup.statsd");
 
+    private CpuTraces traces;
     private Map<String, Long> methodCounts;
     private int profileCount;
     private StackTraceFilter filter;
@@ -31,6 +29,7 @@ public class CPUProfiler extends Profiler {
 
     public CPUProfiler(StatsDClient client, List<String> filterPackages) {
         super(client);
+        traces = new CpuTraces();
         methodCounts = new HashMap<>();
         profileCount = 0;
         filter = new StackTraceFilter(filterPackages, EXCLUDE_PACKAGES);
@@ -49,6 +48,8 @@ public class CPUProfiler extends Profiler {
             if (thread.getStackTrace().length > 0) {
                 String traceKey = StackTraceFormatter.formatStackTrace(thread.getStackTrace());
                 if (filter.includeStackTrace(traceKey)) {
+                    traces.increment(traceKey, PERIOD);
+
                     Long count = methodCounts.get(traceKey);
                     if (count == null) {
                         methodCounts.put(traceKey, PERIOD);
@@ -61,7 +62,7 @@ public class CPUProfiler extends Profiler {
 
         // To keep from overwhelming StatsD, we only report statistics every ten seconds
         if (profileCount % reportingFrequency == 0) {
-            recordMethodCounts();
+            recordMethodCounts(false);
         }
     }
 
@@ -70,7 +71,7 @@ public class CPUProfiler extends Profiler {
      */
     @Override
     public void flushData() {
-        recordMethodCounts();
+        recordMethodCounts(false);
     }
 
     @Override
@@ -85,10 +86,12 @@ public class CPUProfiler extends Profiler {
 
     /**
      * Records method CPU time in StatsD
+     *
+     * @param flushAll Indicate if all data should be flushed
      */
-    private void recordMethodCounts() {
-        for (Map.Entry<String, Long> entry : methodCounts.entrySet()) {
-            recordGaugeValue("cpu.trace." + entry.getKey(), entry.getValue());
+    private void recordMethodCounts(boolean flushAll) {
+        for (Map.Entry<String, Long> entry : traces.getDataToFlush(flushAll)) {
+            recordGaugeDelta("cpu.trace." + entry.getKey(), entry.getValue());
         }
     }
 

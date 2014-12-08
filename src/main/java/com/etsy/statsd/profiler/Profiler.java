@@ -49,4 +49,14 @@ public abstract class Profiler {
     protected void recordGaugeValue(String key, long value) {
         client.recordGaugeValue(key, value);
     }
+
+    /**
+     * Record a gauge delta in StatsD
+     *
+     * @param key The key for the gauge
+     * @param delta The value of the gauge delta
+     */
+    protected void recordGaugeDelta(String key, long delta) {
+        client.recordGaugeDelta(key, delta);
+    }
 }
