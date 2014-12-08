@@ -21,7 +21,6 @@ public class CPUProfiler extends Profiler {
     public static final List<String> EXCLUDE_PACKAGES = Arrays.asList("com.etsy.statsd.profiler", "com.timgroup.statsd");
 
     private CpuTraces traces;
-    private Map<String, Long> methodCounts;
     private int profileCount;
     private StackTraceFilter filter;
     private long reportingFrequency;
@@ -30,7 +29,6 @@ public class CPUProfiler extends Profiler {
     public CPUProfiler(StatsDClient client, List<String> filterPackages) {
         super(client);
         traces = new CpuTraces();
-        methodCounts = new HashMap<>();
         profileCount = 0;
         filter = new StackTraceFilter(filterPackages, EXCLUDE_PACKAGES);
         reportingFrequency = TimeUtil.convertReportingPeriod(getPeriod(), getTimeUnit(), REPORTING_PERIOD, TimeUnit.SECONDS);
@@ -49,13 +47,6 @@ public class CPUProfiler extends Profiler {
                 String traceKey = StackTraceFormatter.formatStackTrace(thread.getStackTrace());
                 if (filter.includeStackTrace(traceKey)) {
                     traces.increment(traceKey, PERIOD);
-
-                    Long count = methodCounts.get(traceKey);
-                    if (count == null) {
-                        methodCounts.put(traceKey, PERIOD);
-                    } else {
-                        methodCounts.put(traceKey, count + PERIOD);
-                    }
                 }
             }
         }
