@@ -33,12 +33,7 @@ def get_max_metric(host, metric, start, end):
     url = 'http://%s/render?target=keepLastValue(%s)&format=json&from=%s&until=%s' % (host, metric, start, end)
     json_url = urllib.urlopen(url)
     json_results = json.loads(json_url.read())
-    max_metric = 0
-    for point in json_results[0]['datapoints']:
-        if point[0] > max_metric:
-            max_metric = int(point[0])
-        
-    return max_metric
+    return max([point[0] for point in json_results[0]['datapoints']])
 
     
 def get_tree(host, prefix, start, end):
