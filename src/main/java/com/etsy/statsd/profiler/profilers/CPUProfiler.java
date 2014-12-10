@@ -1,15 +1,18 @@
 package com.etsy.statsd.profiler.profilers;
 
 import com.etsy.statsd.profiler.Profiler;
+import com.etsy.statsd.profiler.reporter.Reporter;
 import com.etsy.statsd.profiler.util.*;
 import com.etsy.statsd.profiler.worker.ProfilerThreadFactory;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.timgroup.statsd.StatsDClient;
 
 import java.lang.management.ThreadInfo;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,8 +31,8 @@ public class CPUProfiler extends Profiler {
     private long reportingFrequency;
 
 
-    public CPUProfiler(StatsDClient client, List<String> packageWhitelist, List<String> packageBlacklist) {
-        super(client);
+    public CPUProfiler(Reporter reporter, List<String> packageWhitelist, List<String> packageBlacklist) {
+        super(reporter);
         traces = new CPUTraces();
         profileCount = 0;
         filter = new StackTraceFilter(packageWhitelist, Lists.newArrayList(Iterables.concat(EXCLUDE_PACKAGES, packageBlacklist)));
@@ -83,8 +86,8 @@ public class CPUProfiler extends Profiler {
      * @param flushAll Indicate if all data should be flushed
      */
     private void recordMethodCounts(boolean flushAll) {
-        for (Map.Entry<String, Long> entry : traces.getDataToFlush(flushAll)) {
-            recordGaugeDelta("cpu.trace." + entry.getKey(), entry.getValue());
+        for (Map.Entry<String, Long> entry : traces.getDataToFlush(flushAll).entrySet()) {
+            recordGaugeValue("cpu.trace." + entry.getKey(), entry.getValue());
         }
     }
 

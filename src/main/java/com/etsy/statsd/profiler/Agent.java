@@ -2,12 +2,12 @@ package com.etsy.statsd.profiler;
 
 import com.etsy.statsd.profiler.profilers.CPUProfiler;
 import com.etsy.statsd.profiler.profilers.MemoryProfiler;
+import com.etsy.statsd.profiler.reporter.Reporter;
+import com.etsy.statsd.profiler.reporter.StatsDReporter;
 import com.etsy.statsd.profiler.worker.ProfilerShutdownHookWorker;
 import com.etsy.statsd.profiler.worker.ProfilerThreadFactory;
 import com.etsy.statsd.profiler.worker.ProfilerWorkerThread;
 import com.google.common.util.concurrent.MoreExecutors;
-import com.timgroup.statsd.NonBlockingStatsDClient;
-import com.timgroup.statsd.StatsDClient;
 
 import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
@@ -40,10 +40,10 @@ public class Agent {
         List<String> packageWhitelist = arguments.packageWhitelist.or(new ArrayList<String>());
         List<String> packageBlacklist = arguments.packageBlacklist.or(new ArrayList<String>());
 
-        StatsDClient client = new NonBlockingStatsDClient(prefix, statsdServer, statsdPort);
+        Reporter reporter = new StatsDReporter(statsdServer, statsdPort, prefix);
 
-        Profiler memoryProfiler = new MemoryProfiler(client);
-        Profiler cpuProfiler = new CPUProfiler(client, packageWhitelist, packageBlacklist);
+        Profiler memoryProfiler = new MemoryProfiler(reporter);
+        Profiler cpuProfiler = new CPUProfiler(reporter, packageWhitelist, packageBlacklist);
         Collection<Profiler> profilers = Arrays.asList(memoryProfiler, cpuProfiler);
 
         scheduleProfilers(profilers);

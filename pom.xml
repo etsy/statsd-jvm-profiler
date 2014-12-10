@@ -8,7 +8,8 @@
     <packaging>jar</packaging>
 
     <name>statsd-jvm-profiler</name>
-    <url>http://maven.apache.org</url>
+    <url>https://github.com/etsy/statsd-jvm-profiler</url>
+
     <licenses>
         <license>
             <name>MIT License</name>
@@ -16,6 +17,19 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+
+    <scm>
+        <url>git@github.com:etsy/statsd-jvm-profiler.git</url>
+        <connection>scm:git:git@github.com:etsy/statsd-jvm-profiler.git</connection>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>ajsquared</id>
+            <name>Andrew Johnson</name>
+            <url>github.com/ajsquared</url>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

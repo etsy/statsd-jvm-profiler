@@ -22,7 +22,7 @@ public class StackTraceFilterTest {
     public static void setup() {
         includePackages = Arrays.asList("com.etsy", "com.twitter.scalding");
         filter = new StackTraceFilter(includePackages, CPUProfiler.EXCLUDE_PACKAGES);
-        excludedTraces = Arrays.asList("com-etsy-statsd-profiler-util-StackTraceFormatter-formatStackTraceElement", "com-timgroup-statsd-StatsDClient-send", "com-etsy-statsd-profiler-util-StackTraceFormatter-formatStackTraceElement.com-etsy-Foo-fooTest");
+        excludedTraces = Arrays.asList("com-etsy-statsd-profiler-profiler-util-StackTraceFormatter-formatStackTraceElement", "com-timgroup-statsd-StatsDClient-send", "com-etsy-statsd-profiler-profiler-util-StackTraceFormatter-formatStackTraceElement.com-etsy-Foo-fooTest");
         includedTraces = Arrays.asList("com-etsy-foo-fooTest");
         otherTraces = Arrays.asList("com-google-guava-Foo-helloWorld");
     }

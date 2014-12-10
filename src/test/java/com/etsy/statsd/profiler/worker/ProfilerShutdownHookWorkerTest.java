@@ -1,8 +1,8 @@
 package com.etsy.statsd.profiler.worker;
 
 import com.etsy.statsd.profiler.Profiler;
-import com.etsy.statsd.profiler.profilers.MockProfiler1;
 import com.etsy.statsd.profiler.profilers.MockProfiler2;
+import com.etsy.statsd.profiler.profilers.MockProfiler1;
 import org.junit.Test;
 
 import java.util.Arrays;

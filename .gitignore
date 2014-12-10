@@ -1,4 +1,4 @@
 .idea
-statsd-jvm-profiler.iml
 target
 dependency-reduced-pom.xml
+*.iml

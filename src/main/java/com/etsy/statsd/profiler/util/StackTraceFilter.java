@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 /**
  * Utility class for filtering stack traces
- * Assumes a string representation like that produced by @link{com.etsy.statsd.profiler.util.StackTraceFormatter}
+ * Assumes a string representation like that produced by @link{StackTraceFormatter}
  *
  * @author Andrew Johnson
  */

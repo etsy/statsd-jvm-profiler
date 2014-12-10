@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 from optparse import OptionParser
-import json
-import urllib
+import requests
 
 def get_arg_parser():
     parser = OptionParser()
@@ -14,9 +13,10 @@ def get_arg_parser():
 
     
 def get_children(host, prefix):
-    url = 'http://%s/metrics/find?query=%s.*' % (host, prefix)
-    json_url = urllib.urlopen(url)
-    json_results = json.loads(json_url.read()) 
+    params = {'query': '%s.*' % prefix}
+    url = 'http://%s/metrics/find' % host
+    json_url = requests.get(url, params=params)
+    json_results = json_url.json()
     leaves = []
     expandable = []
 
@@ -30,9 +30,10 @@ def get_children(host, prefix):
 
     
 def get_max_metric(host, metric, start, end):
-    url = 'http://%s/render?target=keepLastValue(%s)&format=json&from=%s&until=%s' % (host, metric, start, end)
-    json_url = urllib.urlopen(url)
-    json_results = json.loads(json_url.read())
+    params = {'target': 'keepLastValue(%s)' % metric, 'format': 'json', 'from': start, 'until': end}
+    url = 'http://%s/render' % host
+    json_url = requests.get(url, params=params)
+    json_results = json_url.json()
     return max([point[0] for point in json_results[0]['datapoints']])
 
     

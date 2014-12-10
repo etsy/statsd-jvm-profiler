@@ -1,6 +1,6 @@
 package com.etsy.statsd.profiler;
 
-import com.timgroup.statsd.StatsDClient;
+import com.etsy.statsd.profiler.reporter.Reporter;
 
 import java.util.concurrent.TimeUnit;
 
@@ -10,10 +10,10 @@ import java.util.concurrent.TimeUnit;
  * @author Andrew Johnson
  */
 public abstract class Profiler {
-    private StatsDClient client;
+    private Reporter reporter;
 
-    public Profiler(StatsDClient client) {
-        this.client = client;
+    public Profiler(Reporter reporter) {
+        this.reporter = reporter;
     }
 
     /**
@@ -47,16 +47,6 @@ public abstract class Profiler {
      * @param value The value of the gauge
      */
     protected void recordGaugeValue(String key, long value) {
-        client.recordGaugeValue(key, value);
-    }
-
-    /**
-     * Record a gauge delta in StatsD
-     *
-     * @param key The key for the gauge
-     * @param delta The value of the gauge delta
-     */
-    protected void recordGaugeDelta(String key, long delta) {
-        client.recordGaugeDelta(key, delta);
+        reporter.recordGaugeValue(key, value);
     }
 }

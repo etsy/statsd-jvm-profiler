@@ -1,7 +1,7 @@
 package com.etsy.statsd.profiler.profilers;
 
 import com.etsy.statsd.profiler.Profiler;
-import com.timgroup.statsd.StatsDClient;
+import com.etsy.statsd.profiler.reporter.Reporter;
 
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
@@ -21,8 +21,8 @@ public class MemoryProfiler extends Profiler {
     private MemoryMXBean memoryMXBean;
     private List<GarbageCollectorMXBean> gcMXBeans;
 
-    public MemoryProfiler(StatsDClient client) {
-        super(client);
+    public MemoryProfiler(Reporter reporter) {
+        super(reporter);
         memoryMXBean = ManagementFactory.getMemoryMXBean();
         gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
     }

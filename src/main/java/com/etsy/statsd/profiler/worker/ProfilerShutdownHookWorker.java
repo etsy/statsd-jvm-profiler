@@ -3,7 +3,6 @@ package com.etsy.statsd.profiler.worker;
 import com.etsy.statsd.profiler.Profiler;
 
 import java.util.Collection;
-import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * Worker thread for profiler shutdown hook

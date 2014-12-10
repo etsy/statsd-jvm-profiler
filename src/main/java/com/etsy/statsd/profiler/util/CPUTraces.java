@@ -1,9 +1,9 @@
 package com.etsy.statsd.profiler.util;
 
-
-import com.google.common.collect.ImmutableMap;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Represents the state of the CPU profiler
@@ -12,11 +12,11 @@ import java.util.*;
  */
 public class CPUTraces {
     private Map<String, Long> traces;
-    private Map<String, Long> deltas;
+    private Set<String> dirtyTraces;
 
     public CPUTraces() {
         traces = new HashMap<>();
-        deltas = new HashMap<>();
+        dirtyTraces = new HashSet<>();
     }
 
     /**
@@ -26,40 +26,28 @@ public class CPUTraces {
      * @param inc The value by which to increment the aggregate time for the trace
      */
     public void increment(String traceKey, long inc) {
-        setOrIncrementMap(deltas, traceKey, inc);
+        MapUtil.setOrIncrementMap(traces, traceKey, inc);
+        dirtyTraces.add(traceKey);
     }
 
     /**
      * Get data to be flushed from the state
-     * By default it only returns the deltas and updates the aggregate counts
+     * By default it only returns traces that have been updated since the last flush
      * But with the `flushAll` parameter will flush all traces regardless of dirty state
      *
      * @param flushAll Indicate if all data, not just deltas, should be flushed
      */
-    public Set<Map.Entry<String, Long>> getDataToFlush(boolean flushAll) {
-        for (Map.Entry<String, Long> entry : deltas.entrySet()) {
-            setOrIncrementMap(traces, entry.getKey(), entry.getValue());
-        }
-
-        ImmutableMap<String, Long> mapData = ImmutableMap.copyOf(flushAll ? traces : deltas);
-        Set<Map.Entry<String, Long>> result = mapData.entrySet();
-        deltas.clear();
-        return result;
-    }
-
-    /**
-     * Set a new value in a map or increment an existing value
-     *
-     * @param map The map in which to modify the value
-     * @param key The key for the map
-     * @param inc The new value or increment for the given key
-     */
-    public void setOrIncrementMap(Map<String, Long> map, String key, long inc) {
-        Long val = map.get(key);
-        if (val == null) {
-            map.put(key, inc);
+    public Map<String, Long> getDataToFlush(boolean flushAll) {
+        Map<String, Long> result = new HashMap<>();
+        if (flushAll) {
+            result = traces;
         } else {
-            map.put(key, val + inc);
+            for (String trace : dirtyTraces) {
+                result.put(trace, traces.get(trace));
+            }
         }
+
+        dirtyTraces.clear();
+        return result;
     }
 }
