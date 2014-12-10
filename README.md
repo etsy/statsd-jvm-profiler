@@ -24,7 +24,8 @@ Name           | Meaning
 server         | The hostname of the StatsD instance (required)
 port           | The port number for the StatsD instance (required)
 prefix         | The prefix for metrics (optional, defaults to statsd-jvm-profiler)
-filterPackages | Colon-delimited whitelist for packages to include (optional, defaults to everything)
+packageWhitelist | Colon-delimited whitelist for packages to include (optional, defaults to everything)
+packageBlacklist | Colon-delimited whitelist for packages to exclude (optional, defaults to nothing)
 
 ## Metrics
 
@@ -38,7 +39,7 @@ Assuming you use the default prefix of `statsd-jvm-profiler`, the memory usage m
 
 Memory and GC metrics are reported once every 10 seconds.  The CPU time is sampled every millisecond, but only reported every 10 seconds.  The CPU time metrics represent the total time spent in that function.
 
-Profiling a long-running process or a lot of processes simultaneously will produce a lot of data, so be careful with the capacity of your StatsD instance.  The `filterPackages` argument can be used to limit the number of functions that are reported.  Any function whose stack trace contains a function in one of the whitelisted packages will be included.
+Profiling a long-running process or a lot of processes simultaneously will produce a lot of data, so be careful with the capacity of your StatsD instance.  The `packageWhitelist` argument can be used to limit the number of functions that are reported.  Any function whose stack trace contains a function in one of the whitelisted packages will be included.
 
 ## Visualization
 

@@ -45,18 +45,18 @@ public class ArgumentsTest {
         assertEquals("localhost", arguments.statsdServer);
         assertEquals(8125, arguments.statsdPort);
         assertEquals("default", arguments.metricsPrefix.or("default"));
-        assertEquals(new ArrayList<String>(), arguments.filterPackages.or(new ArrayList<String>()));
+        assertEquals(new ArrayList<String>(), arguments.packageWhitelist.or(new ArrayList<String>()));
     }
 
     @Test
     public void testOptionalArguments() {
-        String args = "server=localhost,port=8125,prefix=i.am.a.prefix,filterPackages=com.etsy";
+        String args = "server=localhost,port=8125,prefix=i.am.a.prefix,packageWhitelist=com.etsy";
         Arguments arguments = Arguments.parseArgs(args);
 
         assertEquals("localhost", arguments.statsdServer);
         assertEquals(8125, arguments.statsdPort);
         assertEquals("i.am.a.prefix", arguments.metricsPrefix.or("default"));
-        assertEquals(Arrays.asList("com.etsy"), arguments.filterPackages.or(new ArrayList<String>()));
+        assertEquals(Arrays.asList("com.etsy"), arguments.packageWhitelist.or(new ArrayList<String>()));
         assertEquals(new ArrayList<String>(), arguments.packageBlacklist.or(new ArrayList<String>()));
     }
 }

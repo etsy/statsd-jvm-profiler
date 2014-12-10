@@ -21,7 +21,7 @@ class StatsDProfilerFlowListener extends FlowListener {
     flow.getFlowSteps.toList foreach { fs: FlowStep[_] =>
       val stepNum = fs.getStepNum.toString
       val conf = fs.getConfig.asInstanceOf[JobConf]
-      val javaAgent = String.format("'-javaagent:/usr/etsy/statsd-jvm-profiler/statsd-jvm-profiler.jar=server=%s,port=%s,prefix=bigdata.profiler.%s.%s.%s.%s,filterPackages=com.etsy:com.twitter.scalding:cascading'",
+      val javaAgent = String.format("'-javaagent:/usr/etsy/statsd-jvm-profiler/statsd-jvm-profiler.jar=server=%s,port=%s,prefix=bigdata.profiler.%s.%s.%s.%s,packageWhitelist=com.etsy:com.twitter.scalding:cascading'",
         statsdHost, statsdPort.toString, userName, jobName, flowId, stepNum)
       val numMapTasks = conf.get("mapred.map.tasks")
       val numReduceTasks = conf.get("mapred.reduce.tasks")

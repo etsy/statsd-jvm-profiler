@@ -73,16 +73,16 @@ public class StackTraceFilter {
     /**
      * Construct a Pattern that matches any of the given packages
      *
-     * @param filterPackages The packages to match in this Pattern
+     * @param packageWhitelist The packages to match in this Pattern
      * @return A Pattern object that matches any of the given packages
      */
-    public Pattern getPackagePattern(List<String> filterPackages, Pattern defaultPattern) {
-        if (filterPackages == null || filterPackages.isEmpty()) {
+    public Pattern getPackagePattern(List<String> packageWhitelist, Pattern defaultPattern) {
+        if (packageWhitelist == null || packageWhitelist.isEmpty()) {
             return defaultPattern;
         }
         else {
             return Pattern.compile(String.format("(.*\\.|^)(%s).*",
-                    Joiner.on("|").join(Lists.transform(filterPackages, new Function<String, String>() {
+                    Joiner.on("|").join(Lists.transform(packageWhitelist, new Function<String, String>() {
                         @Override
                         public String apply(String s) {
                             return String.format("(%s)", s.replace(".", "-"));

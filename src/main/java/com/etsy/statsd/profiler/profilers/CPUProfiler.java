@@ -28,11 +28,11 @@ public class CPUProfiler extends Profiler {
     private long reportingFrequency;
 
 
-    public CPUProfiler(StatsDClient client, List<String> filterPackages, List<String> packageBlacklist) {
+    public CPUProfiler(StatsDClient client, List<String> packageWhitelist, List<String> packageBlacklist) {
         super(client);
         traces = new CPUTraces();
         profileCount = 0;
-        filter = new StackTraceFilter(filterPackages, Lists.newArrayList(Iterables.concat(EXCLUDE_PACKAGES, packageBlacklist)));
+        filter = new StackTraceFilter(packageWhitelist, Lists.newArrayList(Iterables.concat(EXCLUDE_PACKAGES, packageBlacklist)));
         reportingFrequency = TimeUtil.convertReportingPeriod(getPeriod(), getTimeUnit(), REPORTING_PERIOD, TimeUnit.SECONDS);
     }
 

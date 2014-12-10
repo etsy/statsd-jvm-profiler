@@ -37,13 +37,13 @@ public class Agent {
         String statsdServer = arguments.statsdServer;
         int statsdPort = arguments.statsdPort;
         String prefix = arguments.metricsPrefix.or("statsd-jvm-profiler");
-        List<String> filterPackages = arguments.filterPackages.or(new ArrayList<String>());
+        List<String> packageWhitelist = arguments.packageWhitelist.or(new ArrayList<String>());
         List<String> packageBlacklist = arguments.packageBlacklist.or(new ArrayList<String>());
 
         StatsDClient client = new NonBlockingStatsDClient(prefix, statsdServer, statsdPort);
 
         Profiler memoryProfiler = new MemoryProfiler(client);
-        Profiler cpuProfiler = new CPUProfiler(client, filterPackages, packageBlacklist);
+        Profiler cpuProfiler = new CPUProfiler(client, packageWhitelist, packageBlacklist);
         Collection<Profiler> profilers = Arrays.asList(memoryProfiler, cpuProfiler);
 
         scheduleProfilers(profilers);
