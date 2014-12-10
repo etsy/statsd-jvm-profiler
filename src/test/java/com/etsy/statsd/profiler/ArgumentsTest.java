@@ -57,6 +57,6 @@ public class ArgumentsTest {
         assertEquals(8125, arguments.statsdPort);
         assertEquals("i.am.a.prefix", arguments.metricsPrefix.or("default"));
         assertEquals(Arrays.asList("com.etsy"), arguments.filterPackages.or(new ArrayList<String>()));
-
+        assertEquals(new ArrayList<String>(), arguments.packageBlacklist.or(new ArrayList<String>()));
     }
 }

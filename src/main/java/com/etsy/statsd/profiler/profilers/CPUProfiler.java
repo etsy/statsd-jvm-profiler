@@ -4,6 +4,8 @@ import com.etsy.statsd.profiler.Profiler;
 import com.etsy.statsd.profiler.util.*;
 import com.etsy.statsd.profiler.worker.ProfilerThreadFactory;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.timgroup.statsd.StatsDClient;
 
 import java.lang.management.ThreadInfo;
@@ -26,11 +28,11 @@ public class CPUProfiler extends Profiler {
     private long reportingFrequency;
 
 
-    public CPUProfiler(StatsDClient client, List<String> filterPackages) {
+    public CPUProfiler(StatsDClient client, List<String> filterPackages, List<String> packageBlacklist) {
         super(client);
         traces = new CPUTraces();
         profileCount = 0;
-        filter = new StackTraceFilter(filterPackages, EXCLUDE_PACKAGES);
+        filter = new StackTraceFilter(filterPackages, Lists.newArrayList(Iterables.concat(EXCLUDE_PACKAGES, packageBlacklist)));
         reportingFrequency = TimeUtil.convertReportingPeriod(getPeriod(), getTimeUnit(), REPORTING_PERIOD, TimeUnit.SECONDS);
     }
 
