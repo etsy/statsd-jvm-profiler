@@ -41,7 +41,7 @@ public abstract class Profiler {
     public abstract TimeUnit getTimeUnit();
 
     /**
-     * Record a gauge value in StatsD
+     * Record a gauge value
      *
      * @param key The key for the gauge
      * @param value The value of the gauge
