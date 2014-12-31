@@ -33,7 +33,7 @@ public class StackTraceFormatterTest {
         stack[1] = new StackTraceElement("com.etsy.statsd.profiler.util.StackTraceFormatterTest",
                 "testFormatStackTraceElement", "StackTraceFormatterTest.java", 17);
 
-        String expected = "com-etsy-statsd-profiler-util-StackTraceFormatter-formatStackTraceElement,com-etsy-statsd-profiler-util-StackTraceFormatterTest-testFormatStackTraceElement";
+        String expected = "com-etsy-statsd-profiler-util-StackTraceFormatter-formatStackTraceElement.com-etsy-statsd-profiler-util-StackTraceFormatterTest-testFormatStackTraceElement";
 
         assertEquals(expected, StackTraceFormatter.formatStackTrace(stack));
     }
