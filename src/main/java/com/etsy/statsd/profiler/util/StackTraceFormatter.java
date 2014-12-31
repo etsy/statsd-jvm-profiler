@@ -33,6 +33,6 @@ public class StackTraceFormatter {
             lines.add(formatStackTraceElement(element));
         }
 
-        return Joiner.on("_").join(lines);
+        return Joiner.on(".").join(lines);
     }
 }
