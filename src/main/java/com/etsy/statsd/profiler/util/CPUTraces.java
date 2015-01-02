@@ -54,6 +54,11 @@ public class CPUTraces {
         return result;
     }
 
+    /**
+     * Get the bounds on the number of path components for the CPU trace metrics
+     *
+     * @return A Pair of integers, the left being the minimum number of components and the right being the maximum
+     */
     public Pair<Integer, Integer> getBounds() {
         int max = Integer.MIN_VALUE;
         int min = Integer.MAX_VALUE;
