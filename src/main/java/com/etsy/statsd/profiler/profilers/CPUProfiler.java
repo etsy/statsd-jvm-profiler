@@ -7,6 +7,7 @@ import com.etsy.statsd.profiler.worker.ProfilerThreadFactory;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.management.ThreadInfo;
 import java.util.Arrays;
@@ -68,6 +69,10 @@ public class CPUProfiler extends Profiler {
     @Override
     public void flushData() {
         recordMethodCounts(false);
+        // These bounds are recorded to help speed up generating flame graphs
+        Pair<Integer, Integer> bounds = traces.getBounds();
+        recordGaugeValue("cpu.trace." + bounds.getLeft(), bounds.getLeft());
+        recordGaugeValue("cpu.trace." + bounds.getRight(), bounds.getRight());
     }
 
     @Override

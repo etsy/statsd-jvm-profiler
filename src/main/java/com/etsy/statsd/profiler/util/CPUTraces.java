@@ -1,5 +1,8 @@
 package com.etsy.statsd.profiler.util;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -49,5 +52,18 @@ public class CPUTraces {
 
         dirtyTraces.clear();
         return result;
+    }
+
+    public Pair<Integer, Integer> getBounds() {
+        int max = Integer.MIN_VALUE;
+        int min = Integer.MAX_VALUE;
+
+        for (String key : traces.keySet()) {
+            int numComponents = key.split("\\.").length;
+            max = Math.max(max, numComponents);
+            min = Math.min(min, numComponents);
+        }
+
+        return new ImmutablePair<>(min, max);
     }
 }

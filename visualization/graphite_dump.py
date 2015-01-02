@@ -12,21 +12,27 @@ def get_arg_parser():
     return parser
 
     
-def get_children(host, prefix):
-    params = {'query': '%s.*' % prefix}
-    url = 'http://%s/metrics/find' % host
+def get_children(host, prefix, min, max):
+    url = 'http://%s/metrics/expand' % host
+    leaves = []
+    for i in range(min, max + 1):
+        params = {'query': '%s%s' % (prefix, '.*' * i), 'leavesOnly': '1'}
+        json_url = requests.get(url, params=params)
+        json_results = json_url.json()
+        leaves.extend(json_results['results'])
+        print len(leaves)
+
+    return leaves
+
+
+def get_bounds(host, prefix):
+    params = {'query': '%s.*' % prefix, 'leavesOnly': '1'}
+    url = 'http://%s/metrics/expand' % host
     json_url = requests.get(url, params=params)
     json_results = json_url.json()
-    leaves = []
-    expandable = []
+    bounds = [int(bound.replace(prefix + '.', '')) for bound in json_results['results']]
 
-    for child in json_results:
-        if child['leaf'] == 0:
-            expandable.append(child['id'])
-        else:
-            leaves.append(child['id'])
-
-    return (leaves, expandable)
+    return (min(bounds), max(bounds))
 
     
 def get_max_metric(host, metric, start, end):
@@ -39,12 +45,8 @@ def get_max_metric(host, metric, start, end):
     
 def get_tree(host, prefix, start, end):
     nodes_to_process = [prefix]
-    leaves = []
-    while len(nodes_to_process) > 0:
-        curr = nodes_to_process.pop()
-        (l, e) = get_children(host, curr)
-        nodes_to_process.extend(e)
-        leaves.extend(l)
+    (min, max) = get_bounds(host, prefix)
+    leaves = get_children(host, prefix, min, max)
 
     results = {}
     for leaf in leaves:
