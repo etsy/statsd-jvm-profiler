@@ -5,6 +5,7 @@ import requests
 def get_arg_parser():
     parser = OptionParser()
     parser.add_option('-o', '--host', dest='host', help='Hostname of graphite server', metavar='HOST')
+    parser.add_option('-r', '--port', dest='port', help='Port for graphite server', metavar='PORT')
     parser.add_option('-p', '--prefix', dest='prefix', help='Prefix of metric for which to dump the tree', metavar='PREFIX')
     parser.add_option('-s', '--start', dest='start', help='Start date for query', metavar='DATE')
     parser.add_option('-e', '--end', dest='end', help='End date for query', metavar='DATE')
@@ -20,7 +21,6 @@ def get_children(host, prefix, min, max):
         json_url = requests.get(url, params=params)
         json_results = json_url.json()
         leaves.extend(json_results['results'])
-        print len(leaves)
 
     return leaves
 
@@ -74,5 +74,9 @@ if __name__ == '__main__':
         parser.print_help()
         sys.exit(255)
 
-    results = get_tree(args.host, args.prefix, args.start, args.end)
+    host = args.host
+    if args.port is not None:
+        host = '%s:%s' % (host, args.port)
+
+    results = get_tree(host, args.prefix, args.start, args.end)
     format_output(args.prefix, results)
