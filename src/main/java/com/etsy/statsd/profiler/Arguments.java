@@ -85,6 +85,10 @@ public class Arguments {
             }
         }
 
+        if (profilers.isEmpty()) {
+            throw new IllegalArgumentException("At least one profiler must be run");
+        }
+
         return profilers;
     }
 }

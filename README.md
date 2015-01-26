@@ -42,6 +42,11 @@ Memory and GC metrics are reported once every 10 seconds.  The CPU time is sampl
 
 Profiling a long-running process or a lot of processes simultaneously will produce a lot of data, so be careful with the capacity of your StatsD instance.  The `packageWhitelist` and `packageBlacklist` arguments can be used to limit the number of functions that are reported.  Any function whose stack trace contains a function in one of the whitelisted packages will be included.
 
+You can disable either the memory or CPU metrics using the `profilers` argument:
+
+1. Memory metrics only: `profilers=MemoryProfiler`
+2. CPU metrics only: `profilers=CPUProfiler`
+
 ## Visualization
 
 The `visualization` directory contains some utilities for visualizing the output of the profiler.
