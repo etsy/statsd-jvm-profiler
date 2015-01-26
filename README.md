@@ -26,6 +26,7 @@ port           | The port number for the StatsD instance (required)
 prefix         | The prefix for metrics (optional, defaults to statsd-jvm-profiler)
 packageWhitelist | Colon-delimited whitelist for packages to include (optional, defaults to include everything)
 packageBlacklist | Colon-delimited whitelist for packages to exclude (optional, defaults to exclude nothing)
+profilers        | Colon-delimited list of profiler class names (optional, defaults to CPUProfiler and MemoryProfiler)
 
 ## Metrics
 

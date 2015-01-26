@@ -1,7 +1,5 @@
 package com.etsy.statsd.profiler;
 
-import com.etsy.statsd.profiler.profilers.CPUProfiler;
-import com.etsy.statsd.profiler.profilers.MemoryProfiler;
 import com.etsy.statsd.profiler.reporter.Reporter;
 import com.etsy.statsd.profiler.reporter.StatsDReporter;
 import com.etsy.statsd.profiler.worker.ProfilerShutdownHookWorker;
@@ -10,7 +8,9 @@ import com.etsy.statsd.profiler.worker.ProfilerWorkerThread;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.lang.instrument.Instrumentation;
-import java.util.Arrays;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -38,9 +38,15 @@ public class Agent {
 
         Reporter reporter = new StatsDReporter(statsdServer, statsdPort, prefix);
 
-        Profiler memoryProfiler = new MemoryProfiler(reporter, arguments);
-        Profiler cpuProfiler = new CPUProfiler(reporter, arguments);
-        Collection<Profiler> profilers = Arrays.asList(memoryProfiler, cpuProfiler);
+        Collection<Profiler> profilers = new ArrayList<>();
+        for (Class<? extends Profiler> profiler : arguments.profilers) {
+            try {
+                Constructor<? extends Profiler> constructor = profiler.getConstructor(Reporter.class, Arguments.class);
+                profilers.add(constructor.newInstance(reporter, arguments));
+            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+                throw new RuntimeException("Unable to instantiate " + profiler.getSimpleName(), e);
+            }
+        }
 
         scheduleProfilers(profilers);
         registerShutdownHook(profilers);
