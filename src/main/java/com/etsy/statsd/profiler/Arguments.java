@@ -13,8 +13,6 @@ public class Arguments {
     private static final String STATSD_SERVER = "server";
     private static final String STATSD_PORT = "port";
     private static final String METRICS_PREFIX = "prefix";
-    private static final String FILTER_PACKAGES = "packageWhitelist";
-    private static final String PACKAGE_BLACKLIST = "packageBlacklist";
 
     private static final Collection<String> REQUIRED = Arrays.asList(STATSD_SERVER, STATSD_PORT);
 
@@ -47,22 +45,16 @@ public class Arguments {
     public String statsdServer;
     public int statsdPort;
     public Optional<String> metricsPrefix;
-    public Optional<List<String>> packageWhitelist;
-    public Optional<List<String>> packageBlacklist;
+    public Map<String, String> remainingArgs;
 
     private Arguments(Map<String, String> parsedArgs) {
         statsdServer = parsedArgs.get(STATSD_SERVER);
         statsdPort = Integer.parseInt(parsedArgs.get(STATSD_PORT));
         metricsPrefix = Optional.fromNullable(parsedArgs.get(METRICS_PREFIX));
-        packageWhitelist = parsePackageList(parsedArgs.get(FILTER_PACKAGES));
-        packageBlacklist = parsePackageList(parsedArgs.get(PACKAGE_BLACKLIST));
-    }
 
-    private Optional<List<String>> parsePackageList(String packages) {
-        if (packages == null) {
-            return Optional.absent();
-        } else {
-            return Optional.of(Arrays.asList(packages.split(":")));
-        }
+        parsedArgs.remove(STATSD_SERVER);
+        parsedArgs.remove(STATSD_PORT);
+        parsedArgs.remove(METRICS_PREFIX);
+        remainingArgs = parsedArgs;
     }
 }

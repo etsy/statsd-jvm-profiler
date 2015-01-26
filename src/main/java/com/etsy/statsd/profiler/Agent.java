@@ -10,10 +10,8 @@ import com.etsy.statsd.profiler.worker.ProfilerWorkerThread;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.lang.instrument.Instrumentation;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -37,13 +35,11 @@ public class Agent {
         String statsdServer = arguments.statsdServer;
         int statsdPort = arguments.statsdPort;
         String prefix = arguments.metricsPrefix.or("statsd-jvm-profiler");
-        List<String> packageWhitelist = arguments.packageWhitelist.or(new ArrayList<String>());
-        List<String> packageBlacklist = arguments.packageBlacklist.or(new ArrayList<String>());
 
         Reporter reporter = new StatsDReporter(statsdServer, statsdPort, prefix);
 
-        Profiler memoryProfiler = new MemoryProfiler(reporter);
-        Profiler cpuProfiler = new CPUProfiler(reporter, packageWhitelist, packageBlacklist);
+        Profiler memoryProfiler = new MemoryProfiler(reporter, arguments);
+        Profiler cpuProfiler = new CPUProfiler(reporter, arguments);
         Collection<Profiler> profilers = Arrays.asList(memoryProfiler, cpuProfiler);
 
         scheduleProfilers(profilers);

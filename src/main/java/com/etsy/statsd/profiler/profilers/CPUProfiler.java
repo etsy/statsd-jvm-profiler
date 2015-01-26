@@ -1,5 +1,6 @@
 package com.etsy.statsd.profiler.profilers;
 
+import com.etsy.statsd.profiler.Arguments;
 import com.etsy.statsd.profiler.Profiler;
 import com.etsy.statsd.profiler.reporter.Reporter;
 import com.etsy.statsd.profiler.util.*;
@@ -10,10 +11,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.management.ThreadInfo;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -22,6 +20,9 @@ import java.util.concurrent.TimeUnit;
  * @author Andrew Johnson
  */
 public class CPUProfiler extends Profiler {
+    private static final String PACKAGE_WHITELIST_ARG = "packageWhitelist";
+    private static final String PACKAGE_BLACKLIST_ARG = "packageBlacklist";
+
     public static final long REPORTING_PERIOD = 10;
     public static final long PERIOD = 1;
     public static final List<String> EXCLUDE_PACKAGES = Arrays.asList("com.etsy.statsd.profiler", "com.timgroup.statsd");
@@ -32,11 +33,10 @@ public class CPUProfiler extends Profiler {
     private long reportingFrequency;
 
 
-    public CPUProfiler(Reporter reporter, List<String> packageWhitelist, List<String> packageBlacklist) {
-        super(reporter);
+    public CPUProfiler(Reporter reporter, Arguments arguments) {
+        super(reporter, arguments);
         traces = new CPUTraces();
         profileCount = 0;
-        filter = new StackTraceFilter(packageWhitelist, Lists.newArrayList(Iterables.concat(EXCLUDE_PACKAGES, packageBlacklist)));
         reportingFrequency = TimeUtil.convertReportingPeriod(getPeriod(), getTimeUnit(), REPORTING_PERIOD, TimeUnit.SECONDS);
     }
 
@@ -83,6 +83,27 @@ public class CPUProfiler extends Profiler {
     @Override
     public TimeUnit getTimeUnit() {
         return TimeUnit.MILLISECONDS;
+    }
+
+    @Override
+    protected void handleArguments(Arguments arguments) {
+        List<String> packageWhitelist = parsePackageList(arguments.remainingArgs.get(PACKAGE_WHITELIST_ARG));
+        List<String> packageBlacklist = parsePackageList(arguments.remainingArgs.get(PACKAGE_BLACKLIST_ARG));
+        filter = new StackTraceFilter(packageWhitelist, Lists.newArrayList(Iterables.concat(EXCLUDE_PACKAGES, packageBlacklist)));
+    }
+
+    /**
+     * Parses a colon-delimited list of packages
+     *
+     * @param packages A string containing a colon-delimited list of packages
+     * @return A List of packages
+     */
+    private List<String> parsePackageList(String packages) {
+        if (packages == null) {
+            return new ArrayList<>();
+        } else {
+            return Arrays.asList(packages.split(":"));
+        }
     }
 
     /**

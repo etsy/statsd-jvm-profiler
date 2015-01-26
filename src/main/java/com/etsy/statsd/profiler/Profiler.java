@@ -12,8 +12,9 @@ import java.util.concurrent.TimeUnit;
 public abstract class Profiler {
     private Reporter reporter;
 
-    public Profiler(Reporter reporter) {
+    public Profiler(Reporter reporter, Arguments arguments) {
         this.reporter = reporter;
+        handleArguments(arguments);
     }
 
     /**
@@ -39,6 +40,13 @@ public abstract class Profiler {
      * @return A TimeUnit corresponding the the period for this profiler
      */
     public abstract TimeUnit getTimeUnit();
+
+    /**
+     * Handle any additional arguments necessary for this profiler
+     *
+     * @param arguments The arguments given to the profiler
+     */
+    protected abstract void handleArguments(Arguments arguments);
 
     /**
      * Record a gauge value

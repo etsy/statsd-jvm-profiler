@@ -11,20 +11,20 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Andrew Johnson
  */
-public class MockReportingProfiler extends Profiler {
-    public MockReportingProfiler(Reporter reporter) {
-        super(reporter, null);
+public class MockProfilerWithArguments extends Profiler {
+    public static final String FAKE_ARG = "fakeArg";
+
+    public String fake;
+
+    public MockProfilerWithArguments(Reporter reporter, Arguments arguments) {
+        super(reporter, arguments);
     }
 
     @Override
-    public void profile() {
-        recordGaugeValue("profile", 1);
-    }
+    public void profile() { }
 
     @Override
-    public void flushData() {
-        recordGaugeValue("flushData", 1);
-    }
+    public void flushData() { }
 
     @Override
     public long getPeriod() {
@@ -37,5 +37,7 @@ public class MockReportingProfiler extends Profiler {
     }
 
     @Override
-    protected void handleArguments(Arguments arguments) { }
+    protected void handleArguments(Arguments arguments) {
+        fake = arguments.remainingArgs.get(FAKE_ARG);
+    }
 }

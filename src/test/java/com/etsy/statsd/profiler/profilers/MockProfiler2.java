@@ -1,5 +1,6 @@
 package com.etsy.statsd.profiler.profilers;
 
+import com.etsy.statsd.profiler.Arguments;
 import com.etsy.statsd.profiler.Profiler;
 
 import java.util.Set;
@@ -14,7 +15,7 @@ public class MockProfiler2 extends Profiler {
     private Set<String> output;
 
     public MockProfiler2(Set<String> output) {
-        super(null);
+        super(null, null);
         this.output = output;
     }
 
@@ -37,4 +38,7 @@ public class MockProfiler2 extends Profiler {
     public TimeUnit getTimeUnit() {
         return null;
     }
+
+    @Override
+    protected void handleArguments(Arguments arguments) { }
 }

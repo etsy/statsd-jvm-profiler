@@ -1,5 +1,6 @@
 package com.etsy.statsd.profiler.profilers;
 
+import com.etsy.statsd.profiler.Arguments;
 import com.etsy.statsd.profiler.Profiler;
 import com.etsy.statsd.profiler.reporter.Reporter;
 
@@ -21,8 +22,8 @@ public class MemoryProfiler extends Profiler {
     private MemoryMXBean memoryMXBean;
     private List<GarbageCollectorMXBean> gcMXBeans;
 
-    public MemoryProfiler(Reporter reporter) {
-        super(reporter);
+    public MemoryProfiler(Reporter reporter, Arguments arguments) {
+        super(reporter, arguments);
         memoryMXBean = ManagementFactory.getMemoryMXBean();
         gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
     }
@@ -49,6 +50,9 @@ public class MemoryProfiler extends Profiler {
     public TimeUnit getTimeUnit() {
         return TimeUnit.SECONDS;
     }
+
+    @Override
+    protected void handleArguments(Arguments arguments) { /* No arguments needed */ }
 
     /**
      * Records all memory statistics
