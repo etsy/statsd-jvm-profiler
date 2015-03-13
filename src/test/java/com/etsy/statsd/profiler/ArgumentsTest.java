@@ -64,7 +64,7 @@ public class ArgumentsTest {
         String args = "server=localhost,port=8125";
         Arguments arguments = Arguments.parseArgs(args);
 
-        Set<Class<? extends Profiler>> expected = new HashSet<>();
+        Set<Class<? extends Profiler>> expected = new HashSet<Class<? extends Profiler>>();
         expected.add(CPUProfiler.class);
         expected.add(MemoryProfiler.class);
 
@@ -76,7 +76,7 @@ public class ArgumentsTest {
         String args = "server=localhost,port=8125,profilers=com.etsy.statsd.profiler.profilers.CPUProfiler";
         Arguments arguments = Arguments.parseArgs(args);
 
-        Set<Class<? extends Profiler>> expected = new HashSet<>();
+        Set<Class<? extends Profiler>> expected = new HashSet<Class<? extends Profiler>>();
         expected.add(CPUProfiler.class);
 
         assertEquals(expected, arguments.profilers);
@@ -87,7 +87,7 @@ public class ArgumentsTest {
         String args = "server=localhost,port=8125,profilers=MemoryProfiler";
         Arguments arguments = Arguments.parseArgs(args);
 
-        Set<Class<? extends Profiler>> expected = new HashSet<>();
+        Set<Class<? extends Profiler>> expected = new HashSet<Class<? extends Profiler>>();
         expected.add(MemoryProfiler.class);
 
         assertEquals(expected, arguments.profilers);
@@ -98,7 +98,7 @@ public class ArgumentsTest {
         String args = "server=localhost,port=8125,profilers=CPUProfiler:MemoryProfiler";
         Arguments arguments = Arguments.parseArgs(args);
 
-        Set<Class<? extends Profiler>> expected = new HashSet<>();
+        Set<Class<? extends Profiler>> expected = new HashSet<Class<? extends Profiler>>();
         expected.add(CPUProfiler.class);
         expected.add(MemoryProfiler.class);
 

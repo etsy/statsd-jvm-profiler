@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 public class ProfilerShutdownHookWorkerTest {
     @Test
     public void testRunnable() throws InterruptedException {
-        Set<String> output = new HashSet<>();
+        Set<String> output = new HashSet<String>();
         Profiler mockProfiler1 = new MockProfiler1(output);
         Profiler mockProfiler2 = new MockProfiler2(output);
         Collection<Profiler> profilers = Arrays.asList(mockProfiler1, mockProfiler2);
@@ -24,7 +24,7 @@ public class ProfilerShutdownHookWorkerTest {
         t.run();
         t.join();
 
-        Set<String> expectedOutput = new HashSet<>();
+        Set<String> expectedOutput = new HashSet<String>();
         expectedOutput.add(MockProfiler1.class.getSimpleName() + "-flushData");
         expectedOutput.add(MockProfiler2.class.getSimpleName() + "-flushData");
         assertEquals(expectedOutput, output);

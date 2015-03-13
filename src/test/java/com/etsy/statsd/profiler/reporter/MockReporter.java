@@ -14,7 +14,7 @@ public class MockReporter implements Reporter {
     private Map<String, Long> output;
 
     public MockReporter() {
-        output = new HashMap<>();
+        output = new HashMap<String, Long>();
     }
 
     @Override

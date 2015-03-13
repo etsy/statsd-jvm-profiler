@@ -22,7 +22,7 @@ public class CPUTracesTest {
         traces.increment("key", 1);
         traces.increment("key2", 3);
 
-        Map<String, Long> expectedMap = new HashMap<>();
+        Map<String, Long> expectedMap = new HashMap<String, Long>();
         expectedMap.put("key", 1L);
         expectedMap.put("key2", 3L);
 
@@ -31,7 +31,7 @@ public class CPUTracesTest {
         traces.increment("key", 1);
         traces.increment("key2", 3);
 
-        expectedMap = new HashMap<>();
+        expectedMap = new HashMap<String, Long>();
         expectedMap.put("key", 2L);
         expectedMap.put("key2", 6L);
 
@@ -40,7 +40,7 @@ public class CPUTracesTest {
         traces.increment("key3", 100);
         traces.increment("key2", 3);
 
-        expectedMap = new HashMap<>();
+        expectedMap = new HashMap<String, Long>();
         expectedMap.put("key", 2L);
         expectedMap.put("key2", 9L);
         expectedMap.put("key3", 100L);
