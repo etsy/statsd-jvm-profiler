@@ -38,13 +38,19 @@ public class Agent {
 
         Reporter reporter = new StatsDReporter(statsdServer, statsdPort, prefix);
 
-        Collection<Profiler> profilers = new ArrayList<>();
+        Collection<Profiler> profilers = new ArrayList<Profiler>();
         for (Class<? extends Profiler> profiler : arguments.profilers) {
             try {
                 Constructor<? extends Profiler> constructor = profiler.getConstructor(Reporter.class, Arguments.class);
                 profilers.add(constructor.newInstance(reporter, arguments));
-            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                throw new RuntimeException("Unable to instantiate " + profiler.getSimpleName(), e);
+            } catch (NoSuchMethodException e) {
+                handleInitializationException(profiler, e);
+            } catch (InvocationTargetException e) {
+                handleInitializationException(profiler, e);
+            } catch (InstantiationException e) {
+                handleInitializationException(profiler, e);
+            } catch (IllegalAccessException e) {
+                handleInitializationException(profiler, e);
             }
         }
 
@@ -77,5 +83,15 @@ public class Agent {
     private static void registerShutdownHook(Collection<Profiler> profilers) {
         Thread shutdownHook = new Thread(new ProfilerShutdownHookWorker(profilers));
         Runtime.getRuntime().addShutdownHook(shutdownHook);
+    }
+
+    /**
+     * Uniformed handling of initialization exception since Java 6 can't do multiple catch
+     *
+     * @param profiler
+     * @param cause
+     */
+    private static void handleInitializationException(final Class<? extends Profiler> profiler, final Exception cause) {
+        throw new RuntimeException("Unable to instantiate " + profiler.getSimpleName(), cause);
     }
 }

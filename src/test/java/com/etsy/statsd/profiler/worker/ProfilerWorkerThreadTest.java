@@ -12,14 +12,14 @@ import static org.junit.Assert.*;
 public class ProfilerWorkerThreadTest {
     @Test
     public void testRunnable() throws InterruptedException {
-        Set<String> output = new HashSet<>();
+        Set<String> output = new HashSet<String>();
         Profiler mockProfiler1 = new MockProfiler1(output);
 
         Thread t = new Thread(new ProfilerWorkerThread(mockProfiler1));
         t.run();
         t.join();
 
-        Set<String> expectedOutput = new HashSet<>();
+        Set<String> expectedOutput = new HashSet<String>();
         expectedOutput.add(MockProfiler1.class.getSimpleName() + "-profile");
         assertEquals(expectedOutput, output);
     }

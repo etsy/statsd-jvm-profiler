@@ -17,7 +17,7 @@ public class ReporterTest {
         profiler.profile();
         profiler.flushData();
 
-        Map<String, Long> expected = new HashMap<>();
+        Map<String, Long> expected = new HashMap<String, Long>();
         expected.put("profile", 1L);
         expected.put("flushData", 1L);
         assertEquals(expected, mockReporter.getOutput());

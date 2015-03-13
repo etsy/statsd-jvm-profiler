@@ -28,7 +28,7 @@ public class StackTraceFormatter {
      * @return A String representing the given stack trace
      */
     public static String formatStackTrace(StackTraceElement[] stack) {
-        List<String> lines = new ArrayList<>();
+        List<String> lines = new ArrayList<String>();
         for (StackTraceElement element : stack) {
             lines.add(formatStackTraceElement(element));
         }

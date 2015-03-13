@@ -18,8 +18,8 @@ public class CPUTraces {
     private Set<String> dirtyTraces;
 
     public CPUTraces() {
-        traces = new HashMap<>();
-        dirtyTraces = new HashSet<>();
+        traces = new HashMap<String, Long>();
+        dirtyTraces = new HashSet<String>();
     }
 
     /**
@@ -41,7 +41,7 @@ public class CPUTraces {
      * @param flushAll Indicate if all data, not just deltas, should be flushed
      */
     public Map<String, Long> getDataToFlush(boolean flushAll) {
-        Map<String, Long> result = new HashMap<>();
+        Map<String, Long> result = new HashMap<String, Long>();
         if (flushAll) {
             result = traces;
         } else {
@@ -69,6 +69,6 @@ public class CPUTraces {
             min = Math.min(min, numComponents);
         }
 
-        return new ImmutablePair<>(min, max);
+        return new ImmutablePair<Integer, Integer>(min, max);
     }
 }
