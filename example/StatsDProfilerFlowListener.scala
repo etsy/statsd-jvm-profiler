@@ -21,20 +21,24 @@ class StatsDProfilerFlowListener extends FlowListener {
 
     flow.getFlowSteps.toList foreach { fs: FlowStep[_] =>
       val stepNum = fs.getStepNum.toString
-      val conf = fs.getConfig.asInstanceOf[JobConf]
-      val javaAgent = String.format("'-javaagent:/usr/etsy/statsd-jvm-profiler/statsd-jvm-profiler.jar=server=%s,port=%s,prefix=bigdata.profiler.%s.%s.%s.%s,packageWhitelist=com.etsy:com.twitter.scalding:cascading'",
-        statsdHost, statsdPort.toString, userName, jobName, flowId, stepNum)
-      val numMapTasks = conf.get("mapred.map.tasks")
-      val numReduceTasks = conf.get("mapred.reduce.tasks")
+      if (fs.getConfig.isInstanceOf[JobConf]) {
+        val conf = fs.getConfig.asInstanceOf[JobConf]
+        val javaAgent = String.format("'-javaagent:/usr/etsy/statsd-jvm-profiler/statsd-jvm-profiler.jar=server=%s,port=%s,prefix=bigdata.profiler.%s.%s.%s.%s,packageWhitelist=com.etsy:com.twitter.scalding:cascading'",
+          statsdHost, statsdPort.toString, userName, jobName, flowId, stepNum)
+        val numMapTasks = conf.get("mapred.map.tasks")
+        val numReduceTasks = conf.get("mapred.reduce.tasks")
 
-      conf.setBoolean("mapred.task.profile", true)
-      // If you are using YARN you can use the map/reduce specific version of this property
-      // This would allow you to set different parameters if desired
-      conf.set("mapred.task.profile.params", javaAgent)
-      conf.set("mapred.task.profile.maps", getTaskToProfile(numMapTasks,
-        String.format("statsd.profiler.map%s.task", stepNum), conf))
-      conf.set("mapred.task.profile.reduces", getTaskToProfile(numReduceTasks,
-        String.format("statsd.profiler.reduce%s.task", stepNum), conf))
+        conf.setBoolean("mapred.task.profile", true)
+        // If you are using YARN you can use the map/reduce specific version of this property
+        // This would allow you to set different parameters if desired
+        conf.set("mapred.task.profile.params", javaAgent)
+        conf.set("mapred.task.profile.maps", getTaskToProfile(numMapTasks,
+          String.format("statsd.profiler.map%s.task", stepNum), conf))
+        conf.set("mapred.task.profile.reduces", getTaskToProfile(numReduceTasks,
+          String.format("statsd.profiler.reduce%s.task", stepNum), conf))
+      } else {
+        // Profiling is off
+      }
     }
   }
 
