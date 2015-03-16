@@ -5,6 +5,7 @@ import java.util.Random
 import cascading.flow.{Flow, FlowListener, FlowStep}
 import org.apache.hadoop.mapred.JobConf
 
+import scala.util._
 import scala.collection.JavaConversions._
 
 /**
@@ -45,9 +46,10 @@ class StatsDProfilerFlowListener extends FlowListener {
 
   private def getTaskToProfile(numTasks: String, overrideProperty: String, conf: JobConf): String = {
     conf.get(overrideProperty) match {
-      case null => Integer.parseInt(numTasks) match {
-        case 0 => "0"
-        case n: Int => new Random().nextInt(n).toString
+      case null => Try(Integer.parseInt(numTasks)) match {
+        case Success(0) => "0"
+        case Success(n: Int) => new Random().nextInt(n).toString
+        case _ => "0"
       }
       case n: String => n
     }
