@@ -48,7 +48,7 @@ public class ArgumentsTest {
 
         assertEquals("localhost", arguments.server);
         assertEquals(8125, arguments.port);
-        assertEquals("default", arguments.metricsPrefix.or("default"));
+        assertEquals("statsd-jvm-profiler", arguments.metricsPrefix);
     }
 
     @Test
@@ -58,7 +58,7 @@ public class ArgumentsTest {
 
         assertEquals("localhost", arguments.server);
         assertEquals(8125, arguments.port);
-        assertEquals("i.am.a.prefix", arguments.metricsPrefix.or("default"));
+        assertEquals("i.am.a.prefix", arguments.metricsPrefix);
     }
 
     @Test

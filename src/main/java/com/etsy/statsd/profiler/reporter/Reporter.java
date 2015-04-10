@@ -9,19 +9,17 @@ import com.google.common.base.Preconditions;
  * @author Andrew Johnson
  */
 public abstract class Reporter<T> {
-    public static final Class<?>[] CONSTRUCTOR_PARAM_TYPES =new Class<?>[]{String.class, int.class, String.class, Arguments.class};
+    public static final Class<?>[] CONSTRUCTOR_PARAM_TYPES =new Class<?>[]{Arguments.class};
 
     /**
      * The underlying implementation for this reporter
      */
     protected T client;
 
-    public Reporter(String server, int port, String prefix, Arguments arguments) {
-        Preconditions.checkNotNull(server);
-        Preconditions.checkArgument(port > 0);
-        Preconditions.checkNotNull(prefix);
+    public Reporter(Arguments arguments) {
+        Preconditions.checkNotNull(arguments);
         handleArguments(arguments);
-        client = createClient(server, port, prefix);
+        client = createClient(arguments.server, arguments.port, arguments.metricsPrefix);
     }
 
     /**

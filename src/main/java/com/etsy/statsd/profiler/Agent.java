@@ -31,11 +31,8 @@ public class Agent {
      */
     public static void premain(final String args, final Instrumentation instrumentation) {
         Arguments arguments = Arguments.parseArgs(args);
-        String server = arguments.server;
-        int port = arguments.port;
-        String prefix = arguments.metricsPrefix.or("statsd-jvm-profiler");
 
-        Reporter reporter = instantiate(arguments.reporter, Reporter.CONSTRUCTOR_PARAM_TYPES, server, port, prefix, arguments);
+        Reporter reporter = instantiate(arguments.reporter, Reporter.CONSTRUCTOR_PARAM_TYPES, arguments);
 
         Collection<Profiler> profilers = new ArrayList<>();
         for (Class<? extends Profiler> profiler : arguments.profilers) {

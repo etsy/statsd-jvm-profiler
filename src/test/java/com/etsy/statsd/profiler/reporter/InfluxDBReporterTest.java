@@ -2,6 +2,8 @@ package com.etsy.statsd.profiler.reporter;
 
 import com.etsy.statsd.profiler.Arguments;
 import com.etsy.statsd.profiler.reporter.mock.BaseReporterTest;
+import com.etsy.statsd.profiler.util.MockArguments;
+import com.google.common.collect.ImmutableMap;
 import org.influxdb.InfluxDB;
 import org.influxdb.dto.Serie;
 import org.junit.Test;
@@ -20,9 +22,9 @@ public class InfluxDBReporterTest extends BaseReporterTest<InfluxDBReporter> {
 
     @Override
     protected InfluxDBReporter constructReporter() {
-        String args = "server=localhost,port=8125,reporter=InfluxDBReporter,username=user,password=pass,database=database";
-        Arguments arguments = Arguments.parseArgs(args);
-        return new InfluxDBReporter("localhost", 8888, "influxdb.reporter.test", arguments);
+        Arguments arguments = MockArguments.createArgs("localhost", 8888, "influxdb.reporter.test",
+                ImmutableMap.of("username", "user", "password", "password", "database", "database"));
+        return new InfluxDBReporter(arguments);
     }
 
     @Override

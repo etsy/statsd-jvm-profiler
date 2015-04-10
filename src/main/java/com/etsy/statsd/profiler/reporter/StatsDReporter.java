@@ -10,8 +10,8 @@ import com.timgroup.statsd.StatsDClient;
  * @author Andrew Johnson
  */
 public class StatsDReporter extends Reporter<StatsDClient> {
-    public StatsDReporter(String server, int port, String prefix, Arguments arguments) {
-        super(server, port, prefix, arguments);
+    public StatsDReporter(Arguments arguments) {
+        super(arguments);
     }
 
     /**

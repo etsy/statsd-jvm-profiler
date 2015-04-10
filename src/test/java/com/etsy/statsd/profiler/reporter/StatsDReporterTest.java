@@ -1,6 +1,7 @@
 package com.etsy.statsd.profiler.reporter;
 
 import com.etsy.statsd.profiler.reporter.mock.BaseReporterTest;
+import com.etsy.statsd.profiler.util.MockArguments;
 import com.timgroup.statsd.StatsDClient;
 import org.junit.Test;
 import org.mockito.Matchers;
@@ -15,7 +16,7 @@ public class StatsDReporterTest extends BaseReporterTest<StatsDReporter> {
 
     @Override
     protected StatsDReporter constructReporter() {
-        return new StatsDReporter("localhost", 8888, "statsd.reporter.test", null);
+        return new StatsDReporter(MockArguments.BASIC);
     }
 
     @Override

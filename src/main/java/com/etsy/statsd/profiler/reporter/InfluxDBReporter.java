@@ -24,9 +24,9 @@ public class InfluxDBReporter extends Reporter<InfluxDB> {
     private String password;
     private String database;
 
-    public InfluxDBReporter(String server, int port, String prefix, Arguments arguments) {
-        super(server, port, prefix, arguments);
-        this.prefix = prefix;
+    public InfluxDBReporter(Arguments arguments) {
+        super(arguments);
+        this.prefix = arguments.metricsPrefix;
     }
 
     /**

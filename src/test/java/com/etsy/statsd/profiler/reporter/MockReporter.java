@@ -2,6 +2,7 @@ package com.etsy.statsd.profiler.reporter;
 
 import com.etsy.statsd.profiler.Arguments;
 import com.etsy.statsd.profiler.util.MapUtil;
+import com.etsy.statsd.profiler.util.MockArguments;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +16,7 @@ public class MockReporter extends Reporter<String> {
     private Map<String, Long> output;
 
     public MockReporter() {
-        super("", 1, "", null);
+        super(MockArguments.BASIC);
         output = new HashMap<>();
     }
 

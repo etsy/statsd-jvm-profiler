@@ -50,7 +50,7 @@ public class Arguments {
 
     public String server;
     public int port;
-    public Optional<String> metricsPrefix;
+    public String metricsPrefix;
     public Set<Class<? extends Profiler>> profilers;
     public Map<String, String> remainingArgs;
     public Class<? extends Reporter<?>> reporter;
@@ -58,7 +58,7 @@ public class Arguments {
     private Arguments(Map<String, String> parsedArgs) {
         server = parsedArgs.get(SERVER);
         port = Integer.parseInt(parsedArgs.get(PORT));
-        metricsPrefix = Optional.fromNullable(parsedArgs.get(METRICS_PREFIX));
+        metricsPrefix = Optional.fromNullable(parsedArgs.get(METRICS_PREFIX)).or("statsd-jvm-profiler");
         profilers = parseProfilerArg(parsedArgs.get(PROFILERS));
         reporter = parserReporterArg(parsedArgs.get(REPORTER));
 
