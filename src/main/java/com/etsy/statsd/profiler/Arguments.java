@@ -29,7 +29,7 @@ public class Arguments {
      * @return An Arguments object representing the given arguments
      */
     public static Arguments parseArgs(final String args) {
-        Map<String, String> parsed = new HashMap<String, String>();
+        Map<String, String> parsed = new HashMap<>();
         for (String argPair : args.split(",")) {
             String[] tokens = argPair.split("=");
             if (tokens.length != 2) {
@@ -89,7 +89,7 @@ public class Arguments {
 
     @SuppressWarnings("unchecked")
     private Set<Class<? extends Profiler>> parseProfilerArg(String profilerArg) {
-        Set<Class<? extends Profiler>> profilers = new HashSet<Class<? extends Profiler>>();
+        Set<Class<? extends Profiler>> profilers = new HashSet<>();
         if (profilerArg == null) {
             profilers.add(CPUProfiler.class);
             profilers.add(MemoryProfiler.class);

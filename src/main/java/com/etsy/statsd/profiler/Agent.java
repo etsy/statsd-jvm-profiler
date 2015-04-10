@@ -37,7 +37,7 @@ public class Agent {
 
         Reporter reporter = instantiate(arguments.reporter, Reporter.CONSTRUCTOR_PARAM_TYPES, server, port, prefix, arguments);
 
-        Collection<Profiler> profilers = new ArrayList<Profiler>();
+        Collection<Profiler> profilers = new ArrayList<>();
         for (Class<? extends Profiler> profiler : arguments.profilers) {
             profilers.add(instantiate(profiler, Profiler.CONSTRUCTOR_PARAM_TYPES, reporter, arguments));
         }
@@ -96,13 +96,7 @@ public class Agent {
         try {
             Constructor<T> constructor = clazz.getConstructor(parameterTypes);
             return constructor.newInstance(initArgs);
-        } catch (NoSuchMethodException e) {
-            handleInitializationException(clazz, e);
-        } catch (InvocationTargetException e) {
-            handleInitializationException(clazz, e);
-        } catch (InstantiationException e) {
-            handleInitializationException(clazz, e);
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             handleInitializationException(clazz, e);
         }
 

@@ -99,7 +99,7 @@ public class CPUProfiler extends Profiler {
      */
     private List<String> parsePackageList(String packages) {
         if (packages == null) {
-            return new ArrayList<String>();
+            return new ArrayList<>();
         } else {
             return Arrays.asList(packages.split(":"));
         }

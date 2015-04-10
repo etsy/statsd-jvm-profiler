@@ -16,7 +16,7 @@ public class MockReporter extends Reporter<String> {
 
     public MockReporter() {
         super("", 1, "", null);
-        output = new HashMap<String, Long>();
+        output = new HashMap<>();
     }
 
     @Override

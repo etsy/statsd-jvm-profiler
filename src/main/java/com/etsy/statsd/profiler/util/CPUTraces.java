@@ -15,8 +15,8 @@ public class CPUTraces {
     private Set<String> dirtyTraces;
 
     public CPUTraces() {
-        traces = new HashMap<String, Long>();
-        dirtyTraces = new HashSet<String>();
+        traces = new HashMap<>();
+        dirtyTraces = new HashSet<>();
     }
 
     /**
@@ -38,7 +38,7 @@ public class CPUTraces {
      * @param flushAll Indicate if all data, not just deltas, should be flushed
      */
     public Map<String, Long> getDataToFlush(boolean flushAll) {
-        Map<String, Long> result = new HashMap<String, Long>();
+        Map<String, Long> result = new HashMap<>();
         if (flushAll) {
             result = traces;
         } else {
