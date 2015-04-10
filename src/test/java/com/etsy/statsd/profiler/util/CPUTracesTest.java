@@ -1,6 +1,5 @@
 package com.etsy.statsd.profiler.util;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -54,8 +53,8 @@ public class CPUTracesTest {
         traces.increment("a.b.c.d", 1);
         traces.increment("a.b.c.d.e", 1);
 
-        Pair<Integer, Integer> bounds = traces.getBounds();
-        assertEquals(new Integer(3), bounds.getLeft());
-        assertEquals(new Integer(5), bounds.getRight());
+        Range bounds = traces.getBounds();
+        assertEquals(3, bounds.getLeft());
+        assertEquals(5, bounds.getRight());
     }
 }
