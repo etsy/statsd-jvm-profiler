@@ -1,6 +1,7 @@
 package com.etsy.statsd.profiler.reporter;
 
 import com.etsy.statsd.profiler.Arguments;
+import com.google.common.base.Preconditions;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.Serie;
@@ -65,5 +66,9 @@ public class InfluxDBReporter extends Reporter<InfluxDB> {
         username = arguments.remainingArgs.get(USERNAME_ARG);
         password = arguments.remainingArgs.get(PASSWORD_ARG);
         database = arguments.remainingArgs.get(DATABASE_ARG);
+
+        Preconditions.checkNotNull(username);
+        Preconditions.checkNotNull(password);
+        Preconditions.checkNotNull(database);
     }
 }

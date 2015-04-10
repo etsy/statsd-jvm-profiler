@@ -2,6 +2,7 @@ package com.etsy.statsd.profiler.profilers;
 
 import com.etsy.statsd.profiler.Arguments;
 import com.etsy.statsd.profiler.Profiler;
+import com.etsy.statsd.profiler.reporter.MockReporter;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -15,7 +16,7 @@ public class MockProfiler1 extends Profiler {
     private Set<String> output;
 
     public MockProfiler1(Set<String> output) {
-        super(null, null);
+        super(new MockReporter(), null);
         this.output = output;
     }
 

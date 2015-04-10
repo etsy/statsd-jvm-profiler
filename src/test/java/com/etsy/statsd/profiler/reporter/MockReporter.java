@@ -15,7 +15,7 @@ public class MockReporter extends Reporter<String> {
     private Map<String, Long> output;
 
     public MockReporter() {
-        super(null, 0, null, null);
+        super("", 1, "", null);
         output = new HashMap<String, Long>();
     }
 

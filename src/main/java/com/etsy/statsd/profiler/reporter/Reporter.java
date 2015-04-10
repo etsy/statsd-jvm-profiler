@@ -1,6 +1,7 @@
 package com.etsy.statsd.profiler.reporter;
 
 import com.etsy.statsd.profiler.Arguments;
+import com.google.common.base.Preconditions;
 
 /**
  * Interface for reporters
@@ -16,6 +17,9 @@ public abstract class Reporter<T> {
     protected T client;
 
     public Reporter(String server, int port, String prefix, Arguments arguments) {
+        Preconditions.checkNotNull(server);
+        Preconditions.checkArgument(port > 0);
+        Preconditions.checkNotNull(prefix);
         handleArguments(arguments);
         client = createClient(server, port, prefix);
     }

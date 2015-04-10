@@ -1,6 +1,7 @@
 package com.etsy.statsd.profiler;
 
 import com.etsy.statsd.profiler.reporter.Reporter;
+import com.google.common.base.Preconditions;
 
 import java.util.concurrent.TimeUnit;
 
@@ -15,6 +16,7 @@ public abstract class Profiler {
     private Reporter reporter;
 
     public Profiler(Reporter reporter, Arguments arguments) {
+        Preconditions.checkNotNull(reporter);
         this.reporter = reporter;
         handleArguments(arguments);
     }
