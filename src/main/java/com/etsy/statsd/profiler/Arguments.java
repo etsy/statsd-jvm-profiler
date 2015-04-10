@@ -2,6 +2,8 @@ package com.etsy.statsd.profiler;
 
 import com.etsy.statsd.profiler.profilers.CPUProfiler;
 import com.etsy.statsd.profiler.profilers.MemoryProfiler;
+import com.etsy.statsd.profiler.reporter.Reporter;
+import com.etsy.statsd.profiler.reporter.StatsDReporter;
 import com.google.common.base.Optional;
 
 import java.util.*;
@@ -12,12 +14,13 @@ import java.util.*;
  * @author Andrew Johnson
  */
 public class Arguments {
-    private static final String STATSD_SERVER = "server";
-    private static final String STATSD_PORT = "port";
+    private static final String SERVER = "server";
+    private static final String PORT = "port";
     private static final String METRICS_PREFIX = "prefix";
     private static final String PROFILERS = "profilers";
+    private static final String REPORTER = "reporter";
 
-    private static final Collection<String> REQUIRED = Arrays.asList(STATSD_SERVER, STATSD_PORT);
+    private static final Collection<String> REQUIRED = Arrays.asList(SERVER, PORT);
 
     /**
      * Parses arguments into an Arguments object
@@ -45,23 +48,43 @@ public class Arguments {
         return new Arguments(parsed);
     }
 
-    public String statsdServer;
-    public int statsdPort;
+    public String server;
+    public int port;
     public Optional<String> metricsPrefix;
     public Set<Class<? extends Profiler>> profilers;
     public Map<String, String> remainingArgs;
+    public Class<? extends Reporter<?>> reporter;
 
     private Arguments(Map<String, String> parsedArgs) {
-        statsdServer = parsedArgs.get(STATSD_SERVER);
-        statsdPort = Integer.parseInt(parsedArgs.get(STATSD_PORT));
+        server = parsedArgs.get(SERVER);
+        port = Integer.parseInt(parsedArgs.get(PORT));
         metricsPrefix = Optional.fromNullable(parsedArgs.get(METRICS_PREFIX));
         profilers = parseProfilerArg(parsedArgs.get(PROFILERS));
+        reporter = parserReporterArg(parsedArgs.get(REPORTER));
 
-        parsedArgs.remove(STATSD_SERVER);
-        parsedArgs.remove(STATSD_PORT);
+        parsedArgs.remove(SERVER);
+        parsedArgs.remove(PORT);
         parsedArgs.remove(METRICS_PREFIX);
         parsedArgs.remove(PROFILERS);
         remainingArgs = parsedArgs;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Class<? extends Reporter<?>> parserReporterArg(String reporterArg) {
+        if (reporterArg == null) {
+            return StatsDReporter.class;
+        } else {
+            try {
+                return (Class<? extends Reporter<?>>) Class.forName(reporterArg);
+            } catch (ClassNotFoundException e) {
+                // This might indicate the package was left off, so we'll try with the default package
+                try {
+                    return (Class<? extends Reporter<?>>) Class.forName("com.etsy.statsd.profiler.reporter." + reporterArg);
+                } catch (ClassNotFoundException inner) {
+                    throw new IllegalArgumentException("Reporter " + reporterArg + " not found", inner);
+                }
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")

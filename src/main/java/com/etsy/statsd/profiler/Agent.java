@@ -1,7 +1,6 @@
 package com.etsy.statsd.profiler;
 
 import com.etsy.statsd.profiler.reporter.Reporter;
-import com.etsy.statsd.profiler.reporter.StatsDReporter;
 import com.etsy.statsd.profiler.worker.ProfilerShutdownHookWorker;
 import com.etsy.statsd.profiler.worker.ProfilerThreadFactory;
 import com.etsy.statsd.profiler.worker.ProfilerWorkerThread;
@@ -32,26 +31,15 @@ public class Agent {
      */
     public static void premain(final String args, final Instrumentation instrumentation) {
         Arguments arguments = Arguments.parseArgs(args);
-        String statsdServer = arguments.statsdServer;
-        int statsdPort = arguments.statsdPort;
+        String server = arguments.server;
+        int port = arguments.port;
         String prefix = arguments.metricsPrefix.or("statsd-jvm-profiler");
 
-        Reporter reporter = new StatsDReporter(statsdServer, statsdPort, prefix);
+        Reporter reporter = instantiate(arguments.reporter, Reporter.CONSTRUCTOR_PARAM_TYPES, server, port, prefix, arguments);
 
         Collection<Profiler> profilers = new ArrayList<Profiler>();
         for (Class<? extends Profiler> profiler : arguments.profilers) {
-            try {
-                Constructor<? extends Profiler> constructor = profiler.getConstructor(Reporter.class, Arguments.class);
-                profilers.add(constructor.newInstance(reporter, arguments));
-            } catch (NoSuchMethodException e) {
-                handleInitializationException(profiler, e);
-            } catch (InvocationTargetException e) {
-                handleInitializationException(profiler, e);
-            } catch (InstantiationException e) {
-                handleInitializationException(profiler, e);
-            } catch (IllegalAccessException e) {
-                handleInitializationException(profiler, e);
-            }
+            profilers.add(instantiate(profiler, Profiler.CONSTRUCTOR_PARAM_TYPES, reporter, arguments));
         }
 
         scheduleProfilers(profilers);
@@ -88,10 +76,36 @@ public class Agent {
     /**
      * Uniformed handling of initialization exception since Java 6 can't do multiple catch
      *
-     * @param profiler
-     * @param cause
+     * @param clazz The class that could not be instantiated
+     * @param cause The underlying exception
      */
-    private static void handleInitializationException(final Class<? extends Profiler> profiler, final Exception cause) {
-        throw new RuntimeException("Unable to instantiate " + profiler.getSimpleName(), cause);
+    private static void handleInitializationException(final Class<?> clazz, final Exception cause) {
+        throw new RuntimeException("Unable to instantiate " + clazz.getSimpleName(), cause);
+    }
+
+    /**
+     * Instantiate an object
+     *
+     * @param clazz A Class representing the type of object to instantiate
+     * @param parameterTypes The parameter types for the constructor
+     * @param initArgs The values to pass to the constructor
+     * @param <T> The type of the object to instantiate
+     * @return A new instance of type T
+     */
+    private static <T> T instantiate(final Class<T> clazz, Class<?>[] parameterTypes, Object... initArgs) {
+        try {
+            Constructor<T> constructor = clazz.getConstructor(parameterTypes);
+            return constructor.newInstance(initArgs);
+        } catch (NoSuchMethodException e) {
+            handleInitializationException(clazz, e);
+        } catch (InvocationTargetException e) {
+            handleInitializationException(clazz, e);
+        } catch (InstantiationException e) {
+            handleInitializationException(clazz, e);
+        } catch (IllegalAccessException e) {
+            handleInitializationException(clazz, e);
+        }
+
+        return null;
     }
 }

@@ -17,16 +17,33 @@ The profiler is enabled using the JVM's `-javaagent` argument.  You are required
 
 An example of setting up Cascading/Scalding jobs to use the profiler can be found in the `example` directory.
 
-### Options
+### Global Options
 
-Name           | Meaning
--------------- | -------
-server         | The hostname of the StatsD instance (required)
-port           | The port number for the StatsD instance (required)
-prefix         | The prefix for metrics (optional, defaults to statsd-jvm-profiler)
+Name             | Meaning
+---------------- | -------
+server           | The hostname to which the reporter should send data (required)
+port             | The port number for the server to which the reporter should send data (required)
+prefix           | The prefix for metrics (optional, defaults to statsd-jvm-profiler)
 packageWhitelist | Colon-delimited whitelist for packages to include (optional, defaults to include everything)
 packageBlacklist | Colon-delimited whitelist for packages to exclude (optional, defaults to exclude nothing)
 profilers        | Colon-delimited list of profiler class names (optional, defaults to CPUProfiler and MemoryProfiler)
+reporter         | Class name of the reporter to use (optional, defaults to StatsDReporter)
+
+### Reporters
+statsd-jvm-profiler supports multiple backends.  StatsD is the default, but InfluxDB is also supported.  You can select the backend to use by passing the `reporter` argument to the profiler; `StatsDReporter` and `InfluxDBReporter` are the supported values.
+
+Some reporters may require additional arguments.
+
+#### StatsDReporter
+This reporter does not have any additional arguments.
+
+#### InfluxDBReporter
+
+Name        | Meaning
+----------- | -------
+username    | The username with which to connect to InfluxDB (required)
+password    | The password with which to connect to InfluxDB (required)
+database    | The database to which to write metrics (required)
 
 ## Metrics
 

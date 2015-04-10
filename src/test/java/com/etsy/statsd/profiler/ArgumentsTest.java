@@ -44,8 +44,8 @@ public class ArgumentsTest {
         String args = "server=localhost,port=8125";
         Arguments arguments = Arguments.parseArgs(args);
 
-        assertEquals("localhost", arguments.statsdServer);
-        assertEquals(8125, arguments.statsdPort);
+        assertEquals("localhost", arguments.server);
+        assertEquals(8125, arguments.port);
         assertEquals("default", arguments.metricsPrefix.or("default"));
     }
 
@@ -54,8 +54,8 @@ public class ArgumentsTest {
         String args = "server=localhost,port=8125,prefix=i.am.a.prefix,packageWhitelist=com.etsy";
         Arguments arguments = Arguments.parseArgs(args);
 
-        assertEquals("localhost", arguments.statsdServer);
-        assertEquals(8125, arguments.statsdPort);
+        assertEquals("localhost", arguments.server);
+        assertEquals(8125, arguments.port);
         assertEquals("i.am.a.prefix", arguments.metricsPrefix.or("default"));
     }
 

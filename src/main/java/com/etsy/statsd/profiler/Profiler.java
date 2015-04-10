@@ -10,6 +10,8 @@ import java.util.concurrent.TimeUnit;
  * @author Andrew Johnson
  */
 public abstract class Profiler {
+    public static final Class<?>[] CONSTRUCTOR_PARAM_TYPES = new Class<?>[]{Reporter.class, Arguments.class};
+
     private Reporter reporter;
 
     public Profiler(Reporter reporter, Arguments arguments) {

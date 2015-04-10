@@ -1,5 +1,6 @@
 package com.etsy.statsd.profiler.reporter;
 
+import com.etsy.statsd.profiler.Arguments;
 import com.timgroup.statsd.NonBlockingStatsDClient;
 import com.timgroup.statsd.StatsDClient;
 
@@ -8,11 +9,9 @@ import com.timgroup.statsd.StatsDClient;
  *
  * @author Andrew Johnson
  */
-public class StatsDReporter implements Reporter {
-    private StatsDClient client;
-
-    public StatsDReporter(String server, int port, String prefix) {
-        client = new NonBlockingStatsDClient(prefix, server, port);
+public class StatsDReporter extends Reporter<StatsDClient> {
+    public StatsDReporter(String server, int port, String prefix, Arguments arguments) {
+        super(server, port, prefix, arguments);
     }
 
     /**
@@ -25,4 +24,25 @@ public class StatsDReporter implements Reporter {
     public void recordGaugeValue(String key, long value) {
         client.recordGaugeValue(key, value);
     }
+
+    /**
+     * Construct a StatsD client
+     *
+     * @param server The hostname of the StatsD server
+     * @param port The port on which StatsD is running
+     * @param prefix The prefix for all metrics sent
+     * @return A StatsD client
+     */
+    @Override
+    protected StatsDClient createClient(String server, int port, String prefix) {
+        return new NonBlockingStatsDClient(prefix, server, port);
+    }
+
+    /**
+     * Handle additional arguments
+     *
+     * @param arguments The arguments given to the profiler agent
+     */
+    @Override
+    protected void handleArguments(Arguments arguments) { }
 }
