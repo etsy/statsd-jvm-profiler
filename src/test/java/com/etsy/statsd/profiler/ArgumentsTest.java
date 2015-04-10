@@ -2,6 +2,8 @@ package com.etsy.statsd.profiler;
 
 import com.etsy.statsd.profiler.profilers.CPUProfiler;
 import com.etsy.statsd.profiler.profilers.MemoryProfiler;
+import com.etsy.statsd.profiler.reporter.InfluxDBReporter;
+import com.etsy.statsd.profiler.reporter.StatsDReporter;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -111,5 +113,35 @@ public class ArgumentsTest {
 
         exception.expect(IllegalArgumentException.class);
         Arguments.parseArgs(args);
+    }
+
+    @Test
+    public void testReporterWithoutPackage() {
+        String args = "server=localhost,port=8125,reporter=InfluxDBReporter";
+        Arguments arguments = Arguments.parseArgs(args);
+
+        assertEquals(InfluxDBReporter.class, arguments.reporter);
+    }
+
+    @Test
+    public void testReporterWithPackage() {
+        String args = "server=localhost,port=8125,reporter=com.etsy.statsd.profiler.reporter.InfluxDBReporter";
+        Arguments arguments = Arguments.parseArgs(args);
+
+        assertEquals(InfluxDBReporter.class, arguments.reporter);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testReporterNotFound() {
+        String args = "server=localhost,port=8125,reporter=NotRealReporter";
+        Arguments.parseArgs(args);
+    }
+
+    @Test
+    public void testDefaultReporter() {
+        String args = "server=localhost,port=8125";
+        Arguments arguments = Arguments.parseArgs(args);
+
+        assertEquals(StatsDReporter.class, arguments.reporter);
     }
 }
