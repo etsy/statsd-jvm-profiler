@@ -1,0 +1,23 @@
+{
+    "name": "statsd-jvm-profiler-dash",
+    "version": "0.0.1",
+    "dependencies": {
+	"resumer": "*",
+	"memory-streams": "*",
+	"stackvis": "*",
+	"bunyan": "*",
+	"request-json": "*",
+	"express": "*",
+	"jade": "*",
+	"stylus": "*",
+	"serve-favicon": "*",
+	"morgan": "*",
+	"body-parser": "*",
+	"method-override": "*",
+	"influx": "*"
+    },
+    "engines": {
+	"node": "0.10.30",
+	"npm": "1.4.x"
+    }
+}

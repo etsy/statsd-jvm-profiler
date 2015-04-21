@@ -1,5 +1,9 @@
 This directory contains utilities for visualizing the output of the profiler.
 
+## influxdb-dashboard
+
+This is a simple dashboard for visualizing the metrics produced by the profiler using the InfluxDB backend.  See the README in this directory for more information.
+
 ## graphite_dump.py
 
 This script will dump the output of the profiler from Graphite and format it in a manner suitable for use with [FlameGraph](https://github.com/brendangregg/FlameGraph).  You must specify the Graphite host, the prefix of the metrics, and the start and end date for the period to be visualized.

@@ -1,0 +1,27 @@
+doctype html
+html
+	head
+		block head
+			block title
+				title Profiler Dashboard
+			block meta
+				meta(name='description', content='')
+				meta(name='keywords', content='')
+			link(rel='stylesheet', href='/css/bootstrap.min.css')
+			link(rel='stylesheet', href='/css/toc.css')
+			link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.css')
+			| <style>
+			| body { padding-top: 60px; }
+			| </style>
+			script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
+			script(src='//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js')
+			script(src='//cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.js')
+			script(src='/scripts/view-util.js')
+			script(src='/scripts/toc.min.js')
+			script(src='/scripts/jquery.sticky-kit.min.js')
+	body
+		include header-render
+
+		block content
+
+		include footer

@@ -1,0 +1,27 @@
+extends layout
+
+block content
+	div.container
+		h1 Profiler Dashboard
+
+		div.panel.panel-default
+			div.panel-heading(style='text-align:center')
+				h2 Select Job
+			div.panel-body
+				form(action='/render', method='GET')#jobselector
+					label(for=users) User
+					select#users
+					label(for=jobs) Job
+					select#jobs
+					label(for=runs) Run
+					select#runs
+					label(for=stages) Stage
+					select#stages
+					label(for=phases) Phase
+					select#phases
+					br
+					br
+					button(type=submit)#go Render
+
+		script(src='/scripts/jquery.redirect.js')
+		script(src='/scripts/index-client.js')

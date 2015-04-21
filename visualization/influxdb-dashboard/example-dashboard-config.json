@@ -1,0 +1,10 @@
+{
+    "prefix": "bigdata.profiler",
+    "influxdb": {
+	"host": "localhost",
+	"port": 8086,
+	"username": "profiler_user",
+	"password": "profiler_password",
+	"database": "profiler_database"
+    }
+}

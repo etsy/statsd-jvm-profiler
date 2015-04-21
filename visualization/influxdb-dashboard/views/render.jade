@@ -1,0 +1,41 @@
+extends layout-render
+
+block content
+	div.container
+		div.panel.panel-default
+			div.panel-heading(style='text-align:center')
+				h2 Memory
+			div.panel-body#memory
+				input(type='hidden', value='#{user}')#user
+				input(type='hidden', value='#{job}')#job
+				input(type='hidden', value='#{run}')#run
+				input(type='hidden', value='#{stage}')#stage
+				input(type='hidden', value='#{phase}')#phase
+				input(type='hidden', value='#{base}')#base
+				div(style='text-align:center')
+					h3 Heap Usage
+					div#heap
+				div(style='text-align:center')
+					h3 Non-Heap Usage
+					div#nonheap
+		div.panel.panel-default
+			div.panel-heading(style='text-align:center')
+				h2 Garbage Collection
+			div.panel-body#gc
+				div(style='text-align:center')
+					h3 GC Count
+					div#count
+				div(style='text-align:center')
+					h3 GC Time (ms)
+					div#time
+		div.panel.panel-default
+			div.panel-heading(style='text-align:center')
+				h2 Finalization
+			div.panel-body#finalization
+				div(style='text-align:center')
+					h3 Objects Pending Finalization
+					div#finalize
+		
+	div.panel.panel-default#toc
+
+		script(src='/scripts/render-client.js')

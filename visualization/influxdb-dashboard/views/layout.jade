@@ -1,0 +1,22 @@
+doctype html
+html
+	head
+		block head
+			block title
+				title Profiler Dashboard
+			block meta
+				meta(name='description', content='')
+				meta(name='keywords', content='')
+			link(rel='stylesheet', href='/css/bootstrap.min.css')
+			| <style>
+			| body { padding-top: 60px; }
+			| </style>
+			script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
+			script(src='//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js')
+			script(src='/scripts/view-util.js')
+	body
+		include header
+
+		block content
+
+		include footer
