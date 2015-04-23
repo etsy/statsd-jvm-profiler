@@ -8,7 +8,7 @@ exports.getFlameGraph = function(metrics, callback) {
     var writer = stackvis.writerLookup('flamegraph-d3');
     var collapsedMetrics = metrics.filter(function(metric) {
 	// This filters out the metrics representing the upper and lower bounds on depth of the metric hierarchy
-	return metric.metric != metric.value;
+	return metric.metric != ':' + metric.value;
     }).map(function(metric) {
 	return metric.metric + " " + Math.round(metric.value);
     });
