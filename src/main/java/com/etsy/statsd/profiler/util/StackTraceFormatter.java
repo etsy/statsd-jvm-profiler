@@ -18,7 +18,7 @@ public class StackTraceFormatter {
      * @return A String representing the given StackTraceElement
      */
     public static String formatStackTraceElement(StackTraceElement element) {
-        return String.format("%s-%s", element.getClassName().replace(".", "-"), element.getMethodName());
+        return String.format("%s-%s-%d", element.getClassName().replace(".", "-"), element.getMethodName(), element.getLineNumber());
     }
 
     /**
