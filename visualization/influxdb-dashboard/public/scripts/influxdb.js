@@ -85,5 +85,10 @@ function formatMetric(metric, prefix) {
     var frames = noPrefix.split('.');
     frames.splice(0, 1);
     frames.reverse();
-    return frames.join(',').replace('-', '.');
+    var lineNumFrames = frames.map(function(frame) {
+	var lineNumSepIndex = frame.lastIndexOf('-');
+	return frame.substring(0, lineNumSepIndex) + ':' + frame.substring(lineNumSepIndex+1);
+    });
+
+    return lineNumFrames.join(',').replace(/-/g, '.');
 }
