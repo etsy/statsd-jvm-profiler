@@ -9,6 +9,9 @@ $(document).ready(function() {
     var stage = $('#stage').val();
     var phase = $('#phase').val();
     var base = $('#base').val();
+    if (base === undefined) {
+        base = "bigdata.profiler"
+    }
 
     var prefix = base + '.' + user + '.' + job + '.' + run + '.' + stage + '.' + phase;
     var cpuPrefix = prefix + '.cpu.trace';
