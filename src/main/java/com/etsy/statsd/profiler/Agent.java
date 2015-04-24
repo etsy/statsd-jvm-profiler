@@ -71,7 +71,7 @@ public class Agent {
     }
 
     /**
-     * Uniformed handling of initialization exception since Java 6 can't do multiple catch
+     * Uniformed handling of initialization exception
      *
      * @param clazz The class that could not be instantiated
      * @param cause The underlying exception
