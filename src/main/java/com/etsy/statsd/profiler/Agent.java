@@ -1,6 +1,7 @@
 package com.etsy.statsd.profiler;
 
 import com.etsy.statsd.profiler.reporter.Reporter;
+import com.etsy.statsd.profiler.server.ProfilerServer;
 import com.etsy.statsd.profiler.worker.ProfilerShutdownHookWorker;
 import com.etsy.statsd.profiler.worker.ProfilerThreadFactory;
 import com.etsy.statsd.profiler.worker.ProfilerWorkerThread;
@@ -11,8 +12,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
@@ -39,7 +43,7 @@ public class Agent {
             profilers.add(instantiate(profiler, Profiler.CONSTRUCTOR_PARAM_TYPES, reporter, arguments));
         }
 
-        scheduleProfilers(profilers);
+        scheduleProfilers(profilers, arguments.httpPort);
         registerShutdownHook(profilers);
     }
 
@@ -48,16 +52,19 @@ public class Agent {
      *
      * @param profilers Collection of profilers to schedule
      */
-    private static void scheduleProfilers(Collection<Profiler> profilers) {
+    private static void scheduleProfilers(Collection<Profiler> profilers, int httpPort) {
         // We need to convert to an ExitingScheduledExecutorService so the JVM shuts down
         // when the main thread finishes
         ScheduledExecutorService scheduledExecutorService = MoreExecutors.getExitingScheduledExecutorService(
                 (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(profilers.size(), new ProfilerThreadFactory()));
 
+        Map<String, ScheduledFuture<?>> runningProfilers = new HashMap<>(profilers.size());
         for (Profiler profiler : profilers) {
             ProfilerWorkerThread worker = new ProfilerWorkerThread(profiler);
-            scheduledExecutorService.scheduleAtFixedRate(worker, EXECUTOR_DELAY, profiler.getPeriod(), profiler.getTimeUnit());
+            runningProfilers.put(profiler.getClass().getSimpleName(),
+                    scheduledExecutorService.scheduleAtFixedRate(worker, EXECUTOR_DELAY, profiler.getPeriod(), profiler.getTimeUnit()));
         }
+        ProfilerServer.createServer(runningProfilers, httpPort);
     }
 
     /**

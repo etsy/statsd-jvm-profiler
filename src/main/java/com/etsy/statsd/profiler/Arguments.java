@@ -19,6 +19,7 @@ public class Arguments {
     private static final String METRICS_PREFIX = "prefix";
     private static final String PROFILERS = "profilers";
     private static final String REPORTER = "reporter";
+    private static final String HTTP_PORT = "httpPort";
 
     private static final Collection<String> REQUIRED = Arrays.asList(SERVER, PORT);
 
@@ -54,6 +55,7 @@ public class Arguments {
     public Set<Class<? extends Profiler>> profilers;
     public Map<String, String> remainingArgs;
     public Class<? extends Reporter<?>> reporter;
+    public int httpPort;
 
     private Arguments(Map<String, String> parsedArgs) {
         server = parsedArgs.get(SERVER);
@@ -61,6 +63,7 @@ public class Arguments {
         metricsPrefix = Optional.fromNullable(parsedArgs.get(METRICS_PREFIX)).or("statsd-jvm-profiler");
         profilers = parseProfilerArg(parsedArgs.get(PROFILERS));
         reporter = parserReporterArg(parsedArgs.get(REPORTER));
+        httpPort = Integer.parseInt(Optional.fromNullable(parsedArgs.get(HTTP_PORT)).or("5005"));
 
         parsedArgs.remove(SERVER);
         parsedArgs.remove(PORT);
