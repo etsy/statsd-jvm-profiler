@@ -64,7 +64,7 @@ public class Agent {
             runningProfilers.put(profiler.getClass().getSimpleName(),
                     scheduledExecutorService.scheduleAtFixedRate(worker, EXECUTOR_DELAY, profiler.getPeriod(), profiler.getTimeUnit()));
         }
-        ProfilerServer.createServer(runningProfilers, httpPort);
+        ProfilerServer.startServer(runningProfilers, httpPort);
     }
 
     /**

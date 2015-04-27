@@ -6,6 +6,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.http.HttpServerRequest;
+import org.vertx.java.core.http.RouteMatcher;
 
 import java.util.Collection;
 import java.util.Map;
@@ -17,6 +18,21 @@ import java.util.concurrent.ScheduledFuture;
  * @author Andrew Johnson
  */
 public class RequestHandler {
+
+    /**
+     * Construct a RouteMatcher for the supported routes
+     *
+     * @param activeProfilers The active profilers
+     * @return A RouteMatcher that matches all supported routes
+     */
+    public static RouteMatcher getMatcher(final Map<String, ScheduledFuture<?>> activeProfilers) {
+        RouteMatcher matcher = new RouteMatcher();
+        matcher.get("/profilers", RequestHandler.handleGetProfilers(activeProfilers));
+        matcher.get("/disable/:profiler", RequestHandler.handleDisableProfiler(activeProfilers));
+
+        return matcher;
+    }
+
     /**
      * Handle a GET to /profilers
      *
@@ -50,7 +66,12 @@ public class RequestHandler {
         };
     }
 
-    public static Collection<String> getEnabledProfilers(final Map<String, ScheduledFuture<?>> activeProfilers) {
+    /**
+     * Get all enabled profilers
+     * @param activeProfilers The active profilers
+     * @return A Collection<String> containing the names of profilers that are currently running
+     */
+    private static Collection<String> getEnabledProfilers(final Map<String, ScheduledFuture<?>> activeProfilers) {
         return Collections2.transform(Collections2.filter(activeProfilers.entrySet(), new Predicate<Map.Entry<String, ScheduledFuture<?>>>() {
             @Override
             public boolean apply(Map.Entry<String, ScheduledFuture<?>> input) {
