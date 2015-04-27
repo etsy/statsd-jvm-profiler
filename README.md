@@ -28,6 +28,15 @@ packageWhitelist | Colon-delimited whitelist for packages to include (optional, 
 packageBlacklist | Colon-delimited whitelist for packages to exclude (optional, defaults to exclude nothing)
 profilers        | Colon-delimited list of profiler class names (optional, defaults to CPUProfiler and MemoryProfiler)
 reporter         | Class name of the reporter to use (optional, defaults to StatsDReporter)
+httpPort         | The port on which to bind the embedded HTTP server (optional, defaults to 5005)
+
+### Embedded HTTP Server
+statsd-jvm-profiler embeds an HTTP server to support simple interactions with the profiler while it is in operation.  You can configure the port on which this server runs with the `httpPort` option.
+ 
+Endpoint            | Usage
+---------------     | -----
+/profilers          | List the currently enabled profilers
+/disable/:profiler  | Disable the profiler specified by `:profiler`. The name must match what is returned by `/profilers`.
 
 ### Reporters
 statsd-jvm-profiler supports multiple backends.  StatsD is the default, but InfluxDB is also supported.  You can select the backend to use by passing the `reporter` argument to the profiler; `StatsDReporter` and `InfluxDBReporter` are the supported values.
