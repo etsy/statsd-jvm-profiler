@@ -24,6 +24,7 @@ $(document).ready(function() {
     var finalizeMetrics = [{metric: finalizePrefix, alias: 'Objects Pending Finalization'}];
     var gcCountMetrics = [{metric:'PS MarkSweep.count', alias:'PS MarkSweep'},{metric:'PS Scavenge.count', alias:'PS Scavenge'}];
     var gcTimeMetrics = [{metric:'PS MarkSweep.time', alias:'PS MarkSweep'},{metric:'PS Scavenge.time', alias:'PS Scavenge'}];
+    var gcRuntimeMetrics = [{metric:'PS MarkSweep.runtime', alias:'PS MarkSweep'},{metric:'PS Scavenge.time', alias:'PS Scavenge'}];
     
     $("#toc ul").append('<li class=toc-h2><a href=/cpu/' + cpuPrefix + ' target=_blank>Flame Graph</a></li>');
     $('#toc').affix({
@@ -48,5 +49,6 @@ $(document).ready(function() {
 	ViewUtil.renderGraph(finalizeResults, 'Objects Pending Finalization', '#finalize', finalizeMetrics);
 	ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#count', gcCountMetrics);
 	ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#time', gcTimeMetrics);
+	ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#runtime', gcRuntimeMetrics);
     });
 });
