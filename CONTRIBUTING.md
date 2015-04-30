@@ -15,3 +15,4 @@ Every pull request will be built with [Travis CI](https://travis-ci.org/etsy/sta
 - Andrew Johnson [ajsquared](https://github.com/ajsquared)
 - Dan Osipov [danosipov](https://github.com/danosipov)
 - Slawek Puklo [spuklo](https://github.com/spuklo)
+- Andrew Stiegmann [stieg](https://github.com/stieg)
