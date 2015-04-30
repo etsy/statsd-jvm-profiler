@@ -8,8 +8,10 @@ import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Profiles memory usage and GC statistics
@@ -21,11 +23,14 @@ public class MemoryProfiler extends Profiler {
 
     private MemoryMXBean memoryMXBean;
     private List<GarbageCollectorMXBean> gcMXBeans;
+    private HashMap<GarbageCollectorMXBean, AtomicLong> gcTimes = new HashMap<>();
 
     public MemoryProfiler(Reporter reporter, Arguments arguments) {
         super(reporter, arguments);
         memoryMXBean = ManagementFactory.getMemoryMXBean();
         gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
+
+        for (GarbageCollectorMXBean b : gcMXBeans) gcTimes.put(b, new AtomicLong());
     }
 
     /**
@@ -68,7 +73,15 @@ public class MemoryProfiler extends Profiler {
 
         for (GarbageCollectorMXBean gcMXBean : gcMXBeans) {
             recordGaugeValue("gc." + gcMXBean.getName() + ".count", gcMXBean.getCollectionCount());
-            recordGaugeValue("gc." + gcMXBean.getName() + ".time", gcMXBean.getCollectionTime());
+
+            final long time = gcMXBean.getCollectionTime();
+            final long prevTime = gcTimes.get(gcMXBean).get();
+            final long runtime = time - prevTime;
+
+            recordGaugeValue("gc." + gcMXBean.getName() + ".time", time);
+            recordGaugeValue("gc." + gcMXBean.getName() + ".runtime", runtime);
+
+            if (runtime > 0) gcTimes.get(gcMXBean).set(time);
         }
     }
 
