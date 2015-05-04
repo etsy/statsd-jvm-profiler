@@ -4,6 +4,9 @@ statsd-jvm-profiler is a JVM agent profiler that sends profiling data to StatsD.
 
 Read [the blog post](https://codeascraft.com/2015/01/14/introducing-statsd-jvm-profiler-a-jvm-profiler-for-hadoop/) that introduced statsd-jvm-profiler on [Code as Craft](https://codeascraft.com/), Etsy's engineering blog.
 
+## Mailing List
+There is a mailing list for this project at https://groups.google.com/forum/#!forum/statsd-jvm-profiler.
+
 ## Installation
 
 You will need the statsd-jvm-profiler JAR on the machine where the JVM will be running.  If you are profiling Hadoop jobs, that means the JAR will need to be on all of the datanodes.
