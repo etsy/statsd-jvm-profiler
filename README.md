@@ -4,6 +4,8 @@ statsd-jvm-profiler is a JVM agent profiler that sends profiling data to StatsD.
 
 Read [the blog post](https://codeascraft.com/2015/01/14/introducing-statsd-jvm-profiler-a-jvm-profiler-for-hadoop/) that introduced statsd-jvm-profiler on [Code as Craft](https://codeascraft.com/), Etsy's engineering blog.
 
+Also check out [the blog post](https://codeascraft.com/2015/05/12/four-months-of-statsd-jvm-profiler-a-retrospective/) reflecting on the experience of open-sourcing the project.
+
 ## Mailing List
 There is a mailing list for this project at https://groups.google.com/forum/#!forum/statsd-jvm-profiler.  If you have questions or suggestions for the project send them here!
 
