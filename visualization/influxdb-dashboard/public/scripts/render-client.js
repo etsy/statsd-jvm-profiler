@@ -33,22 +33,29 @@ $(document).ready(function() {
 	}
     });
 
-    var heapGet = $.get('/data/' + heapPrefix);
-    var nonHeapGet = $.get('/data/' + nonHeapPrefix);
-    var finalizeGet = $.get('/data/' + finalizePrefix);
-    var gcGet = $.get('/data/' + gcPrefix);
+    // Refresh every minute
+    var refreshInterval = 1000 * 60;
+    var refreshGraphs = function refreshGraphs() {
+      var heapGet = $.get('/data/' + heapPrefix);
+      var nonHeapGet = $.get('/data/' + nonHeapPrefix);
+      var finalizeGet = $.get('/data/' + finalizePrefix);
+      var gcGet = $.get('/data/' + gcPrefix);
+      
+      $.when(heapGet, nonHeapGet, finalizeGet, gcGet).done(function() {
+        var heapResults = heapGet['responseJSON'];
+        var nonHeapResults = nonHeapGet['responseJSON'];
+        var finalizeResults = finalizeGet['responseJSON'];
+        var gcResults = gcGet['responseJSON'];
     
-    $.when(heapGet, nonHeapGet, finalizeGet, gcGet).done(function() {
-    	var heapResults = heapGet['responseJSON'];
-    	var nonHeapResults = nonHeapGet['responseJSON'];
-	var finalizeResults = finalizeGet['responseJSON'];
-    	var gcResults = gcGet['responseJSON'];
-	
-	ViewUtil.renderGraph(heapResults, 'Heap Usage', '#heap', memoryMetrics);
-	ViewUtil.renderGraph(nonHeapResults, 'Non-Heap Usage', '#nonheap', memoryMetrics);
-	ViewUtil.renderGraph(finalizeResults, 'Objects Pending Finalization', '#finalize', finalizeMetrics);
-	ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#count', gcCountMetrics);
-	ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#time', gcTimeMetrics);
-	ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#runtime', gcRuntimeMetrics);
-    });
+        ViewUtil.renderGraph(heapResults, 'Heap Usage', '#heap', memoryMetrics);
+        ViewUtil.renderGraph(nonHeapResults, 'Non-Heap Usage', '#nonheap', memoryMetrics);
+        ViewUtil.renderGraph(finalizeResults, 'Objects Pending Finalization', '#finalize', finalizeMetrics);
+        ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#count', gcCountMetrics);
+        ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#time', gcTimeMetrics);
+        ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#runtime', gcRuntimeMetrics);
+
+        setTimeout(refreshGraphs, refreshInterval);
+      });
+    };
+    refreshGraphs();
 });
