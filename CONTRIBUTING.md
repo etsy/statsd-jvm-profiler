@@ -16,3 +16,4 @@ Every pull request will be built with [Travis CI](https://travis-ci.org/etsy/sta
 - Dan Osipov [danosipov](https://github.com/danosipov)
 - Slawek Puklo [spuklo](https://github.com/spuklo)
 - Andrew Stiegmann [stieg](https://github.com/stieg)
+- Joe Meissler [stickperson](https://github.com/stickperson)
