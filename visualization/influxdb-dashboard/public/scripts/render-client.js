@@ -39,16 +39,21 @@ $(document).ready(function() {
     var gcGet = $.get('/data/' + gcPrefix);
     
     $.when(heapGet, nonHeapGet, finalizeGet, gcGet).done(function() {
-    	var heapResults = heapGet['responseJSON'];
-    	var nonHeapResults = nonHeapGet['responseJSON'];
-	var finalizeResults = finalizeGet['responseJSON'];
-    	var gcResults = gcGet['responseJSON'];
-	
-	ViewUtil.renderGraph(heapResults, 'Heap Usage', '#heap', memoryMetrics);
-	ViewUtil.renderGraph(nonHeapResults, 'Non-Heap Usage', '#nonheap', memoryMetrics);
-	ViewUtil.renderGraph(finalizeResults, 'Objects Pending Finalization', '#finalize', finalizeMetrics);
-	ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#count', gcCountMetrics);
-	ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#time', gcTimeMetrics);
-	ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#runtime', gcRuntimeMetrics);
+      var heapResults = heapGet['responseJSON'];
+      var nonHeapResults = nonHeapGet['responseJSON'];
+      var finalizeResults = finalizeGet['responseJSON'];
+      var gcResults = gcGet['responseJSON'];
+  
+      ViewUtil.renderGraph(heapResults, 'Heap Usage', '#heap', memoryMetrics);
+      ViewUtil.renderGraph(nonHeapResults, 'Non-Heap Usage', '#nonheap', memoryMetrics);
+      ViewUtil.renderGraph(finalizeResults, 'Objects Pending Finalization', '#finalize', finalizeMetrics);
+      ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#count', gcCountMetrics);
+      ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#time', gcTimeMetrics);
+      ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#runtime', gcRuntimeMetrics);
+
     });
+
+    setTimeout(function() {
+      location.reload();
+    }, 60 * 1000);
 });
