@@ -1,61 +1,77 @@
 package com.etsy.cascading.flow
 
-import java.util.Random
+import java.util.Properties
 
 import cascading.flow.{Flow, FlowListener, FlowStep}
 import org.apache.hadoop.mapred.JobConf
 
-import scala.util._
 import scala.collection.JavaConversions._
 
 /**
- * Flow listener for setting up JobConf for the StatsD profiler
+ * Flow listener for setting up JobConf to enable statsd-jvm-profiler
  */
 class StatsDProfilerFlowListener extends FlowListener {
+  val baseParamsFormat = "-javaagent:%s=server=%s,port=%s,prefix=bigdata.profiler.%s.%s.%s.%%s.%%s,packageWhitelist=%s,packageBlacklist=%s,username=%s,password=%s,database=%s,reporter=%s"
+
   override def onStarting(flow: Flow[_]): Unit = {
-    val statsdHost = "statsd"
-    val statsdPort = 8125
+    val profilerProps = loadProperties("statsd-jvm-profiler.properties")
+
+    val jarPath = profilerProps.getProperty("jar.location")
+    val host = profilerProps.getProperty("host")
+    val port = profilerProps.getProperty("port")
     val userName = System.getProperty("user.name")
     val flowId = flow.getID
-    val jobName = flow.getName
+    val jobName = flow.getName.replace(".", "-")
+    val reporter = profilerProps.getProperty("reporter")
+    val packageBlacklist = profilerProps.getProperty("package.blacklist")
+    val packageWhiteList = profilerProps.getProperty("package.whitelist")
+    val influxdbUser = profilerProps.getProperty("influxdb.user")
+    val influxdbPassword = profilerProps.getProperty("influxdb.password")
+    val influxdbDatabase = profilerProps.getProperty("influxdb.database")
+    val dashboardUrl = profilerProps.getProperty("dashboard.url")
+
+    val baseParams = baseParamsFormat.format(jarPath, host, port, userName, jobName, flowId, packageWhiteList, packageBlacklist, influxdbUser, influxdbPassword, influxdbDatabase, reporter)
 
     flow.getFlowSteps.toList foreach { fs: FlowStep[_] =>
       val stepNum = fs.getStepNum.toString
-      if (fs.getConfig.isInstanceOf[JobConf]) {
-        val conf = fs.getConfig.asInstanceOf[JobConf]
-        val javaAgent = String.format("'-javaagent:/usr/etsy/statsd-jvm-profiler/statsd-jvm-profiler.jar=server=%s,port=%s,prefix=bigdata.profiler.%s.%s.%s.%s,packageWhitelist=com.etsy:com.twitter.scalding:cascading'",
-          statsdHost, statsdPort.toString, userName, jobName, flowId, stepNum)
-        val numMapTasks = conf.get("mapred.map.tasks")
-        val numReduceTasks = conf.get("mapred.reduce.tasks")
+      val conf = fs.getConfig.asInstanceOf[JobConf]
+      val numReduceTasks = conf.get("mapreduce.job.reduces")
 
-        conf.setBoolean("mapred.task.profile", true)
-        // If you are using YARN you can use the map/reduce specific version of this property
-        // This would allow you to set different parameters if desired
-        conf.set("mapred.task.profile.params", javaAgent)
-        conf.set("mapred.task.profile.maps", getTaskToProfile(numMapTasks,
-          String.format("statsd.profiler.map%s.task", stepNum), conf))
-        conf.set("mapred.task.profile.reduces", getTaskToProfile(numReduceTasks,
-          String.format("statsd.profiler.reduce%s.task", stepNum), conf))
-      } else {
-        // Profiling is off
+      conf.setBoolean("mapreduce.task.profile", true)
+      conf.set("mapreduce.task.profile.map.params", baseParams.format(stepNum, "map"))
+      conf.set("mapreduce.task.profile.reduce.params", baseParams.format(stepNum, "reduce"))
+      // In newer versions of Cascading/Scalding it seems to no longer be possible to retrieve the correct
+      // number of map or reduce tasks from the flow.
+      // As such we have to profile a predetermined task every time, rather than picking a random one
+      conf.set("mapreduce.task.profile.maps", getTaskToProfile(stepNum, "map", conf))
+      conf.set("mapreduce.task.profile.reduces", getTaskToProfile(stepNum, "reduce", conf))
+
+      // If you use https://github.com/etsy/Sahale this will cause links to the profiler dashboard to appear in Sahale
+      // for jobs that are profiled
+      val additionalLinksOrig = conf.get("sahale.additional.links", "")
+      val additionalLinks = numReduceTasks.toInt match {
+        case i: Int if i <= 0 => "%s;Profiler Dashboard - Map|%s".format(additionalLinksOrig, dashboardUrl.format("map"))
+        case _ => "%s;Profiler Dashboard - Map|%s;Profiler Dashboard - Reduce|%s".format(additionalLinksOrig, dashboardUrl.format("map"), dashboardUrl.format("reduce"))
       }
+      conf.set("sahale.additional.links", additionalLinks)
     }
   }
 
-  override def onCompleted(flow: Flow[_]): Unit = ()
+  private def getTaskToProfile(stage: String, phase: String, conf: JobConf): String = {
+    val prop = "profiler.stage%s.%s".format(stage, phase)
+    conf.get(prop, "0")
+  }
+
+  private def loadProperties(resourceName: String): Properties = {
+    val props = new Properties()
+    props.load(Thread.currentThread.getContextClassLoader.getResourceAsStream(resourceName))
+
+    props
+  }
 
   override def onThrowable(flow: Flow[_], t: Throwable): Boolean = false
 
   override def onStopping(flow: Flow[_]): Unit = ()
 
-  private def getTaskToProfile(numTasks: String, overrideProperty: String, conf: JobConf): String = {
-    conf.get(overrideProperty) match {
-      case null => Try(Integer.parseInt(numTasks)) match {
-        case Success(0) => "0"
-        case Success(n: Int) => new Random().nextInt(n).toString
-        case _ => "0"
-      }
-      case n: String => n
-    }
-  }
+  override def onCompleted(flow: Flow[_]): Unit = ()
 }
