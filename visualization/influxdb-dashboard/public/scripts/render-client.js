@@ -2,16 +2,26 @@ $(document).ready(function() {
     $("#toc").toc({
 	'highlightOffset': 1,
     });
+    var config = {};
+    var params = URI(window.location.href).search(true);
+
+    $.ajax({
+	async: false,
+	type: 'GET',
+	url: '/config',
+	success: function(data) {
+	    config = data;
+	}
+    });
     
-    var user = $('#user').val();
-    var job = $('#job').val();
-    var run = $('#run').val();
-    var stage = $('#stage').val();
-    var phase = $('#phase').val();
-    var base = $('#base').val();
-    if (base === undefined) {
-        base = "bigdata.profiler"
-    }
+    var user = params.user;
+    var job = params.job;
+    var run = params.run;
+    var stage = params.stage;
+    var phase = params.phase;
+    var base = params.prefix || config['prefix'] || 'bigdata.profiler';
+    var refresh = params.refresh || config['refresh'] || 60;
+    alert(refresh);
 
     var prefix = base + '.' + user + '.' + job + '.' + run + '.' + stage + '.' + phase;
     var cpuPrefix = prefix + '.cpu.trace';
@@ -53,7 +63,9 @@ $(document).ready(function() {
 
     });
 
-    setTimeout(function() {
-      location.reload();
-    }, 60 * 1000);
+    if (refresh > 0) {
+	setTimeout(function() {
+	    location.reload();
+	}, refresh * 1000);
+    }
 });

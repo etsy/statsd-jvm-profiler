@@ -11,7 +11,7 @@ exports.index = function(req, res){
 };
 
 exports.render = function(req, res){
-    res.render('render', {user: req.query['user'], job: req.query['job'], run: req.query['run'], stage: req.query['stage'], phase: req.query['phase'], base: prefix});
+    res.render('render', {user: req.query['user'], job: req.query['job'], run: req.query['run'], stage: req.query['stage'], phase: req.query['phase']});
 };
 
 exports.config = function(req, res) {
