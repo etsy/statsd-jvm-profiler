@@ -21,7 +21,6 @@ $(document).ready(function() {
     var phase = params.phase;
     var base = params.prefix || config['prefix'] || 'bigdata.profiler';
     var refresh = params.refresh || config['refresh'] || 60;
-    alert(refresh);
 
     var prefix = base + '.' + user + '.' + job + '.' + run + '.' + stage + '.' + phase;
     var cpuPrefix = prefix + '.cpu.trace';
