@@ -13,7 +13,7 @@ $(document).ready(function() {
 	    config = data;
 	}
     });
-    
+
     var user = params.user;
     var job = params.job;
     var run = params.run;
@@ -24,8 +24,8 @@ $(document).ready(function() {
 
     var prefix = base + '.' + user + '.' + job + '.' + run + '.' + stage + '.' + phase;
     var cpuPrefix = prefix + '.cpu.trace';
-    var heapPrefix = prefix + '.heap';
-    var nonHeapPrefix = prefix + '.nonheap';
+    var heapPrefix = prefix + '.heap.total';
+    var nonHeapPrefix = prefix + '.nonheap.total';
     var finalizePrefix = prefix + '.pending-finalization-count';
     var gcPrefix = prefix + '.gc';
 
@@ -34,7 +34,7 @@ $(document).ready(function() {
     var gcCountMetrics = [{metric:'PS MarkSweep.count', alias:'PS MarkSweep'},{metric:'PS Scavenge.count', alias:'PS Scavenge'}];
     var gcTimeMetrics = [{metric:'PS MarkSweep.time', alias:'PS MarkSweep'},{metric:'PS Scavenge.time', alias:'PS Scavenge'}];
     var gcRuntimeMetrics = [{metric:'PS MarkSweep.runtime', alias:'PS MarkSweep'},{metric:'PS Scavenge.runtime', alias:'PS Scavenge'}];
-    
+
     $("#toc ul").append('<li class=toc-h2><a href=/cpu/' + cpuPrefix + ' target=_blank>Flame Graph</a></li>');
     $('#toc').affix({
 	offset: {
@@ -46,13 +46,13 @@ $(document).ready(function() {
     var nonHeapGet = $.get('/data/' + nonHeapPrefix);
     var finalizeGet = $.get('/data/' + finalizePrefix);
     var gcGet = $.get('/data/' + gcPrefix);
-    
+
     $.when(heapGet, nonHeapGet, finalizeGet, gcGet).done(function() {
       var heapResults = heapGet['responseJSON'];
       var nonHeapResults = nonHeapGet['responseJSON'];
       var finalizeResults = finalizeGet['responseJSON'];
       var gcResults = gcGet['responseJSON'];
-  
+
       ViewUtil.renderGraph(heapResults, 'Heap Usage', '#heap', memoryMetrics);
       ViewUtil.renderGraph(nonHeapResults, 'Non-Heap Usage', '#nonheap', memoryMetrics);
       ViewUtil.renderGraph(finalizeResults, 'Objects Pending Finalization', '#finalize', finalizeMetrics);
