@@ -22,12 +22,14 @@ public class MemoryProfiler extends Profiler {
     private List<GarbageCollectorMXBean> gcMXBeans;
     private HashMap<GarbageCollectorMXBean, AtomicLong> gcTimes = new HashMap<>();
     private ClassLoadingMXBean classLoadingMXBean;
+    private List<MemoryPoolMXBean> memoryPoolMXBeans;
 
     public MemoryProfiler(Reporter reporter, Arguments arguments) {
         super(reporter, arguments);
         memoryMXBean = ManagementFactory.getMemoryMXBean();
         gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
         classLoadingMXBean = ManagementFactory.getClassLoadingMXBean();
+        memoryPoolMXBeans = ManagementFactory.getMemoryPoolMXBeans();
 
         for (GarbageCollectorMXBean b : gcMXBeans) gcTimes.put(b, new AtomicLong());
     }
@@ -67,8 +69,8 @@ public class MemoryProfiler extends Profiler {
         MemoryUsage nonHeap = memoryMXBean.getNonHeapMemoryUsage();
 
         recordGaugeValue("pending-finalization-count", finalizationPendingCount);
-        recordMemoryUsage("heap", heap);
-        recordMemoryUsage("nonheap", nonHeap);
+        recordMemoryUsage("heap.total", heap);
+        recordMemoryUsage("nonheap.total", nonHeap);
 
         for (GarbageCollectorMXBean gcMXBean : gcMXBeans) {
             recordGaugeValue("gc." + gcMXBean.getName() + ".count", gcMXBean.getCollectionCount());
@@ -90,6 +92,15 @@ public class MemoryProfiler extends Profiler {
         recordGaugeValue("loaded-class-count", loadedClassCount);
         recordGaugeValue("total-loaded-class-count", totalLoadedClassCount);
         recordGaugeValue("unloaded-class-count", unloadedClassCount);
+
+        for (MemoryPoolMXBean memoryPoolMXBean: memoryPoolMXBeans) {
+            String type = poolTypeToMetricName(memoryPoolMXBean.getType());
+            String name = poolNameToMetricName(memoryPoolMXBean.getName());
+            String prefix = type + '.' + name;
+            MemoryUsage usage = memoryPoolMXBean.getUsage();
+
+            recordMemoryUsage(prefix, usage);
+        }
     }
 
     /**
@@ -103,5 +114,32 @@ public class MemoryProfiler extends Profiler {
         recordGaugeValue(prefix + ".used", memory.getUsed());
         recordGaugeValue(prefix + ".committed", memory.getCommitted());
         recordGaugeValue(prefix + ".max", memory.getMax());
+    }
+
+    /**
+     * Formats a MemoryType into a valid metric name
+     *
+     * @param memoryType a MemoryType
+     * @return a valid metric name
+     */
+    private String poolTypeToMetricName(MemoryType memoryType) {
+        switch (memoryType) {
+            case HEAP:
+                return "heap";
+            case NON_HEAP:
+                return "nonheap";
+            default:
+                return "unknown";
+        }
+    }
+
+    /**
+     * Formats a pool name into a valid metric name
+     *
+     * @param poolName a pool name
+     * @return a valid metric name
+     */
+    private String poolNameToMetricName(String poolName) {
+        return poolName.toLowerCase().replaceAll("\\s+", "-");
     }
 }
