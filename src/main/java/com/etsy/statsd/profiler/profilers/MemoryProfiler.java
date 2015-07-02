@@ -4,10 +4,7 @@ import com.etsy.statsd.profiler.Arguments;
 import com.etsy.statsd.profiler.Profiler;
 import com.etsy.statsd.profiler.reporter.Reporter;
 
-import java.lang.management.GarbageCollectorMXBean;
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
-import java.lang.management.MemoryUsage;
+import java.lang.management.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -24,11 +21,13 @@ public class MemoryProfiler extends Profiler {
     private MemoryMXBean memoryMXBean;
     private List<GarbageCollectorMXBean> gcMXBeans;
     private HashMap<GarbageCollectorMXBean, AtomicLong> gcTimes = new HashMap<>();
+    private ClassLoadingMXBean classLoadingMXBean;
 
     public MemoryProfiler(Reporter reporter, Arguments arguments) {
         super(reporter, arguments);
         memoryMXBean = ManagementFactory.getMemoryMXBean();
         gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
+        classLoadingMXBean = ManagementFactory.getClassLoadingMXBean();
 
         for (GarbageCollectorMXBean b : gcMXBeans) gcTimes.put(b, new AtomicLong());
     }
@@ -83,6 +82,14 @@ public class MemoryProfiler extends Profiler {
 
             if (runtime > 0) gcTimes.get(gcMXBean).set(time);
         }
+
+        int loadedClassCount = classLoadingMXBean.getLoadedClassCount();
+        long totalLoadedClassCount = classLoadingMXBean.getTotalLoadedClassCount();
+        long unloadedClassCount = classLoadingMXBean.getUnloadedClassCount();
+
+        recordGaugeValue("loaded-class-count", loadedClassCount);
+        recordGaugeValue("total-loaded-class-count", totalLoadedClassCount);
+        recordGaugeValue("unloaded-class-count", unloadedClassCount);
     }
 
     /**
