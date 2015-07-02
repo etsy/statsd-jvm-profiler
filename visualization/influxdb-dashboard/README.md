@@ -30,7 +30,7 @@ before setting up this dashboard.
 
 1. Clone repository.
 2. Open a command prompt, navigate to the folder, and enter: npm install
-3. Next, run the app by entering: node app
+3. Next, run the app by entering: nodejs app.js
 4. Browse to http://localhost:3888
 
 ## Usage

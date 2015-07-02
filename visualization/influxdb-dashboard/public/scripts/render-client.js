@@ -23,7 +23,7 @@ $(document).ready(function() {
     var refresh = params.refresh || config['refresh'] || 60;
 
     var prefix = base + '.' + user + '.' + job + '.' + run + '.' + stage + '.' + phase;
-    var cpuPrefix = prefix + '.cpu.trace';
+    var cpuPrefix = prefix + '.%5Cd.cpu.trace';
     var heapPrefix = prefix + '.heap';
     var nonHeapPrefix = prefix + '.nonheap';
     var finalizePrefix = prefix + '.pending-finalization-count';
