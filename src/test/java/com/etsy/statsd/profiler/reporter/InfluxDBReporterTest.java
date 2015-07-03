@@ -3,18 +3,18 @@ package com.etsy.statsd.profiler.reporter;
 import com.etsy.statsd.profiler.Arguments;
 import com.etsy.statsd.profiler.reporter.mock.BaseReporterTest;
 import com.etsy.statsd.profiler.util.MockArguments;
+import com.etsy.statsd.profiler.util.TagUtil;
 import com.google.common.collect.ImmutableMap;
 import org.influxdb.InfluxDB;
-import org.influxdb.dto.Serie;
+import org.influxdb.dto.BatchPoints;
+import org.influxdb.dto.Point;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import java.util.concurrent.TimeUnit;
-
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class InfluxDBReporterTest extends BaseReporterTest<InfluxDBReporter> {
     @Mock
@@ -29,22 +29,32 @@ public class InfluxDBReporterTest extends BaseReporterTest<InfluxDBReporter> {
 
     @Override
     protected void testCase(Object[] args) {
-        assertEquals(3, args.length);
-        assertEquals("database", args[0]);
-        assertEquals(TimeUnit.MILLISECONDS, args[1]);
+        assertEquals(1, args.length);
 
-        Serie expected = new Serie.Builder("influxdb.reporter.test.fake")
-                .columns(InfluxDBReporter.VALUE_COLUMN)
-                .values(100L)
+        BatchPoints actual = (BatchPoints) args[0];
+
+        Point expectedPoint = Point.measurement("fake")
+                .field(InfluxDBReporter.VALUE_COLUMN, 100L)
+                .tag(TagUtil.PREFIX_TAG, "influxdb.reporter.test")
                 .build();
-        assertEquals(expected.getName(), ((Serie)args[2]).getName());
-        assertArrayEquals(expected.getColumns(), ((Serie) args[2]).getColumns());
-        assertEquals(expected.getRows(), ((Serie)args[2]).getRows());
+
+        BatchPoints expected = BatchPoints.database("database").build();
+        expected.point(expectedPoint);
+
+        assertEquals(expected.getDatabase(), actual.getDatabase());
+        assertEquals(expected.getPoints().size(), actual.getPoints().size());
+
+        Point actualPoint = actual.getPoints().get(0);
+
+        // All the fields on Point are private
+        assertTrue(actualPoint.lineProtocol().startsWith("fake"));
+        assertTrue(actualPoint.lineProtocol().contains("value=100"));
+        assertTrue(actualPoint.lineProtocol().contains("prefix=influxdb.reporter.test"));
     }
 
     @Test
     public void testRecordGaugeValue() {
-        Mockito.doAnswer(answer).when(client).write(Matchers.anyString(), Matchers.any(TimeUnit.class), Matchers.any(Serie[].class));
+        Mockito.doAnswer(answer).when(client).write(Matchers.any(BatchPoints.class));
         reporter.recordGaugeValue("fake", 100L);
     }
 }
