@@ -11,7 +11,7 @@ exports.index = function(req, res){
 };
 
 exports.render = function(req, res){
-    res.render('render', {user: req.query['user'], job: req.query['job'], run: req.query['run'], stage: req.query['stage'], phase: req.query['phase']});
+    res.render('render', {user: req.query['user'], job: req.query['job'], flow: req.query['flow'], stage: req.query['stage'], phase: req.query['phase']});
 };
 
 exports.config = function(req, res) {
@@ -25,15 +25,25 @@ exports.options = function(req, res) {
 };
 
 exports.data = function(req, res) {
-    var prefix = req.params['prefix'];
-    influx.getData(prefix, function(data) {
+    var user = req.params['user'];
+    var job = req.params['job'];
+    var flow = req.params['flow'];
+    var stage = req.params['stage'];
+    var phase = req.params['phase'];
+    var metric = req.params['metric'];
+    influx.getData(user, job, flow, stage, phase, metric, function(data) {
 	res.json(data);
     });
 }
 
 exports.cpu = function(req, res) {
+    var user = req.params['user'];
+    var job = req.params['job'];
+    var flow = req.params['flow'];
+    var stage = req.params['stage'];
+    var phase = req.params['phase'];
     var prefix = req.params['prefix'];
-    influx.getFlameGraphData(prefix, function(metrics) {
+    influx.getFlameGraphData(user, job, flow, stage, phase, prefix, function(metrics) {
 	flamegraph.getFlameGraph(metrics, function(data) {
 	    res.send(data);
 	})

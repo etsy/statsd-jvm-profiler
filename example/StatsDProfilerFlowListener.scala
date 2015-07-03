@@ -11,7 +11,7 @@ import scala.collection.JavaConversions._
  * Flow listener for setting up JobConf to enable statsd-jvm-profiler
  */
 class StatsDProfilerFlowListener extends FlowListener {
-  val baseParamsFormat = "-javaagent:%s=server=%s,port=%s,prefix=bigdata.profiler.%s.%s.%s.%%s.%%s,packageWhitelist=%s,packageBlacklist=%s,username=%s,password=%s,database=%s,reporter=%s"
+  val baseParamsFormat = "-javaagent:%s=server=%s,port=%s,prefix=bigdata.profiler.%s.%s.%s.%%s.%%s,packageWhitelist=%s,packageBlacklist=%s,username=%s,password=%s,database=%s,reporter=%s,tagMapping=%s"
 
   override def onStarting(flow: Flow[_]): Unit = {
     val profilerProps = loadProperties("statsd-jvm-profiler.properties")
@@ -29,8 +29,9 @@ class StatsDProfilerFlowListener extends FlowListener {
     val influxdbPassword = profilerProps.getProperty("influxdb.password")
     val influxdbDatabase = profilerProps.getProperty("influxdb.database")
     val dashboardUrl = profilerProps.getProperty("dashboard.url")
+    val tagMapping = profilerProps.getProperty("tagMapping")
 
-    val baseParams = baseParamsFormat.format(jarPath, host, port, userName, jobName, flowId, packageWhiteList, packageBlacklist, influxdbUser, influxdbPassword, influxdbDatabase, reporter)
+    val baseParams = baseParamsFormat.format(jarPath, host, port, userName, jobName, flowId, packageWhiteList, packageBlacklist, influxdbUser, influxdbPassword, influxdbDatabase, reporter, tagMapping)
 
     flow.getFlowSteps.toList foreach { fs: FlowStep[_] =>
       val stepNum = fs.getStepNum.toString

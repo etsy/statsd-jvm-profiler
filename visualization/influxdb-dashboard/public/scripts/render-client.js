@@ -16,18 +16,18 @@ $(document).ready(function() {
 
     var user = params.user;
     var job = params.job;
-    var run = params.run;
+    var flow = params.flow;
     var stage = params.stage;
     var phase = params.phase;
     var base = params.prefix || config['prefix'] || 'bigdata.profiler';
     var refresh = params.refresh || config['refresh'] || 60;
 
-    var prefix = base + '.' + user + '.' + job + '.' + run + '.' + stage + '.' + phase;
-    var cpuPrefix = prefix + '.cpu.trace';
-    var heapPrefix = prefix + '.heap.total';
-    var nonHeapPrefix = prefix + '.nonheap.total';
-    var finalizePrefix = prefix + '.pending-finalization-count';
-    var gcPrefix = prefix + '.gc';
+    var prefix = base + '.' + user + '.' + job + '.' + flow + '.' + stage + '.' + phase;
+    var cpuPrefix = 'cpu.trace';
+    var heapPrefix = 'heap.total';
+    var nonHeapPrefix = 'nonheap.total';
+    var finalizePrefix = 'pending-finalization-count';
+    var gcPrefix = 'gc';
 
     var memoryMetrics = [{metric:'init', alias:'Initial'},{metric:'committed', alias:'Committed'},{metric:'max', alias:'Maximum'},{metric:'used', alias:'Used'}];
     var finalizeMetrics = [{metric: finalizePrefix, alias: 'Objects Pending Finalization'}];
@@ -35,30 +35,30 @@ $(document).ready(function() {
     var gcTimeMetrics = [{metric:'PS MarkSweep.time', alias:'PS MarkSweep'},{metric:'PS Scavenge.time', alias:'PS Scavenge'}];
     var gcRuntimeMetrics = [{metric:'PS MarkSweep.runtime', alias:'PS MarkSweep'},{metric:'PS Scavenge.runtime', alias:'PS Scavenge'}];
 
-    $("#toc ul").append('<li class=toc-h2><a href=/cpu/' + cpuPrefix + ' target=_blank>Flame Graph</a></li>');
+    $("#toc ul").append('<li class=toc-h2><a href=/cpu/' + user + '/' + job + '/' + flow + '/' + stage + '/' + phase + '/' + cpuPrefix + ' target=_blank>Flame Graph</a></li>');
     $('#toc').affix({
 	offset: {
 	    top: $('.navbar navbar-default').height()
 	}
     });
 
-    var heapGet = $.get('/data/' + heapPrefix);
-    var nonHeapGet = $.get('/data/' + nonHeapPrefix);
-    var finalizeGet = $.get('/data/' + finalizePrefix);
-    var gcGet = $.get('/data/' + gcPrefix);
+    var heapGet = $.get('/data/' + user + '/' + job + '/' + flow + '/' + stage + '/' + phase + '/' + heapPrefix);
+    var nonHeapGet = $.get('/data/' + user + '/' + job + '/' + flow + '/' + stage + '/' + phase + '/' + nonHeapPrefix);
+    var finalizeGet = $.get('/data/' + user + '/' + job + '/' + flow + '/' + stage + '/' + phase + '/' + finalizePrefix);
+    var gcGet = $.get('/data/' + user + '/' + job + '/' + flow + '/' + stage + '/' + phase + '/' + gcPrefix);
 
     $.when(heapGet, nonHeapGet, finalizeGet, gcGet).done(function() {
-      var heapResults = heapGet['responseJSON'];
-      var nonHeapResults = nonHeapGet['responseJSON'];
-      var finalizeResults = finalizeGet['responseJSON'];
-      var gcResults = gcGet['responseJSON'];
+	var heapResults = heapGet['responseJSON'];
+	var nonHeapResults = nonHeapGet['responseJSON'];
+	var finalizeResults = finalizeGet['responseJSON'];
+	var gcResults = gcGet['responseJSON'];
 
-      ViewUtil.renderGraph(heapResults, 'Heap Usage', '#heap', memoryMetrics);
-      ViewUtil.renderGraph(nonHeapResults, 'Non-Heap Usage', '#nonheap', memoryMetrics);
-      ViewUtil.renderGraph(finalizeResults, 'Objects Pending Finalization', '#finalize', finalizeMetrics);
-      ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#count', gcCountMetrics);
-      ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#time', gcTimeMetrics);
-      ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#runtime', gcRuntimeMetrics);
+	ViewUtil.renderGraph(heapResults, 'Heap Usage', '#heap', memoryMetrics);
+	ViewUtil.renderGraph(nonHeapResults, 'Non-Heap Usage', '#nonheap', memoryMetrics);
+	ViewUtil.renderGraph(finalizeResults, 'Objects Pending Finalization', '#finalize', finalizeMetrics);
+	ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#count', gcCountMetrics);
+	ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#time', gcTimeMetrics);
+	ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#runtime', gcRuntimeMetrics);
 
     });
 
