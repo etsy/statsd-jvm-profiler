@@ -45,16 +45,16 @@ exports.getFlameGraphData = function(user, job, flow, stage, phase,  prefix, cal
 exports.getOptions = function(prefix, callback) {
     client.getSeries("heap.total.max", function(err, seriesNames) {
 	var result = {};
-	seriesNames.map(function(series) {
-	    values = series.values[0];
-	    columns = series.columns;
+	var series = seriesNames[0];
+	var columns = series.columns;
 
-	    var userIndex = columns.indexOf('username');
-	    var jobIndex = columns.indexOf('job');
-	    var flowIndex = columns.indexOf('flow');
-	    var stageIndex = columns.indexOf('stage');
-	    var phaseIndex = columns.indexOf('phase');
-
+	var userIndex = columns.indexOf('username');
+	var jobIndex = columns.indexOf('job');
+	var flowIndex = columns.indexOf('flow');
+	var stageIndex = columns.indexOf('stage');
+	var phaseIndex = columns.indexOf('phase');
+	
+	series.values.map(function(values) {
 	    var user = values[userIndex];
 	    var job = values[jobIndex];
 	    var flow = values[flowIndex];
