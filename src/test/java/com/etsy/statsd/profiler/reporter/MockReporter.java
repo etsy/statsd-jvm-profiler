@@ -26,6 +26,13 @@ public class MockReporter extends Reporter<String> {
     }
 
     @Override
+    public void recordGaugeValues(Map<String, Long> gauges) {
+        for (Map.Entry<String, Long> gauge : gauges.entrySet()) {
+            recordGaugeValue(gauge.getKey(), gauge.getValue());
+        }
+    }
+
+    @Override
     protected String createClient(String server, int port, String prefix) {
         return "";
     }
