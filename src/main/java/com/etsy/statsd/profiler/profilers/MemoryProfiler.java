@@ -3,10 +3,12 @@ package com.etsy.statsd.profiler.profilers;
 import com.etsy.statsd.profiler.Arguments;
 import com.etsy.statsd.profiler.Profiler;
 import com.etsy.statsd.profiler.reporter.Reporter;
+import com.google.common.collect.Maps;
 
 import java.lang.management.*;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -64,34 +66,35 @@ public class MemoryProfiler extends Profiler {
      * Records all memory statistics
      */
     private void recordStats() {
-        int finalizationPendingCount = memoryMXBean.getObjectPendingFinalizationCount();
+        long finalizationPendingCount = memoryMXBean.getObjectPendingFinalizationCount();
         MemoryUsage heap = memoryMXBean.getHeapMemoryUsage();
         MemoryUsage nonHeap = memoryMXBean.getNonHeapMemoryUsage();
+        Map<String, Long> metrics = Maps.newHashMap();
 
-        recordGaugeValue("pending-finalization-count", finalizationPendingCount);
-        recordMemoryUsage("heap.total", heap);
-        recordMemoryUsage("nonheap.total", nonHeap);
+        metrics.put("pending-finalization-count", finalizationPendingCount);
+        recordMemoryUsage("heap.total", heap, metrics);
+        recordMemoryUsage("nonheap.total", nonHeap, metrics);
 
         for (GarbageCollectorMXBean gcMXBean : gcMXBeans) {
-            recordGaugeValue("gc." + gcMXBean.getName() + ".count", gcMXBean.getCollectionCount());
+            metrics.put("gc." + gcMXBean.getName() + ".count", gcMXBean.getCollectionCount());
 
             final long time = gcMXBean.getCollectionTime();
             final long prevTime = gcTimes.get(gcMXBean).get();
             final long runtime = time - prevTime;
 
-            recordGaugeValue("gc." + gcMXBean.getName() + ".time", time);
-            recordGaugeValue("gc." + gcMXBean.getName() + ".runtime", runtime);
+            metrics.put("gc." + gcMXBean.getName() + ".time", time);
+            metrics.put("gc." + gcMXBean.getName() + ".runtime", runtime);
 
             if (runtime > 0) gcTimes.get(gcMXBean).set(time);
         }
 
-        int loadedClassCount = classLoadingMXBean.getLoadedClassCount();
+        long loadedClassCount = classLoadingMXBean.getLoadedClassCount();
         long totalLoadedClassCount = classLoadingMXBean.getTotalLoadedClassCount();
         long unloadedClassCount = classLoadingMXBean.getUnloadedClassCount();
 
-        recordGaugeValue("loaded-class-count", loadedClassCount);
-        recordGaugeValue("total-loaded-class-count", totalLoadedClassCount);
-        recordGaugeValue("unloaded-class-count", unloadedClassCount);
+        metrics.put("loaded-class-count", loadedClassCount);
+        metrics.put("total-loaded-class-count", totalLoadedClassCount);
+        metrics.put("unloaded-class-count", unloadedClassCount);
 
         for (MemoryPoolMXBean memoryPoolMXBean: memoryPoolMXBeans) {
             String type = poolTypeToMetricName(memoryPoolMXBean.getType());
@@ -99,8 +102,10 @@ public class MemoryProfiler extends Profiler {
             String prefix = type + '.' + name;
             MemoryUsage usage = memoryPoolMXBean.getUsage();
 
-            recordMemoryUsage(prefix, usage);
+            recordMemoryUsage(prefix, usage, metrics);
         }
+        
+        recordGaugeValues(metrics);
     }
 
     /**
@@ -109,11 +114,11 @@ public class MemoryProfiler extends Profiler {
      * @param prefix The prefix to use for this object
      * @param memory The MemoryUsage object containing the memory usage info
      */
-    private void recordMemoryUsage(String prefix, MemoryUsage memory) {
-        recordGaugeValue(prefix + ".init", memory.getInit());
-        recordGaugeValue(prefix + ".used", memory.getUsed());
-        recordGaugeValue(prefix + ".committed", memory.getCommitted());
-        recordGaugeValue(prefix + ".max", memory.getMax());
+    private void recordMemoryUsage(String prefix, MemoryUsage memory, Map<String, Long> metrics) {
+        metrics.put(prefix + ".init", memory.getInit());
+        metrics.put(prefix + ".used", memory.getUsed());
+        metrics.put(prefix + ".committed", memory.getCommitted());
+        metrics.put(prefix + ".max", memory.getMax());
     }
 
     /**
