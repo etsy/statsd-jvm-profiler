@@ -4,78 +4,92 @@ var config = require('./config.js')
 var client = null;
 config.getConfig(function(conf) {
     client = influx(conf['influxdb']);
-})
+});
 
-exports.getData = function(prefix, callback) {
-    var query = "select * from /" + prefix + ".*/;";
-    client.query(query, function(err, res) {
-	var results = res.map(function(metric) {
-	    var name = metric.name.replace(prefix + '.', '');
-	    var points = metric.points.map(function(point) {
-		return {time: point[0], value: point[2]};
-	    })
+// This measurement will always exist and can be used to query for valid tags
+var canaryMeasurement = "heap.total.max";
+
+exports.getData = function(user, job, flow, stage, phase, metric, callback) {
+    var query = "select value from /^" + metric + ".*/ where username = '" + user + "' and job = '" + job + "' and flow = '" + flow + "' and stage = '" + stage + "' and phase = '" + phase + "'";
+    client.queryRaw(query, function(err, res) {
+	var series = res[0].series;
+	var results = series.map(function(series) {
+	    var name = series.name.replace(metric + '.', '');
+	    var points = series.values.map(function(value) {
+		return {time: new Date(value[0]).getTime(), value: value[1]};
+	    });
+
 	    return {metric: name, values: points};
-	})
-	callback(results);
-    });
-}
-
-exports.getFlameGraphData = function(prefix, callback) {
-    var query = "select * from /" + prefix + ".*/;";
-    client.query(query, function(err, res) {
-	var results = res.map(function(metric) {
-	    var name = formatMetric(metric.name, prefix);
-	    var value = Math.max.apply(null, metric.points.map(function(point) {
-		return point[2];
-	    }));
-
-	    return {metric: name, value: value};
 	});
 	callback(results);
     });
 }
 
+
+exports.getFlameGraphData = function(user, job, flow, stage, phase,  prefix, callback) {
+    var query = "select value from /^" + prefix + ".*/ where username = '" + user + "' and job = '" + job + "' and flow = '" + flow + "' and stage = '" + stage + "' and phase = '" + phase + "'";
+    client.queryRaw(query, function(err, res) {
+	var series = res[0].series;
+    	var results = series.map(function(series) {
+    	    var name = formatMetric(series.name, prefix);
+    	    var value = Math.max.apply(null, series.values.map(function(value) {
+    		return value[1];
+    	    }));
+
+    	    return {metric: name, value: value};
+    	});
+    	callback(results);
+    });
+}
+
 exports.getOptions = function(prefix, callback) {
-    client.query("list series", function(err, res) {
+    client.getSeries("heap.total.max", function(err, seriesNames) {
 	var result = {};
-	res[0]['points'].map(function(point) {
-	    var name = point[1];
-	    var tokens = name.split(".")
-	    var user = tokens[2];
-	    var job = tokens[3];
-	    var run = tokens[4];
-	    var stage = tokens[5];
-	    var phase = tokens[6];
+	var series = seriesNames[0];
+	var columns = series.columns;
+
+	var userIndex = columns.indexOf('username');
+	var jobIndex = columns.indexOf('job');
+	var flowIndex = columns.indexOf('flow');
+	var stageIndex = columns.indexOf('stage');
+	var phaseIndex = columns.indexOf('phase');
+	
+	series.values.map(function(values) {
+	    var user = values[userIndex];
+	    var job = values[jobIndex];
+	    var flow = values[flowIndex];
+	    var stage = values[stageIndex];
+	    var phase = values[phaseIndex];
 
 	    var userVal = result[user]
-	    if (!userVal) {
-		userVal = {};
-	    }
+    	    if (!userVal) {
+    		userVal = {};
+    	    }
 
-	    var jobVal = userVal[job];
-	    if (!jobVal) {
-		jobVal = {};
-	    }
+    	    var jobVal = userVal[job];
+    	    if (!jobVal) {
+    		jobVal = {};
+    	    }
 
-	    var runVal = jobVal[run];
-	    if(!runVal) {
-		runVal = {};
-	    }
+    	    var flowVal = jobVal[flow];
+    	    if(!flowVal) {
+    		flowVal = {};
+    	    }
 
-	    var stageVal = runVal[stage];
-	    if(!stageVal) {
-		stageVal = [];
-	    }
+    	    var stageVal = flowVal[stage];
+    	    if(!stageVal) {
+    		stageVal = [];
+    	    }
 
-	    if(stageVal.indexOf(phase) == -1) {
-		stageVal.push(phase);
-	    }
+    	    if(stageVal.indexOf(phase) == -1) {
+    		stageVal.push(phase);
+    	    }
 	    
-	    runVal[stage] = stageVal;
-	    jobVal[run] = runVal;
-	    userVal[job] = jobVal;
-	    result[user] = userVal;
-	})
+    	    flowVal[stage] = stageVal;
+    	    jobVal[flow] = flowVal;
+    	    userVal[job] = jobVal;
+    	    result[user] = userVal;
+	});
 	callback(result);
     });
 }

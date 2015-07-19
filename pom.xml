@@ -43,6 +43,13 @@
         </snapshotRepository>
     </distributionManagement>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>com.timgroup</groupId>
@@ -55,9 +62,9 @@
             <version>18.0</version>
         </dependency>
         <dependency>
-            <groupId>org.influxdb</groupId>
+            <groupId>com.github.influxdb</groupId>
             <artifactId>influxdb-java</artifactId>
-            <version>1.5</version>
+            <version>influxdb-java-2.0</version>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>

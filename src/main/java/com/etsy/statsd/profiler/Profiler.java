@@ -3,6 +3,7 @@ package com.etsy.statsd.profiler;
 import com.etsy.statsd.profiler.reporter.Reporter;
 import com.google.common.base.Preconditions;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -13,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class Profiler {
     public static final Class<?>[] CONSTRUCTOR_PARAM_TYPES = new Class<?>[]{Reporter.class, Arguments.class};
 
-    private Reporter reporter;
+    private Reporter<?> reporter;
 
     public Profiler(Reporter reporter, Arguments arguments) {
         Preconditions.checkNotNull(reporter);
@@ -60,5 +61,15 @@ public abstract class Profiler {
      */
     protected void recordGaugeValue(String key, long value) {
         reporter.recordGaugeValue(key, value);
+    }
+
+    /**
+     * Record multiple gauge values
+     * This is useful for reporters that can send points in batch
+     *
+     * @param gauges A map of gauge names to values
+     */
+    protected void recordGaugeValues(Map<String, Long> gauges) {
+        reporter.recordGaugeValues(gauges);
     }
 }

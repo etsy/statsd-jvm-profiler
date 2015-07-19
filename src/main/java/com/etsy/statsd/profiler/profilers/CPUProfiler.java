@@ -8,6 +8,7 @@ import com.etsy.statsd.profiler.worker.ProfilerThreadFactory;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import java.lang.management.ThreadInfo;
 import java.util.*;
@@ -111,9 +112,11 @@ public class CPUProfiler extends Profiler {
      * @param flushAll Indicate if all data should be flushed
      */
     private void recordMethodCounts(boolean flushAll) {
+        Map<String, Long> metrics = Maps.newHashMap();
         for (Map.Entry<String, Long> entry : traces.getDataToFlush(flushAll).entrySet()) {
-            recordGaugeValue("cpu.trace." + entry.getKey(), entry.getValue());
+            metrics.put("cpu.trace." + entry.getKey(), entry.getValue());
         }
+        recordGaugeValues(metrics);
     }
 
     /**

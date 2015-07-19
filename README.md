@@ -60,6 +60,16 @@ Name        | Meaning
 username    | The username with which to connect to InfluxDB (required)
 password    | The password with which to connect to InfluxDB (required)
 database    | The database to which to write metrics (required)
+tagMapping  | A mapping of tag names from the metric prefix (optional, defaults to no mapping)
+
+##### Tag Mapping
+InfluxDB 0.9 supports tagging measurements and querying based on those tags.  statsd-jvm-profilers uses these tags to support richer querying of the produced data.  For compatibility with other metric backends, the tags are extracted from the metric prefix.
+
+If the `tagMapping` argument is not defined, only the `prefix` tag will be added, with the value of the entire prefix.
+
+`tagMapping` should be a period-delimited set of tag names.  It must have the same number of components as `prefix`, or else an exception would be thrown.  Each component of `tagMapping` is the name of the tag.  The component in the corresponding position of `prefix` will be the value.
+
+If you do not want to include a component of `prefix` as a tag, use the special name `SKIP` in `tagMapping` for that position.
 
 ## Metrics
 

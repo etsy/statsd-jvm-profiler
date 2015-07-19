@@ -13,16 +13,15 @@ prefix for metrics.
 
 The `/config` endpoint will return the current configuration.
 
-## Metric Structure
-This dashboard assumes a particular metric prefix structure: `<base
-prefix>.<username>.<job>.<run id>.<stage number>.<phase>`.  The
-prefix configured when profiling with statsd-jvm-profiler must match
-this structure.  The [example FlowListener](https://github.com/etsy/statsd-jvm-profiler/blob/master/example/StatsDProfilerFlowListener.scala) 
+## Metric Structure This dashboards assumes that you have configured
+statsd-jvm-profiler to put these tags on the metrics it produces:
+`username`, `job`, `flow`, `stage`, `phase`.  You can use the
+`tagMapping` and `prefix` arguments to do so.  The
+[example FlowListener](https://github.com/etsy/statsd-jvm-profiler/blob/master/example/StatsDProfilerFlowListener.scala)
 produces metrics in this format.  `<base prefix>` is configured in
 dashboard-config.json, but the available values for the others are
 automatically pulled from the metrics that exist in the configured
-InfluxDB database.
- 
+InfluxDB database. 
 
 ## Installation
 It is assumed that you already have InfluxDB configured and running

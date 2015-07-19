@@ -3,6 +3,8 @@ package com.etsy.statsd.profiler.reporter;
 import com.etsy.statsd.profiler.Arguments;
 import com.google.common.base.Preconditions;
 
+import java.util.Map;
+
 /**
  * Interface for reporters
  *
@@ -29,6 +31,14 @@ public abstract class Reporter<T> {
      * @param value The value of the gauge
      */
     public abstract void recordGaugeValue(String key, long value);
+
+    /**
+     * Record multiple gauge values
+     * This is useful for reporters that can send points in batch
+     *
+     * @param gauges A map of gauge names to values
+     */
+    public abstract void recordGaugeValues(Map<String, Long> gauges);
 
     /**
      * Construct the underlying client implementation for this reporter

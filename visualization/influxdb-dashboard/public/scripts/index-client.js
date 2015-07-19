@@ -5,22 +5,22 @@ $(document).ready(function() {
 	var user = $('#users').val();
 	ViewUtil.renderSelect('#jobs', Object.keys(options[user]));
 	$('#jobs').attr('name', 'job');
-	getRuns();
+	getFlows();
     };
 
-    var getRuns = function() {
+    var getFlows = function() {
 	var user = $('#users').val();
 	var job = $('#jobs').val();
-	ViewUtil.renderSelect('#runs', Object.keys(options[user][job]));
-	$('#runs').attr('name', 'run');
+	ViewUtil.renderSelect('#flows', Object.keys(options[user][job]));
+	$('#flows').attr('name', 'flow');
 	getStages();
     };
 
     var getStages = function() {
 	var user = $('#users').val();
 	var job = $('#jobs').val();
-	var run = $('#runs').val();
-	ViewUtil.renderSelect('#stages', Object.keys(options[user][job][run]));
+	var flow = $('#flows').val();
+	ViewUtil.renderSelect('#stages', Object.keys(options[user][job][flow]));
 	$('#stages').attr('name', 'stage');
 	getPhases();
     };
@@ -28,9 +28,9 @@ $(document).ready(function() {
     var getPhases = function() {
 	var user = $('#users').val();
 	var job = $('#jobs').val();
-	var run = $('#runs').val();
+	var flow = $('#flows').val();
 	var stage = $('#stages').val();
-	ViewUtil.renderSelect('#phases', options[user][job][run][stage]);
+	ViewUtil.renderSelect('#phases', options[user][job][flow][stage]);
 	$('#phases').attr('name', 'phase');
     }
     
@@ -39,13 +39,13 @@ $(document).ready(function() {
 	ViewUtil.renderSelect('#users', Object.keys(options));
 	$('#users').attr('name', 'user');
 
-	getJobs();;
+	getJobs();
     }
     
     $.get('/options', refresh);
 
     $('#users').change(getJobs);
-    $('#jobs').change(getRuns);
-    $('#runs').change(getStages);
+    $('#jobs').change(getFlows);
+    $('#flows').change(getStages);
     $('#stages').change(getPhases);
 });

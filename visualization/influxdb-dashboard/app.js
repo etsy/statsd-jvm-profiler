@@ -33,9 +33,9 @@ app.get('/', routes.index);
 app.get('/config', routes.config);
 app.get('/options', routes.options);
 app.get('/render', routes.render);
-app.get('/data/:prefix', routes.data)
+app.get('/data/:user/:job/:flow/:stage/:phase/:metric', routes.data)
 
-app.get('/cpu/:prefix', routes.cpu);
+app.get('/cpu/:user/:job/:flow/:stage/:phase/:prefix', routes.cpu);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

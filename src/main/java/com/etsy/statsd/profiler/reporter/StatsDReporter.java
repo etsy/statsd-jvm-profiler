@@ -4,6 +4,8 @@ import com.etsy.statsd.profiler.Arguments;
 import com.timgroup.statsd.NonBlockingStatsDClient;
 import com.timgroup.statsd.StatsDClient;
 
+import java.util.Map;
+
 /**
  * Reporter that sends data to StatsD
  *
@@ -23,6 +25,19 @@ public class StatsDReporter extends Reporter<StatsDClient> {
     @Override
     public void recordGaugeValue(String key, long value) {
         client.recordGaugeValue(key, value);
+    }
+
+    /**
+     * Record multiple gauge values in StatsD
+     * This simply loops over calling recordGaugeValue
+     *
+     * @param gauges A map of gauge names to values
+     */
+    @Override
+    public void recordGaugeValues(Map<String, Long> gauges) {
+        for (Map.Entry<String, Long> gauge : gauges.entrySet()) {
+            recordGaugeValue(gauge.getKey(), gauge.getValue());
+        }
     }
 
     /**
