@@ -1,5 +1,11 @@
 var ViewUtil = (function($) {
     var view = {};
+
+    view.getMetricsForPool = function(pool, metrics) {
+	return metrics.map(function(metric) {
+	    return {metric: pool + '.' + metric.metric, alias: metric.alias };
+	});
+    }
     
     view.renderSelect = function(id, users) {
 	var html = '<select>';
