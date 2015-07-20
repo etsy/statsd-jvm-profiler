@@ -64,7 +64,7 @@
         <dependency>
             <groupId>com.github.influxdb</groupId>
             <artifactId>influxdb-java</artifactId>
-            <version>influxdb-java-2.0</version>
+            <version>31c3100</version>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
