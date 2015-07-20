@@ -13,8 +13,8 @@ prefix for metrics.
 
 The `/config` endpoint will return the current configuration.
 
-## Metric Structure This dashboards assumes that you have configured
-statsd-jvm-profiler to put these tags on the metrics it produces:
+## Metric Structure 
+This dashboards assumes that you have configured statsd-jvm-profiler to put these tags on the metrics it produces:
 `username`, `job`, `flow`, `stage`, `phase`.  You can use the
 `tagMapping` and `prefix` arguments to do so.  The
 [example FlowListener](https://github.com/etsy/statsd-jvm-profiler/blob/master/example/StatsDProfilerFlowListener.scala)
