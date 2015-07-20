@@ -31,9 +31,9 @@ $(document).ready(function() {
 
     var memoryMetrics = [{metric:'init', alias:'Initial'},{metric:'committed', alias:'Committed'},{metric:'max', alias:'Maximum'},{metric:'used', alias:'Used'}];
     var finalizeMetrics = [{metric: finalizePrefix, alias: 'Objects Pending Finalization'}];
-    var gcCountMetrics = [{metric:'PS MarkSweep.count', alias:'PS MarkSweep'},{metric:'PS Scavenge.count', alias:'PS Scavenge'}];
-    var gcTimeMetrics = [{metric:'PS MarkSweep.time', alias:'PS MarkSweep'},{metric:'PS Scavenge.time', alias:'PS Scavenge'}];
-    var gcRuntimeMetrics = [{metric:'PS MarkSweep.runtime', alias:'PS MarkSweep'},{metric:'PS Scavenge.runtime', alias:'PS Scavenge'}];
+    var gcCountMetrics = [{metric:'PS_MarkSweep.count', alias:'PS_MarkSweep'},{metric:'PS_Scavenge.count', alias:'PS_Scavenge'}];
+    var gcTimeMetrics = [{metric:'PS_MarkSweep.time', alias:'PS_MarkSweep'},{metric:'PS_Scavenge.time', alias:'PS_Scavenge'}];
+    var gcRuntimeMetrics = [{metric:'PS_MarkSweep.runtime', alias:'PS_MarkSweep'},{metric:'PS_Scavenge.runtime', alias:'PS_Scavenge'}];
 
     $("#toc ul").append('<li class=toc-h2><a href=/cpu/' + user + '/' + job + '/' + flow + '/' + stage + '/' + phase + '/' + cpuPrefix + ' target=_blank>Flame Graph</a></li>');
     $('#toc').affix({

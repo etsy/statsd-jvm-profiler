@@ -76,14 +76,15 @@ public class MemoryProfiler extends Profiler {
         recordMemoryUsage("nonheap.total", nonHeap, metrics);
 
         for (GarbageCollectorMXBean gcMXBean : gcMXBeans) {
-            metrics.put("gc." + gcMXBean.getName() + ".count", gcMXBean.getCollectionCount());
+            String gcName = gcMXBean.getName().replace(" ", "_");
+            metrics.put("gc." + gcName + ".count", gcMXBean.getCollectionCount());
 
             final long time = gcMXBean.getCollectionTime();
             final long prevTime = gcTimes.get(gcMXBean).get();
             final long runtime = time - prevTime;
 
-            metrics.put("gc." + gcMXBean.getName() + ".time", time);
-            metrics.put("gc." + gcMXBean.getName() + ".runtime", runtime);
+            metrics.put("gc." + gcName + ".time", time);
+            metrics.put("gc." + gcName + ".runtime", runtime);
 
             if (runtime > 0) gcTimes.get(gcMXBean).set(time);
         }

@@ -62,6 +62,7 @@ public class InfluxDBReporter extends Reporter<InfluxDB> {
     public void recordGaugeValues(Map<String, Long> gauges) {
         long time = System.currentTimeMillis();
         BatchPoints batchPoints = BatchPoints.database(database)
+                .time(time, TimeUnit.MILLISECONDS)
                 .build();
         for (Map.Entry<String, Long> gauge: gauges.entrySet()) {
             batchPoints.point(constructPoint(time, gauge.getKey(), gauge.getValue()));
