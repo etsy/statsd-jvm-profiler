@@ -17,7 +17,7 @@ class InfluxDBDump:
 
     def run(self):
         clauses = ["%s ='%s'" % (tag, value) for (tag, value) in self.mapped_tags.iteritems()]
-        query = 'select value from /^cpu.trace.*/ where %s limit 1' % " and ".join(clauses)
+        query = 'select value from /^cpu.trace.*/ where %s' % " and ".join(clauses)
         metrics = self.client.query(query).raw['series']
         for metric in metrics:
             name = self._format_metric_name(metric['name'], 'cpu.trace.')
