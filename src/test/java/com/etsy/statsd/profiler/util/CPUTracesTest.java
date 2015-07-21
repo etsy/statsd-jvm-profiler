@@ -25,26 +25,16 @@ public class CPUTracesTest {
         expectedMap.put("key", 1L);
         expectedMap.put("key2", 3L);
 
-        assertEquals(expectedMap, traces.getDataToFlush(false));
-
-        traces.increment("key", 1);
-        traces.increment("key2", 3);
-
-        expectedMap = new HashMap<>();
-        expectedMap.put("key", 2L);
-        expectedMap.put("key2", 6L);
-
-        assertEquals(expectedMap, traces.getDataToFlush(false));
+        assertEquals(expectedMap, traces.getDataToFlush());
 
         traces.increment("key3", 100);
         traces.increment("key2", 3);
 
         expectedMap = new HashMap<>();
-        expectedMap.put("key", 2L);
-        expectedMap.put("key2", 9L);
+        expectedMap.put("key2", 3L);
         expectedMap.put("key3", 100L);
 
-        assertEquals(expectedMap, traces.getDataToFlush(true));
+        assertEquals(expectedMap, traces.getDataToFlush());
     }
 
     @Test

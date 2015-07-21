@@ -59,7 +59,7 @@ public class CPUProfiler extends Profiler {
 
         // To keep from overwhelming StatsD, we only report statistics every ten seconds
         if (profileCount % reportingFrequency == 0) {
-            recordMethodCounts(false);
+            recordMethodCounts();
         }
     }
 
@@ -68,7 +68,7 @@ public class CPUProfiler extends Profiler {
      */
     @Override
     public void flushData() {
-        recordMethodCounts(false);
+        recordMethodCounts();
         // These bounds are recorded to help speed up generating flame graphs
         Range bounds = traces.getBounds();
         recordGaugeValue("cpu.trace." + bounds.getLeft(), bounds.getLeft());
@@ -108,12 +108,10 @@ public class CPUProfiler extends Profiler {
 
     /**
      * Records method CPU time in StatsD
-     *
-     * @param flushAll Indicate if all data should be flushed
      */
-    private void recordMethodCounts(boolean flushAll) {
+    private void recordMethodCounts() {
         Map<String, Long> metrics = Maps.newHashMap();
-        for (Map.Entry<String, Long> entry : traces.getDataToFlush(flushAll).entrySet()) {
+        for (Map.Entry<String, Long> entry : traces.getDataToFlush().entrySet()) {
             metrics.put("cpu.trace." + entry.getKey(), entry.getValue());
         }
         recordGaugeValues(metrics);

@@ -32,9 +32,11 @@ exports.getFlameGraphData = function(user, job, flow, stage, phase,  prefix, cal
 	var series = res[0].series;
     	var results = series.map(function(series) {
     	    var name = formatMetric(series.name, prefix);
-    	    var value = Math.max.apply(null, series.values.map(function(value) {
+    	    var value = (null, series.values.map(function(value) {
     		return value[1];
-    	    }));
+    	    })).reduce(function(total, curr) {
+		return total + curr;
+	    }, 0);
 
     	    return {metric: name, value: value};
     	});

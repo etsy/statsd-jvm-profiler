@@ -1,5 +1,7 @@
 package com.etsy.statsd.profiler.util;
 
+import com.google.common.collect.Maps;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -12,11 +14,11 @@ import java.util.Set;
  */
 public class CPUTraces {
     private Map<String, Long> traces;
-    private Set<String> dirtyTraces;
+    private int max = Integer.MIN_VALUE;
+    private int min = Integer.MAX_VALUE;
 
     public CPUTraces() {
         traces = new HashMap<>();
-        dirtyTraces = new HashSet<>();
     }
 
     /**
@@ -27,27 +29,17 @@ public class CPUTraces {
      */
     public void increment(String traceKey, long inc) {
         MapUtil.setOrIncrementMap(traces, traceKey, inc);
-        dirtyTraces.add(traceKey);
+        updateBounds(traceKey);
     }
 
     /**
      * Get data to be flushed from the state
-     * By default it only returns traces that have been updated since the last flush
-     * But with the `flushAll` parameter will flush all traces regardless of dirty state
+     * It only returns traces that have been updated since the last flush
      *
-     * @param flushAll Indicate if all data, not just deltas, should be flushed
      */
-    public Map<String, Long> getDataToFlush(boolean flushAll) {
-        Map<String, Long> result = new HashMap<>();
-        if (flushAll) {
-            result = traces;
-        } else {
-            for (String trace : dirtyTraces) {
-                result.put(trace, traces.get(trace));
-            }
-        }
-
-        dirtyTraces.clear();
+    public Map<String, Long> getDataToFlush() {
+        Map<String, Long> result = Maps.newHashMap(traces);
+        traces.clear();
         return result;
     }
 
@@ -57,15 +49,12 @@ public class CPUTraces {
      * @return A Pair of integers, the left being the minimum number of components and the right being the maximum
      */
     public Range getBounds() {
-        int max = Integer.MIN_VALUE;
-        int min = Integer.MAX_VALUE;
-
-        for (String key : traces.keySet()) {
-            int numComponents = key.split("\\.").length;
-            max = Math.max(max, numComponents);
-            min = Math.min(min, numComponents);
-        }
-
         return new Range(min, max);
+    }
+
+    private void updateBounds(String traceKey) {
+        int numComponents = traceKey.split("\\.").length;
+        max = Math.max(max, numComponents);
+        min = Math.min(min, numComponents);
     }
 }
