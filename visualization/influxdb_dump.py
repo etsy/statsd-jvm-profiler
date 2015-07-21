@@ -21,7 +21,7 @@ class InfluxDBDump:
         metrics = self.client.query(query).raw['series']
         for metric in metrics:
             name = self._format_metric_name(metric['name'], 'cpu.trace.')
-            value = max([v[1] for v in metric['values']])
+            value = sum([v[1] for v in metric['values']])
             if name != str(value):
                 print '%s %d' % (name, value)
 
