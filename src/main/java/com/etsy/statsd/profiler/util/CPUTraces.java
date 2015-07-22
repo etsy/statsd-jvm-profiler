@@ -1,11 +1,7 @@
 package com.etsy.statsd.profiler.util;
 
-import com.google.common.collect.Maps;
-
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Represents the state of the CPU profiler
@@ -38,8 +34,8 @@ public class CPUTraces {
      *
      */
     public Map<String, Long> getDataToFlush() {
-        Map<String, Long> result = Maps.newHashMap(traces);
-        traces.clear();
+        Map<String, Long> result = traces;
+        traces = new HashMap<>();
         return result;
     }
 
