@@ -19,8 +19,10 @@ $(document).ready(function() {
     var flow = params.flow;
     var stage = params.stage;
     var phase = params.phase;
+    var jvmName = params.jvm;
     var base = params.prefix || config['prefix'] || 'bigdata.profiler';
     var refresh = params.refresh || config['refresh'] || 60;
+    var optionalJvmName = jvmName && jvmName !== '' ? '/' + jvmName + '/' : '/';
 
     var prefix = base + '.' + user + '.' + job + '.' + flow + '.' + stage + '.' + phase;
     var cpuPrefix = 'cpu.trace';
@@ -39,18 +41,18 @@ $(document).ready(function() {
     var heapPools = [{pool:'ps-eden-space', selector:'#eden', title:'Eden'}, {pool:'ps-old-gen', selector:'#oldgen', title:'Old Generation'}, {pool:'ps-survivor-space', selector:'#survivor', title:'Survivor Space'}];
     var nonHeapPools = [{pool:'code-cache', selector:'#codecache', title:'Code Cache'}, {pool:'ps-perm-gen', selector:'#permgen', title:'Permgen'}];
 
-    $("#toc ul").append('<li class=toc-h2><a href=/cpu/' + user + '/' + job + '/' + flow + '/' + stage + '/' + phase + '/' + cpuPrefix + ' target=_blank>Flame Graph</a></li>');
+    $("#toc ul").append('<li class=toc-h2><a href=/cpu/' + user + '/' + job + '/' + flow + '/' + stage + '/' + phase + optionalJvmName + cpuPrefix + ' target=_blank>Flame Graph</a></li>');
     $('#toc').affix({
 	offset: {
 	    top: $('.navbar navbar-default').height()
 	}
     });
 
-    var heapGet = $.get('/data/' + user + '/' + job + '/' + flow + '/' + stage + '/' + phase + '/' + heapPrefix);
-    var nonHeapGet = $.get('/data/' + user + '/' + job + '/' + flow + '/' + stage + '/' + phase + '/' + nonHeapPrefix);
-    var finalizeGet = $.get('/data/' + user + '/' + job + '/' + flow + '/' + stage + '/' + phase + '/' + finalizePrefix);
-    var gcGet = $.get('/data/' + user + '/' + job + '/' + flow + '/' + stage + '/' + phase + '/' + gcPrefix);
-    var classLoadingGet = $.get('/data/' + user + '/' + job + '/' + flow + '/' + stage + '/' + phase + '/' + classLoadingPrefix);
+    var heapGet = $.get('/data/' + user + '/' + job + '/' + flow + '/' + stage + '/' + phase + optionalJvmName + heapPrefix);
+    var nonHeapGet = $.get('/data/' + user + '/' + job + '/' + flow + '/' + stage + '/' + phase + optionalJvmName + nonHeapPrefix);
+    var finalizeGet = $.get('/data/' + user + '/' + job + '/' + flow + '/' + stage + '/' + phase + optionalJvmName + finalizePrefix);
+    var gcGet = $.get('/data/' + user + '/' + job + '/' + flow + '/' + stage + '/' + phase + optionalJvmName + gcPrefix);
+    var classLoadingGet = $.get('/data/' + user + '/' + job + '/' + flow + '/' + stage + '/' + phase + optionalJvmName + classLoadingPrefix);
 
     $.when(heapGet, nonHeapGet, finalizeGet, gcGet, classLoadingGet).done(function() {
 	var heapResults = heapGet['responseJSON'];

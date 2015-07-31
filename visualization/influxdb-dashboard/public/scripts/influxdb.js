@@ -9,8 +9,9 @@ config.getConfig(function(conf) {
 // This measurement will always exist and can be used to query for valid tags
 var canaryMeasurement = "heap.total.max";
 
-exports.getData = function(user, job, flow, stage, phase, metric, callback) {
-    var query = "select value from /^" + metric + ".*/ where username = '" + user + "' and job = '" + job + "' and flow = '" + flow + "' and stage = '" + stage + "' and phase = '" + phase + "'";
+exports.getData = function(user, job, flow, stage, phase, jvmName, metric, callback) {
+    var optionalJvmName = jvmName ? "' and jvmName = '" + jvmName + "'": "'";
+    var query = "select value from /^" + metric + ".*/ where username = '" + user + "' and job = '" + job + "' and flow = '" + flow + "' and stage = '" + stage + "' and phase = '" + phase + optionalJvmName;
     client.queryRaw(query, function(err, res) {
 	var series = res[0].series;
 	var results = series.map(function(series) {
@@ -26,8 +27,9 @@ exports.getData = function(user, job, flow, stage, phase, metric, callback) {
 }
 
 
-exports.getFlameGraphData = function(user, job, flow, stage, phase,  prefix, callback) {
-    var query = "select value from /^" + prefix + ".*/ where username = '" + user + "' and job = '" + job + "' and flow = '" + flow + "' and stage = '" + stage + "' and phase = '" + phase + "'";
+exports.getFlameGraphData = function(user, job, flow, stage, phase, jvmName, prefix, callback) {
+    var optionalJvmName = jvmName ? "' and jvmName = '" + jvmName + "'": "'";
+    var query = "select value from /^" + prefix + ".*/ where username = '" + user + "' and job = '" + job + "' and flow = '" + flow + "' and stage = '" + stage + "' and phase = '" + phase + optionalJvmName;
     client.queryRaw(query, function(err, res) {
 	var series = res[0].series;
     	var results = series.map(function(series) {
@@ -55,6 +57,7 @@ exports.getOptions = function(prefix, callback) {
 	var flowIndex = columns.indexOf('flow');
 	var stageIndex = columns.indexOf('stage');
 	var phaseIndex = columns.indexOf('phase');
+	var jvmNameIndex = columns.indexOf('jvmName');
 	
 	series.values.map(function(values) {
 	    var user = values[userIndex];
@@ -62,6 +65,7 @@ exports.getOptions = function(prefix, callback) {
 	    var flow = values[flowIndex];
 	    var stage = values[stageIndex];
 	    var phase = values[phaseIndex];
+	    var jvmName = values[jvmNameIndex];
 
 	    var userVal = result[user]
     	    if (!userVal) {
@@ -80,13 +84,20 @@ exports.getOptions = function(prefix, callback) {
 
     	    var stageVal = flowVal[stage];
     	    if(!stageVal) {
-    		stageVal = [];
+    		stageVal = {};
     	    }
 
-    	    if(stageVal.indexOf(phase) == -1) {
-    		stageVal.push(phase);
+
+	    var phaseVal = stageVal[phase];
+    	    if(!phaseVal) {
+    		phaseVal = [];
     	    }
-	    
+
+	    if (phaseVal.indexOf(jvmName) == -1) {
+		phaseVal.push(jvmName);
+	    }
+
+	    stageVal[phase] = phaseVal;
     	    flowVal[stage] = stageVal;
     	    jobVal[flow] = flowVal;
     	    userVal[job] = jobVal;

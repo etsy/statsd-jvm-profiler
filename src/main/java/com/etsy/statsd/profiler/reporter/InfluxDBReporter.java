@@ -4,13 +4,11 @@ import com.etsy.statsd.profiler.Arguments;
 import com.etsy.statsd.profiler.util.TagUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -26,7 +24,6 @@ public class InfluxDBReporter extends Reporter<InfluxDB> {
     public static final String DATABASE_ARG = "database";
     public static final String TAG_MAPPING_ARG = "tagMapping";
 
-    private String prefix;
     private String username;
     private String password;
     private String database;
@@ -35,10 +32,10 @@ public class InfluxDBReporter extends Reporter<InfluxDB> {
 
     public InfluxDBReporter(Arguments arguments) {
         super(arguments);
-        this.prefix = arguments.metricsPrefix;
+        String prefix = arguments.metricsPrefix;
         // If we have a tag mapping it must match the number of components of the prefix
         Preconditions.checkArgument(tagMapping == null || tagMapping.split("\\.").length == prefix.split("\\.").length);
-        tags = TagUtil.getTags(tagMapping, prefix);
+        tags = TagUtil.getTags(tagMapping, prefix, true);
     }
 
     /**

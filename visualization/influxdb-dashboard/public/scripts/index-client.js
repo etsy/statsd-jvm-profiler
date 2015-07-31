@@ -30,8 +30,19 @@ $(document).ready(function() {
 	var job = $('#jobs').val();
 	var flow = $('#flows').val();
 	var stage = $('#stages').val();
-	ViewUtil.renderSelect('#phases', options[user][job][flow][stage]);
+	ViewUtil.renderSelect('#phases', Object.keys(options[user][job][flow][stage]));
 	$('#phases').attr('name', 'phase');
+	getJvms();
+    }
+
+    var getJvms = function() {
+	var user = $('#users').val();
+	var job = $('#jobs').val();
+	var flow = $('#flows').val();
+	var stage = $('#stages').val();
+	var phase = $('#phases').val();
+	ViewUtil.renderSelect('#jvms', options[user][job][flow][stage][phase]);
+	$('#jvms').attr('name', 'jvm');
     }
     
     var refresh = function(o) {
