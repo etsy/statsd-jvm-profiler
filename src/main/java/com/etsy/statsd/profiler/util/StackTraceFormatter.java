@@ -29,6 +29,8 @@ public class StackTraceFormatter {
      */
     public static String formatStackTrace(StackTraceElement[] stack) {
         List<String> lines = new ArrayList<>();
+        lines.add("cpu");
+        lines.add("trace");
         for (StackTraceElement element : stack) {
             lines.add(formatStackTraceElement(element));
         }

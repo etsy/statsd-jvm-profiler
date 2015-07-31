@@ -20,10 +20,13 @@ public class StackTraceFilter {
 
     private Pattern includePattern;
     private Pattern excludePattern;
+    // This allows us to shortcut doing regex matching for performance
+    private boolean arePatternsDefault;
 
     public StackTraceFilter(List<String> includePackages, List<String> excludePackages) {
         includePattern = getPackagePattern(includePackages, MATCH_EVERYTHING);
         excludePattern = getPackagePattern(excludePackages, MATCH_NOTHING);
+        arePatternsDefault = includePattern == MATCH_EVERYTHING && excludePattern == MATCH_NOTHING;
     }
 
     /**
@@ -34,7 +37,7 @@ public class StackTraceFilter {
      * @return True if it should be included, false otherwise
      */
     public boolean includeStackTrace(String formattedStackTrace) {
-        return includeMatches(formattedStackTrace) && !excludeMatches(formattedStackTrace);
+        return arePatternsDefault || includeMatches(formattedStackTrace) && !excludeMatches(formattedStackTrace);
     }
 
     /**

@@ -24,11 +24,11 @@ public class CPUProfiler extends Profiler {
     private static final String PACKAGE_BLACKLIST_ARG = "packageBlacklist";
 
     public static final long REPORTING_PERIOD = 10;
-    public static final long PERIOD = 1;
+    public static final long PERIOD = 10;
     public static final List<String> EXCLUDE_PACKAGES = Arrays.asList("com.etsy.statsd.profiler", "com.timgroup.statsd");
 
     private CPUTraces traces;
-    private int profileCount;
+    private long profileCount;
     private StackTraceFilter filter;
     private long reportingFrequency;
 
@@ -52,13 +52,14 @@ public class CPUProfiler extends Profiler {
             if (thread.getStackTrace().length > 0) {
                 String traceKey = StackTraceFormatter.formatStackTrace(thread.getStackTrace());
                 if (filter.includeStackTrace(traceKey)) {
-                    traces.increment(traceKey, PERIOD);
+                    traces.increment(traceKey, 1);
                 }
             }
         }
 
         // To keep from overwhelming StatsD, we only report statistics every ten seconds
-        if (profileCount % reportingFrequency == 0) {
+        if (profileCount == reportingFrequency) {
+            profileCount = 0;
             recordMethodCounts();
         }
     }
@@ -110,11 +111,7 @@ public class CPUProfiler extends Profiler {
      * Records method CPU time in StatsD
      */
     private void recordMethodCounts() {
-        Map<String, Long> metrics = Maps.newHashMap();
-        for (Map.Entry<String, Long> entry : traces.getDataToFlush().entrySet()) {
-            metrics.put("cpu.trace." + entry.getKey(), entry.getValue());
-        }
-        recordGaugeValues(metrics);
+        recordGaugeValues(traces.getDataToFlush());
     }
 
     /**

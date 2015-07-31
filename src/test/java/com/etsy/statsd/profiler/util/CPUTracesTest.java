@@ -18,30 +18,30 @@ public class CPUTracesTest {
 
     @Test
     public void testGetDataToFlush() {
-        traces.increment("key", 1);
-        traces.increment("key2", 3);
+        traces.increment("cpu.trace.key", 1);
+        traces.increment("cpu.trace.key2", 3);
 
         Map<String, Long> expectedMap = new HashMap<>();
-        expectedMap.put("key", 1L);
-        expectedMap.put("key2", 3L);
+        expectedMap.put("cpu.trace.key", 1L);
+        expectedMap.put("cpu.trace.key2", 3L);
 
         assertEquals(expectedMap, traces.getDataToFlush());
 
-        traces.increment("key3", 100);
-        traces.increment("key2", 3);
+        traces.increment("cpu.trace.key3", 100);
+        traces.increment("cpu.trace.key2", 3);
 
         expectedMap = new HashMap<>();
-        expectedMap.put("key2", 3L);
-        expectedMap.put("key3", 100L);
+        expectedMap.put("cpu.trace.key2", 3L);
+        expectedMap.put("cpu.trace.key3", 100L);
 
         assertEquals(expectedMap, traces.getDataToFlush());
     }
 
     @Test
     public void testGetBounds() {
-        traces.increment("a.b.c", 1);
-        traces.increment("a.b.c.d", 1);
-        traces.increment("a.b.c.d.e", 1);
+        traces.increment("cpu.trace.a.b.c", 1);
+        traces.increment("cpu.trace.a.b.c.d", 1);
+        traces.increment("cpu.trace.a.b.c.d.e", 1);
 
         Range bounds = traces.getBounds();
         assertEquals(3, bounds.getLeft());

@@ -49,8 +49,13 @@ public class CPUTraces {
     }
 
     private void updateBounds(String traceKey) {
-        int numComponents = traceKey.split("\\.").length;
-        max = Math.max(max, numComponents);
-        min = Math.min(min, numComponents);
+        int numComponents = 1;
+        int len = traceKey.length();
+        for (int i = 0; i < len; ++i)
+            if (traceKey.charAt(i) == '.')
+                numComponents++;
+        // Account for the cpu.trace prefix
+        max = Math.max(max, numComponents - 2);
+        min = Math.min(min, numComponents - 2);
     }
 }

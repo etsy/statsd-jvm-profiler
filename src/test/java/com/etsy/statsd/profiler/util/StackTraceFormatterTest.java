@@ -22,7 +22,7 @@ public class StackTraceFormatterTest {
     public void testFormatEmptyStackTrace() {
         StackTraceElement[] stack = new StackTraceElement[0];
 
-        assertEquals("", StackTraceFormatter.formatStackTrace(stack));
+        assertEquals("cpu.trace", StackTraceFormatter.formatStackTrace(stack));
     }
 
     @Test
@@ -33,7 +33,7 @@ public class StackTraceFormatterTest {
         stack[1] = new StackTraceElement("com.etsy.statsd.profiler.util.StackTraceFormatterTest",
                 "testFormatStackTraceElement", "StackTraceFormatterTest.java", 17);
 
-        String expected = "com-etsy-statsd-profiler-util-StackTraceFormatter-formatStackTraceElement-21.com-etsy-statsd-profiler-util-StackTraceFormatterTest-testFormatStackTraceElement-17";
+        String expected = "cpu.trace.com-etsy-statsd-profiler-util-StackTraceFormatter-formatStackTraceElement-21.com-etsy-statsd-profiler-util-StackTraceFormatterTest-testFormatStackTraceElement-17";
 
         assertEquals(expected, StackTraceFormatter.formatStackTrace(stack));
     }
