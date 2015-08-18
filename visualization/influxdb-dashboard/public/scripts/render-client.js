@@ -2,17 +2,7 @@ $(document).ready(function() {
     $("#toc").toc({
 	'highlightOffset': 1,
     });
-    var config = {};
     var params = URI(window.location.href).search(true);
-
-    $.ajax({
-	async: false,
-	type: 'GET',
-	url: '/config',
-	success: function(data) {
-	    config = data;
-	}
-    });
 
     var user = params.user;
     var job = params.job;
@@ -20,8 +10,8 @@ $(document).ready(function() {
     var stage = params.stage;
     var phase = params.phase;
     var jvmName = params.jvm;
-    var base = params.prefix || config['prefix'] || 'bigdata.profiler';
-    var refresh = params.refresh || config['refresh'] || 60;
+    var base = params.prefix || $('#prefix').text() || 'bigdata.profiler';
+    var refresh = params.refresh || $('#refresh').text() || 60;
     var optionalJvmName = jvmName && jvmName !== '' ? '/' + jvmName + '/' : '/';
 
     var prefix = base + '.' + user + '.' + job + '.' + flow + '.' + stage + '.' + phase;

@@ -2,8 +2,10 @@ var influx = require('../public/scripts/influxdb.js');
 var flamegraph = require('../public/scripts/flamegraph.js');
 var config = require('../public/scripts/config.js');
 var prefix = null;
+var refresh = null
 config.getConfig(function(conf) {
     prefix = conf['prefix'];
+    refresh = conf['refresh'];
 })
 
 exports.index = function(req, res){
@@ -11,7 +13,7 @@ exports.index = function(req, res){
 };
 
 exports.render = function(req, res){
-    res.render('render', {user: req.query['user'], job: req.query['job'], flow: req.query['flow'], stage: req.query['stage'], phase: req.query['phase'], jvmName: req.query['jvm']});
+    res.render('render', {user: req.query['user'], job: req.query['job'], flow: req.query['flow'], stage: req.query['stage'], phase: req.query['phase'], jvmName: req.query['jvm'], 'prefix': prefix, 'refresh': refresh});
 };
 
 exports.config = function(req, res) {

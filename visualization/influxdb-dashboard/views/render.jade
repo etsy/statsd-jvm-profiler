@@ -2,6 +2,8 @@ extends layout-render
 
 block content
 	div.container
+		text.hidden#refresh #{refresh}
+		text.hidden#prefix #{prefix}
 		div.panel.panel-default
 			div.panel-heading(style='text-align:center')
 				h2 Memory
