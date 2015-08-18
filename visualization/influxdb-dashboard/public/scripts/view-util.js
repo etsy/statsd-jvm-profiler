@@ -17,6 +17,10 @@ var ViewUtil = (function($) {
     }
 
     view.renderGraph = function(results, title, div, metrics) {
+	if (Object.keys(results).length === 0) {
+	    $(div).hide().html('Unable to retrieve metrics').show();
+	    return;
+	}
 	var data = metrics.map(function(metric) {
 	    var values = $.grep(results, function(e){ return e.metric == metric.metric; })[0]['values'];
 	    return [[metric.metric].concat(values.map(function(value) {

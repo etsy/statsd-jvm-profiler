@@ -14,14 +14,17 @@ exports.getData = function(user, job, flow, stage, phase, jvmName, metric, callb
     var query = "select value from /^" + metric + ".*/ where username = '" + user + "' and job = '" + job + "' and flow = '" + flow + "' and stage = '" + stage + "' and phase = '" + phase + optionalJvmName;
     client.queryRaw(query, function(err, res) {
 	var series = res[0].series;
-	var results = series.map(function(series) {
-	    var name = series.name.replace(metric + '.', '');
-	    var points = series.values.map(function(value) {
-		return {time: new Date(value[0]).getTime(), value: value[1]};
-	    });
+	var results = {};
+	if (series) {
+	    results = series.map(function(series) {
+		var name = series.name.replace(metric + '.', '');
+		var points = series.values.map(function(value) {
+		    return {time: new Date(value[0]).getTime(), value: value[1]};
+		});
 
-	    return {metric: name, values: points};
-	});
+		return {metric: name, values: points};
+	    });
+	}
 	callback(results);
     });
 }
@@ -32,16 +35,19 @@ exports.getFlameGraphData = function(user, job, flow, stage, phase, jvmName, pre
     var query = "select value from /^" + prefix + ".*/ where username = '" + user + "' and job = '" + job + "' and flow = '" + flow + "' and stage = '" + stage + "' and phase = '" + phase + optionalJvmName;
     client.queryRaw(query, function(err, res) {
 	var series = res[0].series;
-    	var results = series.map(function(series) {
-    	    var name = formatMetric(series.name, prefix);
-    	    var value = (null, series.values.map(function(value) {
-    		return value[1];
-    	    })).reduce(function(total, curr) {
-		return total + curr;
-	    }, 0);
+	var results = {};
+	if (series) {
+    	    results = series.map(function(series) {
+    		var name = formatMetric(series.name, prefix);
+    		var value = (null, series.values.map(function(value) {
+    		    return value[1];
+    		})).reduce(function(total, curr) {
+		    return total + curr;
+		}, 0);
 
-    	    return {metric: name, value: value};
-    	});
+    		return {metric: name, value: value};
+    	    });
+	}
     	callback(results);
     });
 }

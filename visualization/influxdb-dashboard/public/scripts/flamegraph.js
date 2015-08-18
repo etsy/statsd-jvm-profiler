@@ -6,6 +6,10 @@ var resumer = require('resumer');
 exports.getFlameGraph = function(metrics, callback) {
     var reader = stackvis.readerLookup('collapsed');
     var writer = stackvis.writerLookup('flamegraph-d3');
+    if (Object.keys(metrics).length === 0) {
+	callback('Unable to retrieve CPU metrics');
+	return;
+    }
     var collapsedMetrics = metrics.filter(function(metric) {
 	// This filters out the metrics representing the upper and lower bounds on depth of the metric hierarchy
 	return metric.metric != ':' + metric.value;
