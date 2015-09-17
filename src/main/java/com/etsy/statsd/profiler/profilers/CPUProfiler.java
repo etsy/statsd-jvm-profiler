@@ -8,10 +8,12 @@ import com.etsy.statsd.profiler.worker.ProfilerThreadFactory;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import java.lang.management.ThreadInfo;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -23,7 +25,7 @@ public class CPUProfiler extends Profiler {
     private static final String PACKAGE_WHITELIST_ARG = "packageWhitelist";
     private static final String PACKAGE_BLACKLIST_ARG = "packageBlacklist";
 
-    public static final long REPORTING_PERIOD = 10;
+    public static final long REPORTING_PERIOD = 1;
     public static final long PERIOD = 10;
     public static final List<String> EXCLUDE_PACKAGES = Arrays.asList("com.etsy.statsd.profiler", "com.timgroup.statsd");
 
@@ -57,7 +59,7 @@ public class CPUProfiler extends Profiler {
             }
         }
 
-        // To keep from overwhelming StatsD, we only report statistics every ten seconds
+        // To keep from overwhelming StatsD, we only report statistics every second
         if (profileCount == reportingFrequency) {
             profileCount = 0;
             recordMethodCounts();
