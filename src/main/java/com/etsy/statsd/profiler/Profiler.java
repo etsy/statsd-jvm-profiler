@@ -47,6 +47,17 @@ public abstract class Profiler {
     public abstract TimeUnit getTimeUnit();
 
     /**
+     * CPUProfiler can emit some metrics that indicate the upper and lower bound on the length of stack traces
+     * This is helpful for querying this data for some backends (such as Graphite) that do not have rich query languages
+     * Reporters can override this to disable these metrics
+     *
+     * @return true if the bounds metrics should be emitted, false otherwise
+     */
+    protected boolean emitBounds() {
+        return reporter.emitBounds();
+    }
+
+    /**
      * Handle any additional arguments necessary for this profiler
      *
      * @param arguments The arguments given to the profiler

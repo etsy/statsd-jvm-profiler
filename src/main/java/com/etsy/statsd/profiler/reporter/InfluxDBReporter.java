@@ -67,6 +67,17 @@ public class InfluxDBReporter extends Reporter<InfluxDB> {
     }
 
     /**
+     * InfluxDB has a rich query language and does not need the bounds metrics emitted by CPUProfiler
+     * As such we can disable emitting these metrics
+     *
+     * @return false
+     */
+    @Override
+    public boolean emitBounds() {
+        return false;
+    }
+
+    /**
      *
      * @param server The server to which to report data
      * @param port The port on which the server is running

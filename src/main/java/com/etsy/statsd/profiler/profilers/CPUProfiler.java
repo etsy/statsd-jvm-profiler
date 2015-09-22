@@ -72,10 +72,12 @@ public class CPUProfiler extends Profiler {
     @Override
     public void flushData() {
         recordMethodCounts();
-        // These bounds are recorded to help speed up generating flame graphs
-        Range bounds = traces.getBounds();
-        recordGaugeValue("cpu.trace." + bounds.getLeft(), bounds.getLeft());
-        recordGaugeValue("cpu.trace." + bounds.getRight(), bounds.getRight());
+        // These bounds are recorded to help speed up generating flame graphs for certain backends
+        if (emitBounds()) {
+            Range bounds = traces.getBounds();
+            recordGaugeValue("cpu.trace." + bounds.getLeft(), bounds.getLeft());
+            recordGaugeValue("cpu.trace." + bounds.getRight(), bounds.getRight());
+        }
     }
 
     @Override
