@@ -44,28 +44,40 @@ $(document).ready(function() {
     var gcGet = $.get('/data/' + user + '/' + job + '/' + flow + '/' + stage + '/' + phase + optionalJvmName + gcPrefix);
     var classLoadingGet = $.get('/data/' + user + '/' + job + '/' + flow + '/' + stage + '/' + phase + optionalJvmName + classLoadingPrefix);
 
-    $.when(heapGet, nonHeapGet, finalizeGet, gcGet, classLoadingGet).done(function() {
+    $.when(heapGet).done(function() {
 	var heapResults = heapGet['responseJSON'];
-	var nonHeapResults = nonHeapGet['responseJSON'];
-	var finalizeResults = finalizeGet['responseJSON'];
-	var gcResults = gcGet['responseJSON'];
-	var classLoadingResults = classLoadingGet['responseJSON'];
-
 	ViewUtil.renderGraph(heapResults, 'Heap Usage', '#heap', ViewUtil.getMetricsForPool('total', memoryMetrics));
-	ViewUtil.renderGraph(nonHeapResults, 'Non-Heap Usage', '#nonheap', ViewUtil.getMetricsForPool('total', memoryMetrics));
-	ViewUtil.renderGraph(finalizeResults, 'Objects Pending Finalization', '#finalize', finalizeMetrics);
-	ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#count', gcCountMetrics);
-	ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#time', gcTimeMetrics);
-	ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#runtime', gcRuntimeMetrics);
-	ViewUtil.renderGraph(classLoadingResults, 'Class Loading', '#classloading', classLoadingMetrics);
 	heapPools.forEach(function(pool) {
 	    ViewUtil.renderGraph(heapResults, pool.title, pool.selector, ViewUtil.getMetricsForPool(pool.pool, memoryMetrics));
 	});
+    });
+
+    $.when(nonHeapGet).done(function() {
+	var nonHeapResults = nonHeapGet['responseJSON'];
+	ViewUtil.renderGraph(nonHeapResults, 'Non-Heap Usage', '#nonheap', ViewUtil.getMetricsForPool('total', memoryMetrics));
+	
 	nonHeapPools.forEach(function(pool) {
 	    ViewUtil.renderGraph(nonHeapResults, pool.title, pool.selector, ViewUtil.getMetricsForPool(pool.pool, memoryMetrics));
 	});
     });
 
+    $.when(finalizeGet).done(function() {
+	var finalizeResults = finalizeGet['responseJSON'];
+	ViewUtil.renderGraph(finalizeResults, 'Objects Pending Finalization', '#finalize', finalizeMetrics);
+    });
+
+    $.when(gcGet).done(function() {
+	var gcResults = gcGet['responseJSON'];
+	ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#count', gcCountMetrics);
+	ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#time', gcTimeMetrics);
+	ViewUtil.renderGraph(gcResults, 'Garbage Collection', '#runtime', gcRuntimeMetrics);
+    });
+
+    $.when(classLoadingGet).done(function() {
+	var classLoadingResults = classLoadingGet['responseJSON'];
+	ViewUtil.renderGraph(classLoadingResults, 'Class Loading', '#classloading', classLoadingMetrics);
+    });
+    
     if (refresh > 0) {
 	setTimeout(function() {
 	    location.reload();
