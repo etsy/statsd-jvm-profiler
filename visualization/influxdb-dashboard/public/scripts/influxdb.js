@@ -55,61 +55,63 @@ exports.getFlameGraphData = function(user, job, flow, stage, phase, jvmName, pre
 exports.getOptions = function(prefix, callback) {
     client.getSeries("heap.total.max", function(err, seriesNames) {
 	var result = {};
-	var series = seriesNames[0];
-	var columns = series.columns;
+	if (seriesNames !== undefined) {
+	    var series = seriesNames[0];
+	    var columns = series.columns;
 
-	var userIndex = columns.indexOf('username');
-	var jobIndex = columns.indexOf('job');
-	var flowIndex = columns.indexOf('flow');
-	var stageIndex = columns.indexOf('stage');
-	var phaseIndex = columns.indexOf('phase');
-	var jvmNameIndex = columns.indexOf('jvmName');
-	
-	series.values.map(function(values) {
-	    var user = values[userIndex];
-	    var job = values[jobIndex];
-	    var flow = values[flowIndex];
-	    var stage = values[stageIndex];
-	    var phase = values[phaseIndex];
-	    var jvmName = values[jvmNameIndex];
+	    var userIndex = columns.indexOf('username');
+	    var jobIndex = columns.indexOf('job');
+	    var flowIndex = columns.indexOf('flow');
+	    var stageIndex = columns.indexOf('stage');
+	    var phaseIndex = columns.indexOf('phase');
+	    var jvmNameIndex = columns.indexOf('jvmName');
+	    
+	    series.values.map(function(values) {
+		var user = values[userIndex];
+		var job = values[jobIndex];
+		var flow = values[flowIndex];
+		var stage = values[stageIndex];
+		var phase = values[phaseIndex];
+		var jvmName = values[jvmNameIndex];
 
-	    var userVal = result[user]
-    	    if (!userVal) {
-    		userVal = {};
-    	    }
+		var userVal = result[user]
+    		if (!userVal) {
+    		    userVal = {};
+    		}
 
-    	    var jobVal = userVal[job];
-    	    if (!jobVal) {
-    		jobVal = {};
-    	    }
+    		var jobVal = userVal[job];
+    		if (!jobVal) {
+    		    jobVal = {};
+    		}
 
-    	    var flowVal = jobVal[flow];
-    	    if(!flowVal) {
-    		flowVal = {};
-    	    }
+    		var flowVal = jobVal[flow];
+    		if(!flowVal) {
+    		    flowVal = {};
+    		}
 
-    	    var stageVal = flowVal[stage];
-    	    if(!stageVal) {
-    		stageVal = {};
-    	    }
+    		var stageVal = flowVal[stage];
+    		if(!stageVal) {
+    		    stageVal = {};
+    		}
 
 
-	    var phaseVal = stageVal[phase];
-    	    if(!phaseVal) {
-    		phaseVal = [];
-    	    }
+		var phaseVal = stageVal[phase];
+    		if(!phaseVal) {
+    		    phaseVal = [];
+    		}
 
-	    if (phaseVal.indexOf(jvmName) == -1) {
-		phaseVal.push(jvmName);
-	    }
+		if (phaseVal.indexOf(jvmName) == -1) {
+		    phaseVal.push(jvmName);
+		}
 
-	    stageVal[phase] = phaseVal;
-    	    flowVal[stage] = stageVal;
-    	    jobVal[flow] = flowVal;
-    	    userVal[job] = jobVal;
-    	    result[user] = userVal;
-	});
-	callback(result);
+		stageVal[phase] = phaseVal;
+    		flowVal[stage] = stageVal;
+    		jobVal[flow] = flowVal;
+    		userVal[job] = jobVal;
+    		result[user] = userVal;
+	    });
+	    callback(result);
+	}
     });
 }
 
