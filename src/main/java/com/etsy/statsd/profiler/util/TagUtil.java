@@ -3,7 +3,6 @@ package com.etsy.statsd.profiler.util;
 import com.google.common.collect.Maps;
 
 import java.lang.management.ManagementFactory;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
