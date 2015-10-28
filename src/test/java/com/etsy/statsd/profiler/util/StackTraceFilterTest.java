@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -23,8 +24,8 @@ public class StackTraceFilterTest {
         includePackages = Arrays.asList("com.etsy", "com.twitter.scalding");
         filter = new StackTraceFilter(includePackages, CPUProfiler.EXCLUDE_PACKAGES);
         excludedTraces = Arrays.asList("com-etsy-statsd-profiler-profiler-util-StackTraceFormatter-formatStackTraceElement", "com-timgroup-statsd-StatsDClient-send", "com-etsy-statsd-profiler-profiler-util-StackTraceFormatter-formatStackTraceElement.com-etsy-Foo-fooTest");
-        includedTraces = Arrays.asList("com-etsy-foo-fooTest");
-        otherTraces = Arrays.asList("com-google-guava-Foo-helloWorld");
+        includedTraces = Collections.singletonList("com-etsy-foo-fooTest");
+        otherTraces = Collections.singletonList("com-google-guava-Foo-helloWorld");
     }
 
     @Test
