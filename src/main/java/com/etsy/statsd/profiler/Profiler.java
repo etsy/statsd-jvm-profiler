@@ -16,6 +16,7 @@ public abstract class Profiler {
 
     private Reporter<?> reporter;
 
+    private long recordedStats = 0;
     public Profiler(Reporter reporter, Arguments arguments) {
         Preconditions.checkNotNull(reporter);
         this.reporter = reporter;
@@ -71,6 +72,7 @@ public abstract class Profiler {
      * @param value The value of the gauge
      */
     protected void recordGaugeValue(String key, long value) {
+        recordedStats++;
         reporter.recordGaugeValue(key, value);
     }
 
@@ -81,6 +83,9 @@ public abstract class Profiler {
      * @param gauges A map of gauge names to values
      */
     protected void recordGaugeValues(Map<String, Long> gauges) {
+        recordedStats++;
         reporter.recordGaugeValues(gauges);
     }
+
+    public long getRecordedStats() { return recordedStats; }
 }

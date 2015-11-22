@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertEquals;
 
@@ -19,8 +21,9 @@ public class ProfilerShutdownHookWorkerTest {
         Profiler mockProfiler1 = new MockProfiler1(output);
         Profiler mockProfiler2 = new MockProfiler2(output);
         Collection<Profiler> profilers = Arrays.asList(mockProfiler1, mockProfiler2);
+        AtomicReference<Boolean> isRunning = new AtomicReference<>(true);
 
-        Thread t = new Thread(new ProfilerShutdownHookWorker(profilers));
+        Thread t = new Thread(new ProfilerShutdownHookWorker(profilers, isRunning));
         t.run();
         t.join();
 
@@ -28,5 +31,6 @@ public class ProfilerShutdownHookWorkerTest {
         expectedOutput.add(MockProfiler1.class.getSimpleName() + "-flushData");
         expectedOutput.add(MockProfiler2.class.getSimpleName() + "-flushData");
         assertEquals(expectedOutput, output);
+        assertEquals(isRunning.get(), false);
     }
 }

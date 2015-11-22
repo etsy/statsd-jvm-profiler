@@ -10,14 +10,12 @@ import com.google.common.util.concurrent.MoreExecutors;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * javaagent profiler using StatsD as a backend
@@ -27,6 +25,8 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 public class Agent {
     public static final int EXECUTOR_DELAY = 0;
 
+    static AtomicReference<Boolean> isRunning = new AtomicReference<>(true);
+    static LinkedList<String> errors = new LinkedList<>();
     /**
      * Start the profiler
      *
@@ -59,12 +59,14 @@ public class Agent {
                 (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(profilers.size(), new ProfilerThreadFactory()));
 
         Map<String, ScheduledFuture<?>> runningProfilers = new HashMap<>(profilers.size());
+        Map<String, Profiler> activeProfilers = new HashMap<>(profilers.size());
         for (Profiler profiler : profilers) {
-            ProfilerWorkerThread worker = new ProfilerWorkerThread(profiler);
-            runningProfilers.put(profiler.getClass().getSimpleName(),
-                    scheduledExecutorService.scheduleAtFixedRate(worker, EXECUTOR_DELAY, profiler.getPeriod(), profiler.getTimeUnit()));
+            activeProfilers.put(profiler.getClass().getSimpleName(), profiler);
+            ProfilerWorkerThread worker = new ProfilerWorkerThread(profiler, errors);
+            ScheduledFuture future =  scheduledExecutorService.scheduleAtFixedRate(worker, EXECUTOR_DELAY, profiler.getPeriod(), profiler.getTimeUnit());
+            runningProfilers.put(profiler.getClass().getSimpleName(), future);
         }
-        ProfilerServer.startServer(runningProfilers, httpPort);
+        ProfilerServer.startServer(runningProfilers, activeProfilers, httpPort, isRunning, errors);
     }
 
     /**
@@ -73,7 +75,7 @@ public class Agent {
      * @param profilers The profilers to flush at shutdown
      */
     private static void registerShutdownHook(Collection<Profiler> profilers) {
-        Thread shutdownHook = new Thread(new ProfilerShutdownHookWorker(profilers));
+        Thread shutdownHook = new Thread(new ProfilerShutdownHookWorker(profilers, isRunning));
         Runtime.getRuntime().addShutdownHook(shutdownHook);
     }
 

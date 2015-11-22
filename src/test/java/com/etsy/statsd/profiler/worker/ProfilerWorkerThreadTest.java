@@ -5,6 +5,7 @@ import com.etsy.statsd.profiler.profilers.MockProfiler1;
 import org.junit.Test;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -15,7 +16,7 @@ public class ProfilerWorkerThreadTest {
         Set<String> output = new HashSet<>();
         Profiler mockProfiler1 = new MockProfiler1(output);
 
-        Thread t = new Thread(new ProfilerWorkerThread(mockProfiler1));
+        Thread t = new Thread(new ProfilerWorkerThread(mockProfiler1, new LinkedList<String>()));
         t.run();
         t.join();
 
