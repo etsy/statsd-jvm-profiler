@@ -12,6 +12,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Sets up a simple embedded HTTP server for interacting with the profiler while it runs
@@ -19,6 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author Andrew Johnson
  */
 public class ProfilerServer {
+    private static final Logger log = Logger.getLogger(ProfilerServer.class.getName());
     private static final Vertx vertx = VertxFactory.newVertx();
 
     /**
@@ -36,6 +39,8 @@ public class ProfilerServer {
                 if (event.failed()) {
                     server.close();
                     startServer(runningProfilers, activeProfilers, port + 1, isRunning, errors);
+                } else if (event.succeeded()) {
+                    log.info("Profiler server started on port " + port);
                 }
             }
         });

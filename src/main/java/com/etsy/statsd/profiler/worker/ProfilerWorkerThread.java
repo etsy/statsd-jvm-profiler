@@ -30,7 +30,7 @@ public class ProfilerWorkerThread implements Runnable {
             e.printStackTrace(pw);
             errors.add(String.format("Received an error running profiler: %s, error: %s", profiler.getClass().getName(), sw.toString()));
             if ( errors.size() > 10) {
-                errors.pollLast();
+                errors.pollFirst();
             }
         }
     }
