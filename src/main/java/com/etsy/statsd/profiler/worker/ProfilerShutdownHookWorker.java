@@ -3,6 +3,7 @@ package com.etsy.statsd.profiler.worker;
 import com.etsy.statsd.profiler.Profiler;
 
 import java.util.Collection;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Worker thread for profiler shutdown hook
@@ -11,9 +12,10 @@ import java.util.Collection;
  */
 public class ProfilerShutdownHookWorker implements Runnable {
     private Collection<Profiler> profilers;
-
-    public ProfilerShutdownHookWorker(Collection<Profiler> profilers) {
+    private AtomicReference<Boolean> isRunning;
+    public ProfilerShutdownHookWorker(Collection<Profiler> profilers, AtomicReference<Boolean> isRunning) {
         this.profilers = profilers;
+        this.isRunning = isRunning;
     }
 
     @Override
@@ -21,5 +23,7 @@ public class ProfilerShutdownHookWorker implements Runnable {
         for (Profiler p : profilers) {
             p.flushData();
         }
+
+        isRunning.set(false);
     }
 }

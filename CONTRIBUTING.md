@@ -19,3 +19,4 @@ Every pull request will be built with [Travis CI](https://travis-ci.org/etsy/sta
 - Joe Meissler [stickperson](https://github.com/stickperson)
 - Ben Darfler [bdarfler](https://github.com/bdarfler)
 - Ihor Bobak [ibobak](https://github.com/ibobak)
+- Jeff Fenchel [jfenc91](https://github.com/jfenc91)
