@@ -33,7 +33,9 @@ public class MemoryProfiler extends Profiler {
         classLoadingMXBean = ManagementFactory.getClassLoadingMXBean();
         memoryPoolMXBeans = ManagementFactory.getMemoryPoolMXBeans();
 
-        for (GarbageCollectorMXBean b : gcMXBeans) gcTimes.put(b, new AtomicLong());
+        for (GarbageCollectorMXBean b : gcMXBeans) {
+            gcTimes.put(b, new AtomicLong());
+        }
     }
 
     /**
@@ -86,7 +88,9 @@ public class MemoryProfiler extends Profiler {
             metrics.put("gc." + gcName + ".time", time);
             metrics.put("gc." + gcName + ".runtime", runtime);
 
-            if (runtime > 0) gcTimes.get(gcMXBean).set(time);
+            if (runtime > 0) {
+                gcTimes.get(gcMXBean).set(time);
+            }
         }
 
         long loadedClassCount = classLoadingMXBean.getLoadedClassCount();

@@ -15,6 +15,8 @@ import java.util.Collection;
  * @author Andrew Johnson
  */
 public class ThreadDumper {
+    private ThreadDumper() { }
+
     private static ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
 
     /**
@@ -23,7 +25,7 @@ public class ThreadDumper {
     private static class ThreadStatePredicate implements Predicate<ThreadInfo> {
         private Thread.State state;
 
-        public ThreadStatePredicate(Thread.State state) {
+        ThreadStatePredicate(Thread.State state) {
             this.state = state;
         }
 

@@ -8,6 +8,7 @@ import java.util.Map;
  * @author Andrew Johnson
  */
 public class MapUtil {
+    private MapUtil() { }
 
     /**
      * Set a new value in a map or increment an existing value

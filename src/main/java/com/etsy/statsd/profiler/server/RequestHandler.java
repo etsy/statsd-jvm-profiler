@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author Andrew Johnson
  */
 public class RequestHandler {
+    private RequestHandler() { }
     
     /**
      * Construct a RouteMatcher for the supported routes
@@ -126,7 +127,7 @@ public class RequestHandler {
             public boolean apply(Map.Entry<String, ScheduledFuture<?>> input) {
                 return !input.getValue().isDone();
             }
-        }), new Function<Map.Entry<String,ScheduledFuture<?>>, String>() {
+        }), new Function<Map.Entry<String, ScheduledFuture<?>>, String>() {
             @Override
             public String apply(Map.Entry<String, ScheduledFuture<?>> input) {
                 return input.getKey();

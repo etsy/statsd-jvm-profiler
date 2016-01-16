@@ -12,6 +12,8 @@ import java.util.Map;
  * @author Andrew Johnson
  */
 public class TagUtil {
+    private TagUtil() { }
+
     public static final String SKIP_TAG = "SKIP";
     public static final String PREFIX_TAG = "prefix";
 

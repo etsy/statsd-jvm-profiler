@@ -92,18 +92,18 @@ public class Arguments {
 
     @SuppressWarnings("unchecked")
     private Set<Class<? extends Profiler>> parseProfilerArg(String profilerArg) {
-        Set<Class<? extends Profiler>> profilers = new HashSet<>();
+        Set<Class<? extends Profiler>> parsedProfilers = new HashSet<>();
         if (profilerArg == null) {
-            profilers.add(CPUProfiler.class);
-            profilers.add(MemoryProfiler.class);
+            parsedProfilers.add(CPUProfiler.class);
+            parsedProfilers.add(MemoryProfiler.class);
         } else {
             for (String p : profilerArg.split(":")) {
                 try {
-                    profilers.add((Class<? extends Profiler>) Class.forName(p));
+                    parsedProfilers.add((Class<? extends Profiler>) Class.forName(p));
                 } catch (ClassNotFoundException e) {
                     // This might indicate the package was left off, so we'll try with the default package
                     try {
-                        profilers.add((Class<? extends Profiler>) Class.forName("com.etsy.statsd.profiler.profilers." + p));
+                        parsedProfilers.add((Class<? extends Profiler>) Class.forName("com.etsy.statsd.profiler.profilers." + p));
                     } catch (ClassNotFoundException inner) {
                         throw new IllegalArgumentException("Profiler " + p + " not found", inner);
                     }
@@ -111,10 +111,10 @@ public class Arguments {
             }
         }
 
-        if (profilers.isEmpty()) {
+        if (parsedProfilers.isEmpty()) {
             throw new IllegalArgumentException("At least one profiler must be run");
         }
 
-        return profilers;
+        return parsedProfilers;
     }
 }

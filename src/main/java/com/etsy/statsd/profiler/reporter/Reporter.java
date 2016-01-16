@@ -11,7 +11,7 @@ import java.util.Map;
  * @author Andrew Johnson
  */
 public abstract class Reporter<T> {
-    public static final Class<?>[] CONSTRUCTOR_PARAM_TYPES =new Class<?>[]{Arguments.class};
+    public static final Class<?>[] CONSTRUCTOR_PARAM_TYPES = new Class<?>[]{Arguments.class};
 
     /**
      * The underlying implementation for this reporter

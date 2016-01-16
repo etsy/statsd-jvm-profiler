@@ -8,6 +8,8 @@ import java.util.concurrent.TimeUnit;
  * @author Andrew Johnson
  */
 public class TimeUtil {
+    private TimeUtil() { }
+
     /**
      * Convert a reporting period into the time scale of a profiling period
      *

@@ -11,6 +11,8 @@ import java.util.List;
  * @author Andrew Johnson
  */
 public class StackTraceFormatter {
+    private StackTraceFormatter() { }
+
     /**
      * Formats a StackTraceElement as a String, excluding the line number
      *

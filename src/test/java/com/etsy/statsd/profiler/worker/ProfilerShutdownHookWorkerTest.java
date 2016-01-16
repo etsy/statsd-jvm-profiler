@@ -1,15 +1,14 @@
 package com.etsy.statsd.profiler.worker;
 
 import com.etsy.statsd.profiler.Profiler;
-import com.etsy.statsd.profiler.profilers.MockProfiler2;
 import com.etsy.statsd.profiler.profilers.MockProfiler1;
+import com.etsy.statsd.profiler.profilers.MockProfiler2;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertEquals;
