@@ -29,6 +29,11 @@ public class Agent {
 
     static AtomicReference<Boolean> isRunning = new AtomicReference<>(true);
     static LinkedList<String> errors = new LinkedList<>();
+
+    public static void agentmain(final String args, final Instrumentation instrumentation) {
+        premain(args, instrumentation);
+    }
+
     /**
      * Start the profiler
      *
