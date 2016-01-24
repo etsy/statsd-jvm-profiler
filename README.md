@@ -41,6 +41,8 @@ The profiler is enabled using the JVM's `-javaagent` argument.  You are required
 -javaagent:/usr/etsy/statsd-jvm-profiler/statsd-jvm-profiler.jar=server=hostname,port=num
 ```
 
+You should use the uberjar when starting the profiler in this manner so that all the profiler's dependencies are available.
+
 The profiler can also be loaded dynamically (after the JVM has already started), but this technique requires relying on Sun's `tools.jar`, meaning it's an implementation-specific solution that might not work for all JVMs. For more information see the [Dynamic Loading section](#dynamic-loading-of-agent). 
 
 An example of setting up Cascading/Scalding jobs to use the profiler can be found in the `example` directory.
