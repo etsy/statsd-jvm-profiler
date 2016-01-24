@@ -22,6 +22,8 @@ The profiler is enabled using the JVM's `-javaagent` argument.  You are required
 -javaagent:/usr/etsy/statsd-jvm-profiler/statsd-jvm-profiler.jar=server=hostname,port=num
 ```
 
+The profiler can also be loaded dynamically (after the JVM has already started), but this technique requires relying on Sun's `tools.jar`, meaning it's an implementation-specific solution that might not work for all JVMs. For more information see the [Dynamic Loading section](#dynamic-loading-of-agent). 
+
 An example of setting up Cascading/Scalding jobs to use the profiler can be found in the `example` directory.
 
 ### Global Options
@@ -96,6 +98,34 @@ You can disable either the memory or CPU metrics using the `profilers` argument:
 ## Visualization
 
 The `visualization` directory contains some utilities for visualizing the output of the profiler.
+
+## Dynamic Loading of Agent
+
+1. Make sure you have the `tools.jar` available in your classpath during compilation and runtime. This JAR is usually found in the JAVA_HOME directory under the `/lib` folder for Oracle Java installations.
+2. Make sure the `jvm-profiler` JAR is available during runtime. 
+3. During your application boostrap process, do the following:
+
+```scala
+  val jarPath: String = s"$ABSOLUTE_PATH_TO/com.etsy.statsd-jvm-profiler-$VERSION.jar"
+  val agentArgs: String = s"server=$SERVER,port=$PORT"
+  attachJvmAgent(jarPath, agentArgs)
+
+  def attachJvmAgent(profilerJarPath: String, agentArgs: String): Unit = {
+    val nameOfRunningVM: String = java.lang.management.ManagementFactory.getRuntimeMXBean.getName
+    val p: Integer = nameOfRunningVM.indexOf('@')
+    val pid: String = nameOfRunningVM.substring(0, p)
+
+    try {
+      val vm: com.sun.tools.attach.VirtualMachine = com.sun.tools.attach.VirtualMachine.attach(pid)
+      vm.loadAgent(profilerJarPath, agentArgs)
+      vm.detach()
+      LOGGER.info("Dynamically loaded StatsD JVM Profiler Agent...");
+    } catch {
+      case e: Exception => LOGGER.warn(s"Could not dynamically load StatsD JVM Profiler Agent ($profilerJarPath)", e);
+    }
+  }
+```
+
 
 ## Contributing
 Contributions are highly encouraged!  Check out [the contribution guidlines](https://github.com/etsy/statsd-jvm-profiler/blob/master/CONTRIBUTING.md).
