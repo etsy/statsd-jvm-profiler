@@ -15,6 +15,25 @@ You will need the statsd-jvm-profiler JAR on the machine where the JVM will be r
 
 The JAR can be built with `mvn package`.  You will need a relatively recent Maven (at least Maven 3).
 
+statsd-jvm-profiler is available in Maven Central:
+```xml
+<dependency>
+  <groupId>com.etsy</groupId>
+  <artifactId>statsd-jvm-profiler</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
+If you would like an uberjar containing all of the dependencies instead of the standard JAR, use the `jar-with-dependencies` classifier:
+```xml
+<dependency>
+  <groupId>com.etsy</groupId>
+  <artifactId>statsd-jvm-profiler</artifactId>
+  <version>1.0.0</version>
+  <classifier>jar-with-dependencies</classifier>
+</dependency>
+```
+
 ## Usage
 
 The profiler is enabled using the JVM's `-javaagent` argument.  You are required to specify at least the StatsD host and port number to use.  You can also specify the prefix for metrics and a whitelist of packages to be included in the CPU profiling.  Arguments can be specified like so:

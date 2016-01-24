@@ -4,7 +4,7 @@
 
     <groupId>com.etsy</groupId>
     <artifactId>statsd-jvm-profiler</artifactId>
-    <version>0.9.1-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>statsd-jvm-profiler</name>
@@ -163,6 +163,10 @@
                         <goals>
                             <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>jar-with-dependencies</shadedClassifierName>
+                        </configuration>
                     </execution>
                 </executions>
                 <configuration>
