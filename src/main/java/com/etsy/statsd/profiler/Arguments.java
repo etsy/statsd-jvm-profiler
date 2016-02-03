@@ -20,6 +20,7 @@ public class Arguments {
     private static final String PROFILERS = "profilers";
     private static final String REPORTER = "reporter";
     private static final String HTTP_PORT = "httpPort";
+    private static final String HTTP_SEVER_ENABLED = "httpServerEnabled";
 
     private static final Collection<String> REQUIRED = Arrays.asList(SERVER, PORT);
 
@@ -56,6 +57,7 @@ public class Arguments {
     public Map<String, String> remainingArgs;
     public Class<? extends Reporter<?>> reporter;
     public int httpPort;
+    public boolean httpServerEnabled;
 
     private Arguments(Map<String, String> parsedArgs) {
         server = parsedArgs.get(SERVER);
@@ -64,6 +66,7 @@ public class Arguments {
         profilers = parseProfilerArg(parsedArgs.get(PROFILERS));
         reporter = parserReporterArg(parsedArgs.get(REPORTER));
         httpPort = Integer.parseInt(Optional.fromNullable(parsedArgs.get(HTTP_PORT)).or("5005"));
+        httpServerEnabled = Boolean.parseBoolean(Optional.fromNullable(parsedArgs.get(HTTP_SEVER_ENABLED)).or("true"));
 
         parsedArgs.remove(SERVER);
         parsedArgs.remove(PORT);
@@ -112,7 +115,7 @@ public class Arguments {
         }
 
         if (parsedProfilers.isEmpty()) {
-            throw new IllegalArgumentException("At least one profiler must be run");
+            throw new IllegalArgumentException("At least one profiler must be specified");
         }
 
         return parsedProfilers;
