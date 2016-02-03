@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class ArgumentsTest {
     @Rule
@@ -143,5 +145,21 @@ public class ArgumentsTest {
         Arguments arguments = Arguments.parseArgs(args);
 
         assertEquals(StatsDReporter.class, arguments.reporter);
+    }
+
+    @Test
+    public void testHttpServerEnabledByDefault() throws Exception {
+        String args = "server=localhost,port=8125";
+        Arguments arguments = Arguments.parseArgs(args);
+
+        assertTrue(arguments.httpServerEnabled);
+    }
+
+    @Test
+    public void testHttpServerDisabled() throws Exception {
+        String args = "server=localhost,port=8125,httpServerEnabled=false";
+        Arguments arguments = Arguments.parseArgs(args);
+
+        assertFalse(arguments.httpServerEnabled);
     }
 }

@@ -50,7 +50,7 @@ public class Agent {
             profilers.add(instantiate(profiler, Profiler.CONSTRUCTOR_PARAM_TYPES, reporter, arguments));
         }
 
-        scheduleProfilers(profilers, arguments.httpPort);
+        scheduleProfilers(profilers, arguments);
         registerShutdownHook(profilers);
     }
 
@@ -58,8 +58,9 @@ public class Agent {
      * Schedule profilers with a SchedulerExecutorService
      *
      * @param profilers Collection of profilers to schedule
+     * @param arguments
      */
-    private static void scheduleProfilers(Collection<Profiler> profilers, int httpPort) {
+    private static void scheduleProfilers(Collection<Profiler> profilers, Arguments arguments) {
         // We need to convert to an ExitingScheduledExecutorService so the JVM shuts down
         // when the main thread finishes
         ScheduledExecutorService scheduledExecutorService = MoreExecutors.getExitingScheduledExecutorService(
@@ -73,7 +74,10 @@ public class Agent {
             ScheduledFuture future =  scheduledExecutorService.scheduleAtFixedRate(worker, EXECUTOR_DELAY, profiler.getPeriod(), profiler.getTimeUnit());
             runningProfilers.put(profiler.getClass().getSimpleName(), future);
         }
-        ProfilerServer.startServer(runningProfilers, activeProfilers, httpPort, isRunning, errors);
+
+        if (arguments.httpServerEnabled) {
+            ProfilerServer.startServer(runningProfilers, activeProfilers, arguments.httpPort, isRunning, errors);
+        }
     }
 
     /**
