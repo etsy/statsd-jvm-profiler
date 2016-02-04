@@ -12,8 +12,8 @@ import java.util.LinkedList;
  * @author Andrew Johnson
  */
 public class ProfilerWorkerThread implements Runnable {
-    private Profiler profiler;
-    private LinkedList<String> errors;
+    private final Profiler profiler;
+    private final LinkedList<String> errors;
 
     public ProfilerWorkerThread(Profiler profiler, LinkedList<String> errors) {
         this.profiler = profiler;

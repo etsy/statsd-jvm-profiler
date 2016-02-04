@@ -20,11 +20,11 @@ import java.util.concurrent.atomic.AtomicLong;
 public class MemoryProfiler extends Profiler {
     public static final long PERIOD = 10;
 
-    private MemoryMXBean memoryMXBean;
-    private List<GarbageCollectorMXBean> gcMXBeans;
-    private HashMap<GarbageCollectorMXBean, AtomicLong> gcTimes = new HashMap<>();
-    private ClassLoadingMXBean classLoadingMXBean;
-    private List<MemoryPoolMXBean> memoryPoolMXBeans;
+    private final MemoryMXBean memoryMXBean;
+    private final List<GarbageCollectorMXBean> gcMXBeans;
+    private final HashMap<GarbageCollectorMXBean, AtomicLong> gcTimes = new HashMap<>();
+    private final ClassLoadingMXBean classLoadingMXBean;
+    private final List<MemoryPoolMXBean> memoryPoolMXBeans;
 
     public MemoryProfiler(Reporter reporter, Arguments arguments) {
         super(reporter, arguments);

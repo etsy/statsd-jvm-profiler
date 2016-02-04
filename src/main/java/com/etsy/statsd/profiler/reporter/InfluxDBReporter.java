@@ -28,7 +28,7 @@ public class InfluxDBReporter extends Reporter<InfluxDB> {
     private String password;
     private String database;
     private String tagMapping;
-    private Map<String, String> tags;
+    private final Map<String, String> tags;
 
     public InfluxDBReporter(Arguments arguments) {
         super(arguments);

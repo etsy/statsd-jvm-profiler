@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadFactory;
 public class ProfilerThreadFactory implements ThreadFactory {
     public static final String NAME_PREFIX = "statsd-jvm-profiler";
 
-    private ThreadFactory defaultThreadFactory = Executors.defaultThreadFactory();
+    private final ThreadFactory defaultThreadFactory = Executors.defaultThreadFactory();
 
     /**
      * Create a profiler thread with the name prefixed with 'statsd-jvm-profiler'

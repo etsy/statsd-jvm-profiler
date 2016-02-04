@@ -18,10 +18,10 @@ public class StackTraceFilter {
     public static final Pattern MATCH_EVERYTHING = Pattern.compile("^.*$");
     public static final Pattern MATCH_NOTHING = Pattern.compile("$^");
 
-    private Pattern includePattern;
-    private Pattern excludePattern;
+    private final Pattern includePattern;
+    private final Pattern excludePattern;
     // This allows us to shortcut doing regex matching for performance
-    private boolean arePatternsDefault;
+    private final boolean arePatternsDefault;
 
     public StackTraceFilter(List<String> includePackages, List<String> excludePackages) {
         includePattern = getPackagePattern(includePackages, MATCH_EVERYTHING);
