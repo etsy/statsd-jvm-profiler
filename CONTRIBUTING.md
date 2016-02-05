@@ -21,3 +21,4 @@ Every pull request will be built with [Travis CI](https://travis-ci.org/etsy/sta
 - Ihor Bobak [ibobak](https://github.com/ibobak)
 - Jeff Fenchel [jfenc91](https://github.com/jfenc91)
 - Alejandro Rivera [AlejandroRivera](https://github.com/AlejandroRivera)
+- Mohamed Ezzat [m-ezzat](https://github.com/m-ezzat)
