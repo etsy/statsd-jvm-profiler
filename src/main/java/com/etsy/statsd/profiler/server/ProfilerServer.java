@@ -1,11 +1,11 @@
 package com.etsy.statsd.profiler.server;
 
 import com.etsy.statsd.profiler.Profiler;
-import org.vertx.java.core.AsyncResult;
-import org.vertx.java.core.Handler;
-import org.vertx.java.core.Vertx;
-import org.vertx.java.core.VertxFactory;
-import org.vertx.java.core.http.HttpServer;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpServer;
+import io.vertx.ext.web.impl.RouterImpl;
 
 import java.util.LinkedList;
 import java.util.Map;
@@ -22,7 +22,7 @@ public class ProfilerServer {
     private ProfilerServer() { }
 
     private static final Logger LOGGER = Logger.getLogger(ProfilerServer.class.getName());
-    private static final Vertx VERTX = VertxFactory.newVertx();
+    private static final Vertx VERTX = Vertx.factory.vertx();
 
     /**
      * Start an embedded HTTP server
@@ -32,7 +32,7 @@ public class ProfilerServer {
      */
     public static void startServer(final Map<String, ScheduledFuture<?>> runningProfilers, final Map<String, Profiler> activeProfilers, final int port, final AtomicReference<Boolean> isRunning, final LinkedList<String> errors) {
         final HttpServer server = VERTX.createHttpServer();
-        server.requestHandler(RequestHandler.getMatcher(runningProfilers, activeProfilers, isRunning, errors));
+        server.requestHandler(RequestHandler.getMatcher(new RouterImpl(VERTX), runningProfilers, activeProfilers, isRunning, errors));
         server.listen(port, new Handler<AsyncResult<HttpServer>>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
