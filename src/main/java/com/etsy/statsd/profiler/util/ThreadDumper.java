@@ -23,7 +23,7 @@ public class ThreadDumper {
      * Predicate to filter by thread state
      */
     private static class ThreadStatePredicate implements Predicate<ThreadInfo> {
-        private Thread.State state;
+        private final Thread.State state;
 
         ThreadStatePredicate(Thread.State state) {
             this.state = state;

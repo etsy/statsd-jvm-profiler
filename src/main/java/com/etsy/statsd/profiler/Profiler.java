@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class Profiler {
     public static final Class<?>[] CONSTRUCTOR_PARAM_TYPES = new Class<?>[]{Reporter.class, Arguments.class};
 
-    private Reporter<?> reporter;
+    private final Reporter<?> reporter;
 
     private long recordedStats = 0;
     public Profiler(Reporter reporter, Arguments arguments) {

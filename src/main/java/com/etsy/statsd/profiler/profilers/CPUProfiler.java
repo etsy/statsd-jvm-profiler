@@ -29,10 +29,10 @@ public class CPUProfiler extends Profiler {
     public static final long PERIOD = 10;
     public static final List<String> EXCLUDE_PACKAGES = Arrays.asList("com.etsy.statsd.profiler", "com.timgroup.statsd");
 
-    private CPUTraces traces;
+    private final CPUTraces traces;
     private long profileCount;
     private StackTraceFilter filter;
-    private long reportingFrequency;
+    private final long reportingFrequency;
 
 
     public CPUProfiler(Reporter reporter, Arguments arguments) {

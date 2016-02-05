@@ -4,8 +4,8 @@ package com.etsy.statsd.profiler.util;
  * Represents an immutable range of integers
  */
 public class Range {
-    private int left;
-    private int right;
+    private final int left;
+    private final int right;
 
     public Range(int left, int right) {
         this.left = left;

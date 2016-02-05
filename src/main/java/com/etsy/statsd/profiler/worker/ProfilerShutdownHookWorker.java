@@ -11,8 +11,8 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author Andrew Johnson
  */
 public class ProfilerShutdownHookWorker implements Runnable {
-    private Collection<Profiler> profilers;
-    private AtomicReference<Boolean> isRunning;
+    private final Collection<Profiler> profilers;
+    private final AtomicReference<Boolean> isRunning;
     public ProfilerShutdownHookWorker(Collection<Profiler> profilers, AtomicReference<Boolean> isRunning) {
         this.profilers = profilers;
         this.isRunning = isRunning;
