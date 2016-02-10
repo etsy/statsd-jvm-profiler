@@ -24,32 +24,6 @@ public class Arguments {
 
     private static final Collection<String> REQUIRED = Arrays.asList(SERVER, PORT);
 
-    /**
-     * Parses arguments into an Arguments object
-     *
-     * @param args A String containing comma-delimited args in k=v form
-     * @return An Arguments object representing the given arguments
-     */
-    public static Arguments parseArgs(final String args) {
-        Map<String, String> parsed = new HashMap<>();
-        for (String argPair : args.split(",")) {
-            String[] tokens = argPair.split("=");
-            if (tokens.length != 2) {
-                throw new IllegalArgumentException("statsd-jvm-profiler takes a comma-delimited list of arguments in k=v form");
-            }
-
-            parsed.put(tokens[0], tokens[1]);
-        }
-
-        for (String requiredArg : REQUIRED) {
-            if (!parsed.containsKey(requiredArg)) {
-                throw new IllegalArgumentException(String.format("%s argument was not supplied", requiredArg));
-            }
-        }
-
-        return new Arguments(parsed);
-    }
-
     public String server;
     public int port;
     public String metricsPrefix;
@@ -75,6 +49,32 @@ public class Arguments {
         remainingArgs = parsedArgs;
     }
 
+    /**
+     * Parses arguments into an Arguments object
+     *
+     * @param args A String containing comma-delimited args in k=v form
+     * @return An Arguments object representing the given arguments
+     */
+    public static Arguments parseArgs(final String args) {
+        Map<String, String> parsed = new HashMap<>();
+        for (String argPair : args.split(",")) {
+            String[] tokens = argPair.split("=");
+            if (tokens.length != 2) {
+                throw new IllegalArgumentException("statsd-jvm-profiler takes a comma-delimited list of arguments in k=v form");
+            }
+
+            parsed.put(tokens[0], tokens[1]);
+        }
+
+        for (String requiredArg : REQUIRED) {
+            if (!parsed.containsKey(requiredArg)) {
+                throw new IllegalArgumentException(String.format("%s argument was not supplied", requiredArg));
+            }
+        }
+
+        return new Arguments(parsed);
+    }
+    
     @SuppressWarnings("unchecked")
     private Class<? extends Reporter<?>> parserReporterArg(String reporterArg) {
         if (reporterArg == null) {

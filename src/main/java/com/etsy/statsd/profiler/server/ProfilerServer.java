@@ -19,10 +19,10 @@ import java.util.logging.Logger;
  * @author Andrew Johnson
  */
 public class ProfilerServer {
-    private ProfilerServer() { }
-
     private static final Logger LOGGER = Logger.getLogger(ProfilerServer.class.getName());
     private static final Vertx VERTX = Vertx.factory.vertx();
+
+    private ProfilerServer() { }
 
     /**
      * Start an embedded HTTP server
