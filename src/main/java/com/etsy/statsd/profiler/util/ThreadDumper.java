@@ -15,9 +15,9 @@ import java.util.Collection;
  * @author Andrew Johnson
  */
 public class ThreadDumper {
-    private ThreadDumper() { }
-
     private static ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+
+    private ThreadDumper() { }
 
     /**
      * Predicate to filter by thread state

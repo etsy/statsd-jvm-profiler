@@ -23,12 +23,12 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author Andrew Johnson
  */
 public class Agent {
-    private Agent() { }
-
     public static final int EXECUTOR_DELAY = 0;
 
     static AtomicReference<Boolean> isRunning = new AtomicReference<>(true);
     static LinkedList<String> errors = new LinkedList<>();
+
+    private Agent() { }
 
     public static void agentmain(final String args, final Instrumentation instrumentation) {
         premain(args, instrumentation);

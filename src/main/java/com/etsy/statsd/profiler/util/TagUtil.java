@@ -12,8 +12,6 @@ import java.util.Map;
  * @author Andrew Johnson
  */
 public class TagUtil {
-    private TagUtil() { }
-
     public static final String SKIP_TAG = "SKIP";
     public static final String PREFIX_TAG = "prefix";
 
@@ -21,6 +19,8 @@ public class TagUtil {
     public static final String PID_TAG = "pid";
     public static final String HOSTNAME_TAG = "hostname";
     public static final String JVM_NAME_TAG = "jvmName";
+
+    private TagUtil() { }
 
     public static Map<String, String> getGlobalTags(Map<String, String> tags) {
         // Add the jvm name, pid, hostname as tags to help identify different processes
