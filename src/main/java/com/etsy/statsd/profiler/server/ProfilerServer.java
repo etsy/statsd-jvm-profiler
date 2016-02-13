@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  *
  * @author Andrew Johnson
  */
-public class ProfilerServer {
+public final class ProfilerServer {
     private static final Logger LOGGER = Logger.getLogger(ProfilerServer.class.getName());
     private static final Vertx VERTX = Vertx.factory.vertx();
 

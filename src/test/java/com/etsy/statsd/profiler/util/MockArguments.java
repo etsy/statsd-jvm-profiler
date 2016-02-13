@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * Utility class to create mock arguments for testing
  */
-public class MockArguments {
+public final class MockArguments {
     public static final Arguments BASIC = createArgs("localhost", 8888, "statsd-jvm-profiler", null);
 
     private MockArguments() { }
