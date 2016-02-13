@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author Andrew Johnson
  */
-public class RequestHandler {
+public final class RequestHandler {
     private RequestHandler() { }
     
     /**

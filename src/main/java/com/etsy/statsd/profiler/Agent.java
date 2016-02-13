@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author Andrew Johnson
  */
-public class Agent {
+public final class Agent {
     public static final int EXECUTOR_DELAY = 0;
 
     static AtomicReference<Boolean> isRunning = new AtomicReference<>(true);

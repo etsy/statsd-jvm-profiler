@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Andrew Johnson
  */
-public class TimeUtil {
+public final class TimeUtil {
     private TimeUtil() { }
 
     /**

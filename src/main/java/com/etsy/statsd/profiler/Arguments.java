@@ -13,7 +13,7 @@ import java.util.*;
  *
  * @author Andrew Johnson
  */
-public class Arguments {
+public final class Arguments {
     private static final String SERVER = "server";
     private static final String PORT = "port";
     private static final String METRICS_PREFIX = "prefix";

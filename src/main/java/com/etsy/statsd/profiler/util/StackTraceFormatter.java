@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @author Andrew Johnson
  */
-public class StackTraceFormatter {
+public final class StackTraceFormatter {
     private StackTraceFormatter() { }
 
     /**
