@@ -17,12 +17,24 @@ public final class MapUtil {
      * @param key The key for the map
      * @param inc The new value or increment for the given key
      */
-    public static void setOrIncrementMap(Map<String, Long> map, String key, long inc) {
-        Long val = map.get(key);
+    public static void setOrIncrementMap(Map<String, Number> map, String key, Number inc) {
+        Number val = map.get(key);
         if (val == null) {
-            map.put(key, inc);
+            if (inc instanceof Double) {
+                map.put(key, inc.doubleValue());
+            } else if (inc instanceof Long || inc instanceof Integer) {
+                map.put(key, inc.longValue());
+            } else {
+                throw new IllegalArgumentException("Unexpected Number type: " + inc.getClass().getSimpleName());
+            }
         } else {
-            map.put(key, val + inc);
+            if (val instanceof Double) {
+                map.put(key, val.doubleValue() + inc.doubleValue());
+            } else if (val instanceof Long || val instanceof Integer) {
+                map.put(key, val.longValue() + inc.longValue());
+            } else {
+                throw new IllegalArgumentException("Unexpected Number type: " + val.getClass().getSimpleName());
+            }
         }
     }
 }

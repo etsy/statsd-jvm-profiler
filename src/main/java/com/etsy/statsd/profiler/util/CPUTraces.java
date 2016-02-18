@@ -9,7 +9,7 @@ import java.util.Map;
  * @author Andrew Johnson
  */
 public class CPUTraces {
-    private Map<String, Long> traces;
+    private Map<String, Number> traces;
     private int max = Integer.MIN_VALUE;
     private int min = Integer.MAX_VALUE;
 
@@ -33,8 +33,8 @@ public class CPUTraces {
      * It only returns traces that have been updated since the last flush
      *
      */
-    public Map<String, Long> getDataToFlush() {
-        Map<String, Long> result = traces;
+    public Map<String, Number> getDataToFlush() {
+        Map<String, Number> result = traces;
         traces = new HashMap<>();
         return result;
     }

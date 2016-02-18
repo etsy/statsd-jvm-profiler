@@ -27,6 +27,14 @@ public class StatsDReporter extends Reporter<StatsDClient> {
         client.recordGaugeValue(key, value);
     }
 
+  /**
+   * @see #recordGaugeValue(String, long)
+   */
+    @Override
+    public void recordGaugeValue(String key, double value) {
+        client.recordGaugeValue(key, value);
+    }
+
     /**
      * Record multiple gauge values in StatsD
      * This simply loops over calling recordGaugeValue
@@ -34,9 +42,15 @@ public class StatsDReporter extends Reporter<StatsDClient> {
      * @param gauges A map of gauge names to values
      */
     @Override
-    public void recordGaugeValues(Map<String, Long> gauges) {
-        for (Map.Entry<String, Long> gauge : gauges.entrySet()) {
-            recordGaugeValue(gauge.getKey(), gauge.getValue());
+    public void recordGaugeValues(Map<String, ? extends Number> gauges) {
+        for (Map.Entry<String, ? extends Number> gauge : gauges.entrySet()) {
+          if (gauge.getValue() instanceof Long) {
+            client.recordGaugeValue(gauge.getKey(), gauge.getValue().longValue());
+          } else if (gauge.getValue() instanceof Double) {
+            client.recordGaugeValue(gauge.getKey(), gauge.getValue().doubleValue());
+          } else {
+            throw new IllegalArgumentException("Unexpected Number type: " + gauge.getValue().getClass().getSimpleName());
+          }
         }
     }
 
