@@ -34,23 +34,18 @@ public class JVMCPUProfiler extends Profiler {
   private static final Map<String, String> ATTRIBUTES_MAP = ImmutableMap.of("ProcessCpuLoad", "cpu.jvm",
                                                                             "SystemCpuLoad",  "cpu.system");
 
-  private static final String[] ATTRIBUTES = ATTRIBUTES_MAP.keySet().toArray(new String[ATTRIBUTES_MAP.size()]);
-
-  private final MBeanServer mbs;
-  private final ObjectName os;
+  private AttributeList list;
 
   public JVMCPUProfiler(Reporter reporter, Arguments arguments) {
     super(reporter, arguments);
-    mbs = ManagementFactory.getPlatformMBeanServer();
-    os = getOperatingSystemObject();
-  }
-
-  private ObjectName getOperatingSystemObject() {
     try {
-      return ObjectName.getInstance("java.lang:type=OperatingSystem");
-    } catch (MalformedObjectNameException e) {
-      return null;
+      MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+      ObjectName os = ObjectName.getInstance("java.lang:type=OperatingSystem");
+      list = mbs.getAttributes(os, ATTRIBUTES_MAP.keySet().toArray(new String[ATTRIBUTES_MAP.size()]));
+    } catch (InstanceNotFoundException | ReflectionException | MalformedObjectNameException e) {
+      list = null;
     }
+
   }
 
   /**
@@ -83,14 +78,7 @@ public class JVMCPUProfiler extends Profiler {
    * Records all memory statistics
    */
   private void recordStats() {
-    if (os == null) {
-      return;
-    }
-
-    AttributeList list;
-    try {
-      list = mbs.getAttributes(os, ATTRIBUTES);
-    } catch (InstanceNotFoundException | ReflectionException e) {
+    if (list == null) {
       return;
     }
 
