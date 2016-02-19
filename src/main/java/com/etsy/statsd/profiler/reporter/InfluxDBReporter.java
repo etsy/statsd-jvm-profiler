@@ -75,7 +75,7 @@ public class InfluxDBReporter extends Reporter<InfluxDB> {
     }
 
     /**
-     * InfluxDB has a rich query language and does not need the bounds metrics emitted by CPUProfiler
+     * InfluxDB has a rich query language and does not need the bounds metrics emitted by CPUTracingProfiler
      * As such we can disable emitting these metrics
      *
      * @return false

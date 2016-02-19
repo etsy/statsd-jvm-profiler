@@ -28,7 +28,7 @@ import javax.management.ReflectionException;
  *
  * @author Alejandro Rivera
  */
-public class JVMCPUProfiler extends Profiler {
+public class CPULoadProfiler extends Profiler {
 
   public static final long PERIOD = 10;
   private static final Map<String, String> ATTRIBUTES_MAP = ImmutableMap.of("ProcessCpuLoad", "cpu.jvm",
@@ -36,7 +36,7 @@ public class JVMCPUProfiler extends Profiler {
 
   private AttributeList list;
 
-  public JVMCPUProfiler(Reporter reporter, Arguments arguments) {
+  public CPULoadProfiler(Reporter reporter, Arguments arguments) {
     super(reporter, arguments);
     try {
       MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();

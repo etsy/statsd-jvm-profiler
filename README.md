@@ -56,7 +56,7 @@ port             | The port number for the server to which the reporter should s
 prefix           | The prefix for metrics (optional, defaults to statsd-jvm-profiler)
 packageWhitelist | Colon-delimited whitelist for packages to include (optional, defaults to include everything)
 packageBlacklist | Colon-delimited whitelist for packages to exclude (optional, defaults to exclude nothing)
-profilers        | Colon-delimited list of profiler class names (optional, defaults to `CPUProfiler` and `MemoryProfiler`)
+profilers        | Colon-delimited list of profiler class names (optional, defaults to `CPUTracingProfiler` and `MemoryProfiler`)
 reporter         | Class name of the reporter to use (optional, defaults to StatsDReporter)
 httpServerEnabled| Determines if the embedded HTTP server should be started. (optional, defaults to `true`)
 httpPort         | The port on which to bind the embedded HTTP server (optional, defaults to 5005). If this port is already in use, the next free port will be taken.
@@ -102,16 +102,16 @@ If you do not want to include a component of `prefix` as a tag, use the special 
 
 ## Profilers
 
-`statsd-jvm-profiler` offers 3 profilers: `MemoryProfiler`, `CPUProfiler` and `JVMCPUProfiler`.
+`statsd-jvm-profiler` offers 3 profilers: `MemoryProfiler`, `CPUTracingProfiler` and `CPULoadProfiler`.
 
 The metrics for all these profilers will prefixed with the value from the `prefix` argument or it's default value: `statsd-jvm-profiler`.
 
 You can enable specific profilers through the `profilers` argument like so:
 1. Memory metrics only: `profilers=MemoryProfiler`
-2. CPU Tracing metrics only: `profilers=CPUProfiler`
-3. JVM/System CPU metrics only: `profilers=JVMCPUProfiler`
+2. CPU Tracing metrics only: `profilers=CPUTracingProfiler`
+3. JVM/System CPU load metrics only: `profilers=CPULoadProfiler`
 
-Default value: `profilers=MemoryProfiler:CPUProfiler`
+Default value: `profilers=MemoryProfiler:CPUTracingProfiler`
 
 ### Garbage Collector and Memory Profiler: `MemoryProfiler`
 This profiler will record:
@@ -125,7 +125,7 @@ the GC metrics will be under `statsd-jvm-profiler.gc`.
 
 Memory and GC metrics are reported once every 10 seconds.
 
-### CPU Tracing Profiler: `CPUProfiler`
+### CPU Tracing Profiler: `CPUTracingProfiler`
 This profiler records the time spent in each function across all Threads.
 
 Assuming you use the default prefix of `statsd-jvm-profiler`, the the CPU time metrics will be under `statsd-jvm-profiler.cpu.trace`.
@@ -139,7 +139,7 @@ of functions that are reported. Any function whose stack trace contains a functi
 
 The `visualization` directory contains some utilities for visualizing the output of this profiler.
 
-### JVM And System CPU Profiler: `JVMCPUProfiler`
+### JVM And System CPU Load Profiler: `CPULoadProfiler`
 
 This profiler will record the JVM's and the overall system's CPU load, if the JVM is capable of providing this information.
 
@@ -151,7 +151,7 @@ The reported metrics will be percentages in the range of [0, 100] with 1 decimal
 CPU load metrics are sampled and reported once every 10 seconds.
 
 Important notes:
-* This Profiler is not enabled by default. To enable use the argument `profilers=JVMCPUProfiler`
+* This Profiler is not enabled by default. To enable use the argument `profilers=CPULoadProfiler`
 * This Profiler relies on Sun/Oracle-specific JVM implementations that offer a JMX bean that might not be available in other JVMs.
   Even if you are using the right JVM, there's no guarantee this JMX bean will remain there in the future.
 * The minimum required JVM version that offers support for this is for Java 7.

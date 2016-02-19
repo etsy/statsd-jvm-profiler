@@ -1,6 +1,6 @@
 package com.etsy.statsd.profiler.util;
 
-import com.etsy.statsd.profiler.profilers.CPUProfiler;
+import com.etsy.statsd.profiler.profilers.CPUTracingProfiler;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -22,7 +22,7 @@ public class StackTraceFilterTest {
     @BeforeClass
     public static void setup() {
         includePackages = Arrays.asList("com.etsy", "com.twitter.scalding");
-        filter = new StackTraceFilter(includePackages, CPUProfiler.EXCLUDE_PACKAGES);
+        filter = new StackTraceFilter(includePackages, CPUTracingProfiler.EXCLUDE_PACKAGES);
         excludedTraces = Arrays.asList("com-etsy-statsd-profiler-profiler-util-StackTraceFormatter-formatStackTraceElement", "com-timgroup-statsd-StatsDClient-send", "com-etsy-statsd-profiler-profiler-util-StackTraceFormatter-formatStackTraceElement.com-etsy-Foo-fooTest");
         includedTraces = Collections.singletonList("com-etsy-foo-fooTest");
         otherTraces = Collections.singletonList("com-google-guava-Foo-helloWorld");

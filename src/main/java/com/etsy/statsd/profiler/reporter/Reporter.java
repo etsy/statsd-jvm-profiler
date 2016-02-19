@@ -46,7 +46,7 @@ public abstract class Reporter<T> {
     public abstract void recordGaugeValues(Map<String, ? extends Number> gauges);
 
     /**
-     * CPUProfiler can emit some metrics that indicate the upper and lower bound on the length of stack traces
+     * CPUTracingProfiler can emit some metrics that indicate the upper and lower bound on the length of stack traces
      * This is helpful for querying this data for some backends (such as Graphite) that do not have rich query languages
      * Reporters can override this to disable these metrics
      *

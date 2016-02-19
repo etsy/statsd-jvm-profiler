@@ -1,6 +1,6 @@
 package com.etsy.statsd.profiler;
 
-import com.etsy.statsd.profiler.profilers.CPUProfiler;
+import com.etsy.statsd.profiler.profilers.CPUTracingProfiler;
 import com.etsy.statsd.profiler.profilers.MemoryProfiler;
 import com.etsy.statsd.profiler.reporter.InfluxDBReporter;
 import com.etsy.statsd.profiler.reporter.StatsDReporter;
@@ -69,7 +69,7 @@ public class ArgumentsTest {
         Arguments arguments = Arguments.parseArgs(args);
 
         Set<Class<? extends Profiler>> expected = new HashSet<>();
-        expected.add(CPUProfiler.class);
+        expected.add(CPUTracingProfiler.class);
         expected.add(MemoryProfiler.class);
 
         assertEquals(expected, arguments.profilers);
@@ -77,11 +77,11 @@ public class ArgumentsTest {
 
     @Test
     public void testProfilerWithPackage() {
-        String args = "server=localhost,port=8125,profilers=com.etsy.statsd.profiler.profilers.CPUProfiler";
+        String args = "server=localhost,port=8125,profilers=com.etsy.statsd.profiler.profilers.CPUTracingProfiler";
         Arguments arguments = Arguments.parseArgs(args);
 
         Set<Class<? extends Profiler>> expected = new HashSet<>();
-        expected.add(CPUProfiler.class);
+        expected.add(CPUTracingProfiler.class);
 
         assertEquals(expected, arguments.profilers);
     }
@@ -99,11 +99,11 @@ public class ArgumentsTest {
 
     @Test
     public void testMultipleProfilers() {
-        String args = "server=localhost,port=8125,profilers=CPUProfiler:MemoryProfiler";
+        String args = "server=localhost,port=8125,profilers=CPUTracingProfiler:MemoryProfiler";
         Arguments arguments = Arguments.parseArgs(args);
 
         Set<Class<? extends Profiler>> expected = new HashSet<>();
-        expected.add(CPUProfiler.class);
+        expected.add(CPUTracingProfiler.class);
         expected.add(MemoryProfiler.class);
 
         assertEquals(expected, arguments.profilers);
