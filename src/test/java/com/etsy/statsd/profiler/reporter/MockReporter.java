@@ -13,7 +13,7 @@ import java.util.Map;
  * @author Andrew Johnson
  */
 public class MockReporter extends Reporter<String> {
-    private Map<String, Long> output;
+    private Map<String, Number> output;
 
     public MockReporter() {
         super(MockArguments.BASIC);
@@ -26,10 +26,21 @@ public class MockReporter extends Reporter<String> {
     }
 
     @Override
-    public void recordGaugeValues(Map<String, Long> gauges) {
-        for (Map.Entry<String, Long> gauge : gauges.entrySet()) {
-            recordGaugeValue(gauge.getKey(), gauge.getValue());
+    public void recordGaugeValues(Map<String, ? extends Number> gauges) {
+        for (Map.Entry<String, ? extends Number> gauge : gauges.entrySet()) {
+            if (gauge.getValue() instanceof Long) {
+                recordGaugeValue(gauge.getKey(), gauge.getValue().longValue());
+            } else if (gauge.getValue() instanceof Double) {
+                recordGaugeValue(gauge.getKey(), gauge.getValue().doubleValue());
+            } else {
+                throw new IllegalArgumentException("Unexpected Number type: " + gauge.getValue().getClass().getSimpleName());
+            }
         }
+    }
+
+    @Override
+    public void recordGaugeValue(String key, double value) {
+        MapUtil.setOrIncrementMap(output, key, value);
     }
 
     @Override
@@ -40,7 +51,7 @@ public class MockReporter extends Reporter<String> {
     @Override
     protected void handleArguments(Arguments arguments) { }
 
-    public Map<String, Long> getOutput() {
+    public Map<String, Number> getOutput() {
         return output;
     }
 }

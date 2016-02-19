@@ -1,6 +1,6 @@
 package com.etsy.statsd.profiler;
 
-import com.etsy.statsd.profiler.profilers.CPUProfiler;
+import com.etsy.statsd.profiler.profilers.CPUTracingProfiler;
 import com.etsy.statsd.profiler.profilers.MemoryProfiler;
 import com.etsy.statsd.profiler.reporter.Reporter;
 import com.etsy.statsd.profiler.reporter.StatsDReporter;
@@ -97,7 +97,7 @@ public final class Arguments {
     private Set<Class<? extends Profiler>> parseProfilerArg(String profilerArg) {
         Set<Class<? extends Profiler>> parsedProfilers = new HashSet<>();
         if (profilerArg == null) {
-            parsedProfilers.add(CPUProfiler.class);
+            parsedProfilers.add(CPUTracingProfiler.class);
             parsedProfilers.add(MemoryProfiler.class);
         } else {
             for (String p : profilerArg.split(":")) {

@@ -48,7 +48,7 @@ public abstract class Profiler {
     public abstract TimeUnit getTimeUnit();
 
     /**
-     * CPUProfiler can emit some metrics that indicate the upper and lower bound on the length of stack traces
+     * CPUTracingProfiler can emit some metrics that indicate the upper and lower bound on the length of stack traces
      * This is helpful for querying this data for some backends (such as Graphite) that do not have rich query languages
      * Reporters can override this to disable these metrics
      *
@@ -77,12 +77,20 @@ public abstract class Profiler {
     }
 
     /**
+     * @see #recordGaugeValue(String, long)
+     */
+    protected void recordGaugeValue(String key, double value) {
+        recordedStats++;
+        reporter.recordGaugeValue(key, value);
+    }
+
+    /**
      * Record multiple gauge values
      * This is useful for reporters that can send points in batch
      *
      * @param gauges A map of gauge names to values
      */
-    protected void recordGaugeValues(Map<String, Long> gauges) {
+    protected void recordGaugeValues(Map<String, ? extends Number> gauges) {
         recordedStats++;
         reporter.recordGaugeValues(gauges);
     }

@@ -11,7 +11,7 @@ public class MapUtilTest {
 
     @Test
     public void testSetOrIncrementMap() {
-        Map<String, Long> map = new HashMap<>();
+        Map<String, Number> map = new HashMap<>();
         MapUtil.setOrIncrementMap(map, "key", 1);
         assertEquals(new Long(1L), map.get("key"));
 

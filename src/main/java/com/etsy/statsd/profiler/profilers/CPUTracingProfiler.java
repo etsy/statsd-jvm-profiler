@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Andrew Johnson
  */
-public class CPUProfiler extends Profiler {
+public class CPUTracingProfiler extends Profiler {
     private static final String PACKAGE_WHITELIST_ARG = "packageWhitelist";
     private static final String PACKAGE_BLACKLIST_ARG = "packageBlacklist";
 
@@ -35,7 +35,7 @@ public class CPUProfiler extends Profiler {
     private final long reportingFrequency;
 
 
-    public CPUProfiler(Reporter reporter, Arguments arguments) {
+    public CPUTracingProfiler(Reporter reporter, Arguments arguments) {
         super(reporter, arguments);
         traces = new CPUTraces();
         profileCount = 0;
