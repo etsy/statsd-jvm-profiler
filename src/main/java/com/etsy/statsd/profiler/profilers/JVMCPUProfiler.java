@@ -1,10 +1,13 @@
 package com.etsy.statsd.profiler.profilers;
 
+import com.google.common.collect.ImmutableMap;
+
 import com.etsy.statsd.profiler.Arguments;
 import com.etsy.statsd.profiler.Profiler;
 import com.etsy.statsd.profiler.reporter.Reporter;
 
 import java.lang.management.ManagementFactory;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -26,13 +29,28 @@ import javax.management.ReflectionException;
  * @author Alejandro Rivera
  */
 public class JVMCPUProfiler extends Profiler {
+
   public static final long PERIOD = 10;
-  public static final double INVALID_VALUE = Double.NaN;
+  private static final Map<String, String> ATTRIBUTES_MAP = ImmutableMap.of("ProcessCpuLoad", "cpu.jvm",
+                                                                            "SystemCpuLoad",  "cpu.system");
+
+  private static final String[] ATTRIBUTES = ATTRIBUTES_MAP.keySet().toArray(new String[ATTRIBUTES_MAP.size()]);
+
   private final MBeanServer mbs;
+  private final ObjectName os;
 
   public JVMCPUProfiler(Reporter reporter, Arguments arguments) {
     super(reporter, arguments);
     mbs = ManagementFactory.getPlatformMBeanServer();
+    os = getOperatingSystemObject();
+  }
+
+  private ObjectName getOperatingSystemObject() {
+    try {
+      return ObjectName.getInstance("java.lang:type=OperatingSystem");
+    } catch (MalformedObjectNameException e) {
+      return null;
+    }
   }
 
   /**
@@ -65,50 +83,35 @@ public class JVMCPUProfiler extends Profiler {
    * Records all memory statistics
    */
   private void recordStats() {
-    ObjectName os = getOperatingsystemObject();
-    if (os != null) {
-      recordStat(os, "ProcessCpuLoad", "cpu.jvm");
-      recordStat(os, "SystemCpuLoad", "cpu.system");
+    if (os == null) {
+      return;
     }
-  }
-
-  private void recordStat(ObjectName os, String attribute, String metricKey) {
-    double value = getValue(mbs, os, attribute);
-    if (value != INVALID_VALUE) {
-      recordGaugeValue(metricKey, value);
-    }
-  }
-
-  private ObjectName getOperatingsystemObject() {
-    try {
-      return ObjectName.getInstance("java.lang:type=OperatingSystem");
-    } catch (MalformedObjectNameException e) {
-      return null;
-    }
-  }
-
-  public static double getValue(MBeanServer mbs, ObjectName name, String attribute) {
 
     AttributeList list;
     try {
-      list = mbs.getAttributes(name, new String[]{attribute});
-    } catch (InstanceNotFoundException e) {
-      return INVALID_VALUE;
-    } catch (ReflectionException e) {
-      return INVALID_VALUE;
+      list = mbs.getAttributes(os, ATTRIBUTES);
+    } catch (InstanceNotFoundException | ReflectionException e) {
+      return;
     }
 
-    if (list.isEmpty()) {
-      return INVALID_VALUE;
+    Attribute att;
+    Double value;
+    String metric;
+    for (Object o : list) {
+      att = (Attribute) o;
+      value = (Double) att.getValue();
+
+      if (value == null || value == -1.0) {
+        continue;
+      }
+
+      metric = ATTRIBUTES_MAP.get(att.getName());
+      if (metric == null) {
+        continue;
+      }
+
+      value = ((int) (value * 1000)) / 10.0d; // 0-100 with 1-decimal precision
+      recordGaugeValue(metric, value);
     }
-
-    Attribute att = (Attribute) list.get(0);
-    Double value = (Double) att.getValue();
-
-    if (value == -1.0) {
-      return INVALID_VALUE;
-    }
-
-    return ((int) (value * 1000)) / 10.0d; // 0-100 with 1-decimal precision
   }
 }
