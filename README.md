@@ -20,7 +20,7 @@ statsd-jvm-profiler is available in Maven Central:
 <dependency>
   <groupId>com.etsy</groupId>
   <artifactId>statsd-jvm-profiler</artifactId>
-  <version>1.0.1</version>
+  <version>2.0.0</version>
 </dependency>
 ```
 
@@ -29,7 +29,7 @@ If you would like an uberjar containing all of the dependencies instead of the s
 <dependency>
   <groupId>com.etsy</groupId>
   <artifactId>statsd-jvm-profiler</artifactId>
-  <version>1.0.1</version>
+  <version>2.0.0</version>
   <classifier>jar-with-dependencies</classifier>
 </dependency>
 ```
