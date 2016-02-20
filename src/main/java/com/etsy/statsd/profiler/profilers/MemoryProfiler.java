@@ -119,7 +119,7 @@ public class MemoryProfiler extends Profiler {
      * @param prefix The prefix to use for this object
      * @param memory The MemoryUsage object containing the memory usage info
      */
-    private void recordMemoryUsage(String prefix, MemoryUsage memory, Map<String, Long> metrics) {
+    private static void recordMemoryUsage(String prefix, MemoryUsage memory, Map<String, Long> metrics) {
         metrics.put(prefix + ".init", memory.getInit());
         metrics.put(prefix + ".used", memory.getUsed());
         metrics.put(prefix + ".committed", memory.getCommitted());
@@ -132,7 +132,7 @@ public class MemoryProfiler extends Profiler {
      * @param memoryType a MemoryType
      * @return a valid metric name
      */
-    private String poolTypeToMetricName(MemoryType memoryType) {
+    private static String poolTypeToMetricName(MemoryType memoryType) {
         switch (memoryType) {
             case HEAP:
                 return "heap";
@@ -149,7 +149,7 @@ public class MemoryProfiler extends Profiler {
      * @param poolName a pool name
      * @return a valid metric name
      */
-    private String poolNameToMetricName(String poolName) {
+    private static String poolNameToMetricName(String poolName) {
         return poolName.toLowerCase().replaceAll("\\s+", "-");
     }
 }

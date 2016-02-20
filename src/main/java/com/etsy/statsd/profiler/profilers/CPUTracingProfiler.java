@@ -103,7 +103,7 @@ public class CPUTracingProfiler extends Profiler {
      * @param packages A string containing a colon-delimited list of packages
      * @return A List of packages
      */
-    private List<String> parsePackageList(String packages) {
+    private static List<String> parsePackageList(String packages) {
         if (packages == null) {
             return new ArrayList<>();
         } else {
@@ -123,7 +123,7 @@ public class CPUTracingProfiler extends Profiler {
      *
      * @return A Collection<ThreadInfo> representing current thread state
      */
-    private Collection<ThreadInfo> getAllRunnableThreads() {
+    private static Collection<ThreadInfo> getAllRunnableThreads() {
         return ThreadDumper.filterAllThreadsInState(false, false, Thread.State.RUNNABLE, new Predicate<ThreadInfo>() {
             @Override
             public boolean apply(ThreadInfo input) {
