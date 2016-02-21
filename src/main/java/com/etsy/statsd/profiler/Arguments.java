@@ -76,7 +76,7 @@ public final class Arguments {
     }
     
     @SuppressWarnings("unchecked")
-    private Class<? extends Reporter<?>> parserReporterArg(String reporterArg) {
+    private static Class<? extends Reporter<?>> parserReporterArg(String reporterArg) {
         if (reporterArg == null) {
             return StatsDReporter.class;
         } else {
@@ -94,7 +94,7 @@ public final class Arguments {
     }
 
     @SuppressWarnings("unchecked")
-    private Set<Class<? extends Profiler>> parseProfilerArg(String profilerArg) {
+    private static Set<Class<? extends Profiler>> parseProfilerArg(String profilerArg) {
         Set<Class<? extends Profiler>> parsedProfilers = new HashSet<>();
         if (profilerArg == null) {
             parsedProfilers.add(CPUTracingProfiler.class);
