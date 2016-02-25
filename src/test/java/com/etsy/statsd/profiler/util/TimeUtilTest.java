@@ -15,3 +15,4 @@ public class TimeUtilTest {
         assertEquals(100000, TimeUtil.convertReportingPeriod(100, TimeUnit.MICROSECONDS, 10, TimeUnit.SECONDS));
     }
 }
+
