@@ -5,11 +5,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import io.vertx.core.Handler;
-import io.vertx.core.http.HttpMethod;
-import io.vertx.core.http.HttpServerRequest;
-import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
+import org.vertx.java.core.Handler;
+import org.vertx.java.core.http.HttpServerRequest;
+import org.vertx.java.core.http.RouteMatcher;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -31,19 +29,14 @@ public final class RequestHandler {
      * @param activeProfilers The active profilers
      * @return A RouteMatcher that matches all supported routes
      */
-    public static Handler<HttpServerRequest> getMatcher(final Router router, final Map<String, ScheduledFuture<?>> runningProfilers, Map<String, Profiler> activeProfilers, AtomicReference<Boolean> isRunning, LinkedList<String> errors) {
-        router.route(HttpMethod.GET, "/profilers").handler(RequestHandler.handleGetProfilers(runningProfilers));
-        router.route(HttpMethod.GET, "/disable/:profiler").handler(RequestHandler.handleDisableProfiler(runningProfilers));
-        router.route(HttpMethod.GET, "/status/profiler/:profiler").handler(RequestHandler.handleProfilerStatus(activeProfilers));
-        router.route(HttpMethod.GET, "/errors").handler(RequestHandler.handleErrorMessages(errors));
-        router.route(HttpMethod.GET, "/isRunning").handler(RequestHandler.isRunning(isRunning));
-
-        return new Handler<HttpServerRequest>() {
-            @Override
-            public void handle(HttpServerRequest httpServerRequest) {
-                router.accept(httpServerRequest);
-            }
-        };
+    public static RouteMatcher getMatcher(final Map<String, ScheduledFuture<?>> runningProfilers,  Map<String, Profiler> activeProfilers, AtomicReference<Boolean> isRunning, LinkedList<String> errors) {
+        RouteMatcher matcher = new RouteMatcher();
+        matcher.get("/profilers", RequestHandler.handleGetProfilers(runningProfilers));
+        matcher.get("/disable/:profiler", RequestHandler.handleDisableProfiler(runningProfilers));
+        matcher.get("/status/profiler/:profiler", RequestHandler.handleProfilerStatus(activeProfilers));
+        matcher.get("/errors", RequestHandler.handleErrorMessages(errors));
+        matcher.get("/isRunning", RequestHandler.isRunning(isRunning));
+        return matcher;
     }
 
     /**
@@ -51,11 +44,11 @@ public final class RequestHandler {
      *
      * @return A Handler that returns all running profilers
      */
-    public static Handler<RoutingContext> isRunning(final AtomicReference<Boolean> isRunning) {
-        return new Handler<RoutingContext>() {
+    public static Handler<HttpServerRequest> isRunning(final AtomicReference<Boolean> isRunning) {
+        return new Handler<HttpServerRequest>() {
             @Override
-            public void handle(RoutingContext routingContext) {
-                routingContext.response().end(String.format("isRunning: %b", isRunning.get()));
+            public void handle(HttpServerRequest httpServerRequest) {
+                httpServerRequest.response().end(String.format("isRunning: %b", isRunning.get()));
             }
         };
     }
@@ -65,11 +58,11 @@ public final class RequestHandler {
      *
      * @return A Handler that handles a request to the /profilers endpoint
      */
-    public static Handler<RoutingContext> handleGetProfilers(final Map<String, ScheduledFuture<?>> runningProfilers) {
-        return new Handler<RoutingContext>() {
+    public static Handler<HttpServerRequest> handleGetProfilers(final Map<String, ScheduledFuture<?>> runningProfilers) {
+        return new Handler<HttpServerRequest>() {
             @Override
-            public void handle(RoutingContext routingContext) {
-                routingContext.response().end(Joiner.on("\n").join(getEnabledProfilers(runningProfilers)));
+            public void handle(HttpServerRequest httpServerRequest) {
+                httpServerRequest.response().end(Joiner.on("\n").join(getEnabledProfilers(runningProfilers)));
             }
         };
     }
@@ -79,11 +72,11 @@ public final class RequestHandler {
      *
      * @return The last 10 error stacktraces
      */
-    public static Handler<RoutingContext> handleErrorMessages(final LinkedList<String> errors) {
-        return new Handler<RoutingContext>() {
+    public static Handler<HttpServerRequest> handleErrorMessages(final LinkedList<String> errors) {
+        return new Handler<HttpServerRequest>() {
             @Override
-            public void handle(RoutingContext routingContext) {
-                routingContext.response().end("Errors: " + Joiner.on("\n").join(errors));
+            public void handle(HttpServerRequest httpServerRequest) {
+                httpServerRequest.response().end("Errors: " + Joiner.on("\n").join(errors));
             }
         };
     }
@@ -94,14 +87,14 @@ public final class RequestHandler {
      * @param activeProfilers The active profilers
      * @return A Handler that handles a request to the /disable/:profiler endpoint
      */
-    public static Handler<RoutingContext> handleDisableProfiler(final Map<String, ScheduledFuture<?>> activeProfilers) {
-        return new Handler<RoutingContext>() {
+    public static Handler<HttpServerRequest> handleDisableProfiler(final Map<String, ScheduledFuture<?>> activeProfilers) {
+        return new Handler<HttpServerRequest>() {
             @Override
-            public void handle(RoutingContext routingContext) {
-                String profilerToDisable = routingContext.request().params().get("profiler");
+            public void handle(HttpServerRequest httpServerRequest) {
+                String profilerToDisable = httpServerRequest.params().get("profiler");
                 ScheduledFuture<?> future = activeProfilers.get(profilerToDisable);
                 future.cancel(false);
-                routingContext.response().end(String.format("Disabled profiler %s", profilerToDisable));
+                httpServerRequest.response().end(String.format("Disabled profiler %s", profilerToDisable));
             }
         };
     }
@@ -112,13 +105,13 @@ public final class RequestHandler {
      * @param activeProfilers The active profilers
      * @return A Handler that handles a request to the /disable/:profiler endpoint
      */
-    public static Handler<RoutingContext> handleProfilerStatus(final  Map<String, Profiler> activeProfilers) {
-        return new Handler<RoutingContext>() {
+    public static Handler<HttpServerRequest> handleProfilerStatus(final  Map<String, Profiler> activeProfilers) {
+        return new Handler<HttpServerRequest>() {
             @Override
-            public void handle(RoutingContext routingContext) {
-                String profilerName = routingContext.request().params().get("profiler");
+            public void handle(HttpServerRequest httpServerRequest) {
+                String profilerName = httpServerRequest.params().get("profiler");
                 Profiler profiler = activeProfilers.get(profilerName);
-                routingContext.response().end(String.format("Recorded stats %d\n", profiler.getRecordedStats()));
+                httpServerRequest.response().end(String.format("Recorded stats %d\n", profiler.getRecordedStats()));
             }
         };
     }
