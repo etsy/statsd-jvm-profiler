@@ -10,7 +10,7 @@ import org.vertx.java.core.http.HttpServerRequest;
 import org.vertx.java.core.http.RouteMatcher;
 
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicReference;
@@ -29,7 +29,7 @@ public final class RequestHandler {
      * @param activeProfilers The active profilers
      * @return A RouteMatcher that matches all supported routes
      */
-    public static RouteMatcher getMatcher(final Map<String, ScheduledFuture<?>> runningProfilers,  Map<String, Profiler> activeProfilers, AtomicReference<Boolean> isRunning, LinkedList<String> errors) {
+    public static RouteMatcher getMatcher(final Map<String, ScheduledFuture<?>> runningProfilers,  Map<String, Profiler> activeProfilers, AtomicReference<Boolean> isRunning, List<String> errors) {
         RouteMatcher matcher = new RouteMatcher();
         matcher.get("/profilers", RequestHandler.handleGetProfilers(runningProfilers));
         matcher.get("/disable/:profiler", RequestHandler.handleDisableProfiler(runningProfilers));
@@ -72,7 +72,7 @@ public final class RequestHandler {
      *
      * @return The last 10 error stacktraces
      */
-    public static Handler<HttpServerRequest> handleErrorMessages(final LinkedList<String> errors) {
+    public static Handler<HttpServerRequest> handleErrorMessages(final List<String> errors) {
         return new Handler<HttpServerRequest>() {
             @Override
             public void handle(HttpServerRequest httpServerRequest) {

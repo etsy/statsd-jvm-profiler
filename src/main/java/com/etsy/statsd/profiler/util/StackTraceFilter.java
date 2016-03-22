@@ -67,7 +67,7 @@ public class StackTraceFilter {
      * @param formattedStackTrace The stack trace to check against the pattern
      * @return True if the stack trace matches the pattern, false otherwise
      */
-    private boolean matches(Pattern pattern, String formattedStackTrace) {
+    private static boolean matches(Pattern pattern, String formattedStackTrace) {
         Matcher matcher = pattern.matcher(formattedStackTrace);
 
         return matcher.matches();
