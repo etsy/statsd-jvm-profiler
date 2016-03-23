@@ -33,7 +33,7 @@ public final class ProfilerServer {
     public static void startServer(final Map<String, ScheduledFuture<?>> runningProfilers, final Map<String, Profiler> activeProfilers, final int port, final AtomicReference<Boolean> isRunning, final List<String> errors) {
         final HttpServer server = VERTX.createHttpServer();
         server.requestHandler(RequestHandler.getMatcher(runningProfilers, activeProfilers, isRunning, errors));
-        server.listen(port, new Handler<AsyncResult<HttpServer>>() {
+        server.listen(port, "0.0.0.0", new Handler<AsyncResult<HttpServer>>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 if (event.failed()) {

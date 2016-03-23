@@ -104,7 +104,7 @@ public class ProfilerServerTest {
     }
 
     private void httpRequestTest(String path, String expectedBody) throws IOException {
-        HttpRequestBase get = new HttpGet(String.format("http://localhost:%d/%s", port, path));
+        HttpRequestBase get = new HttpGet(String.format("http://0.0.0.0:%d/%s", port, path));
         CloseableHttpResponse response = client.execute(get);
 
         int statusCode = response.getStatusLine().getStatusCode();
