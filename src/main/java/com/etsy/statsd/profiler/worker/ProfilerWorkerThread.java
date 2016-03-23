@@ -5,6 +5,7 @@ import com.etsy.statsd.profiler.Profiler;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Worker thread for executing a profiler
@@ -13,9 +14,9 @@ import java.util.LinkedList;
  */
 public class ProfilerWorkerThread implements Runnable {
     private final Profiler profiler;
-    private final LinkedList<String> errors;
+    private final List<String> errors;
 
-    public ProfilerWorkerThread(Profiler profiler, LinkedList<String> errors) {
+    public ProfilerWorkerThread(Profiler profiler, List<String> errors) {
         this.profiler = profiler;
         this.errors = errors;
     }
@@ -30,7 +31,7 @@ public class ProfilerWorkerThread implements Runnable {
             e.printStackTrace(pw);
             errors.add(String.format("Received an error running profiler: %s, error: %s", profiler.getClass().getName(), sw.toString()));
             if (errors.size() > 10) {
-                errors.pollFirst();
+                ((LinkedList) errors).pollFirst();
             }
         }
     }
