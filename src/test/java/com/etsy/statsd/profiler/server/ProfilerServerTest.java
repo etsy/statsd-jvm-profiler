@@ -18,7 +18,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -45,9 +44,7 @@ public class ProfilerServerTest {
         activeProfilers.put("MockProfiler1", profiler1);
         activeProfilers.put("MockProfiler2", profiler2);
 
-        ServerSocket s = new ServerSocket(0); // This gives us a random open port
-        port = s.getLocalPort();
-        s.close();
+        port = 8080;
 
         isRunning = new AtomicReference<>(true);
         errors = new ArrayList<>();
@@ -104,7 +101,7 @@ public class ProfilerServerTest {
     }
 
     private void httpRequestTest(String path, String expectedBody) throws IOException {
-        HttpRequestBase get = new HttpGet(String.format("http://0.0.0.0:%d/%s", port, path));
+        HttpRequestBase get = new HttpGet(String.format("http://localhost:%d/%s", port, path));
         CloseableHttpResponse response = client.execute(get);
 
         int statusCode = response.getStatusLine().getStatusCode();
