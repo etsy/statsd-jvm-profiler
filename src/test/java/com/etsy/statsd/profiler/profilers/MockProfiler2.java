@@ -32,12 +32,12 @@ public class MockProfiler2 extends Profiler {
 
     @Override
     public long getPeriod() {
-        return 0;
+        return 1;
     }
 
     @Override
     public TimeUnit getTimeUnit() {
-        return null;
+        return TimeUnit.MINUTES;
     }
 
     @Override

@@ -9,9 +9,7 @@ import org.vertx.java.core.Handler;
 import org.vertx.java.core.http.HttpServerRequest;
 import org.vertx.java.core.http.RouteMatcher;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -119,10 +117,10 @@ public final class RequestHandler {
     /**
      * Get all enabled profilers
      * @param activeProfilers The active profilers
-     * @return A Collection<String> containing the names of profilers that are currently running
+     * @return A sorted List<String> containing the names of profilers that are currently running
      */
-    private static Collection<String> getEnabledProfilers(final Map<String, ScheduledFuture<?>> activeProfilers) {
-        return Collections2.transform(Collections2.filter(activeProfilers.entrySet(), new Predicate<Map.Entry<String, ScheduledFuture<?>>>() {
+    private static List<String> getEnabledProfilers(final Map<String, ScheduledFuture<?>> activeProfilers) {
+        Collection<String> profilers = Collections2.transform(Collections2.filter(activeProfilers.entrySet(), new Predicate<Map.Entry<String, ScheduledFuture<?>>>() {
             @Override
             public boolean apply(Map.Entry<String, ScheduledFuture<?>> input) {
                 return !input.getValue().isDone();
@@ -133,5 +131,10 @@ public final class RequestHandler {
                 return input.getKey();
             }
         });
+
+        List<String> result = new ArrayList<>(profilers);
+        Collections.sort(result);
+        return result;
+
     }
 }
