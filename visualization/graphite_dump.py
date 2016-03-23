@@ -30,7 +30,7 @@ def get_bounds(host, prefix):
     url = 'http://%s/metrics/expand' % host
     json_url = requests.get(url, params=params)
     json_results = json_url.json()
-    bounds = [int(bound.replace(prefix + '.', '')) for bound in json_results['results']]
+    bounds = [int(bound.replace(prefix + '.', '')) for bound in json_results['results'] if bound.isdigit()]
 
     return (min(bounds), max(bounds))
 
