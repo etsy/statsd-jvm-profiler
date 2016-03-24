@@ -32,8 +32,8 @@ def get_bounds(host, prefix):
     json_results = json_url.json()
     bounds = []
     for bound in json_results['results']:
-        x = bound.replace(prefix + '.', '')
-        if x.isdigit():
+        boundresult = bound.replace(prefix + '.', '')
+        if boundresult.isdigit():
             bounds.append(int(x))
 
     return (min(bounds), max(bounds))
@@ -59,7 +59,7 @@ def get_tree(host, prefix, start, end):
     for leaf in leaves:
         leafmetric = get_max_metric(host, leaf, start, end)
         if leafmetric is not None:
-            results[leaf] = get_max_metric(host, leaf, start, end)
+            results[leaf] = leafmetric
 
     return results
 
