@@ -34,7 +34,7 @@ def get_bounds(host, prefix):
     for bound in json_results['results']:
         boundresult = bound.replace(prefix + '.', '')
         if boundresult.isdigit():
-            bounds.append(int(x))
+            bounds.append(int(boundresult))
 
     return (min(bounds), max(bounds))
 
