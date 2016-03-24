@@ -30,7 +30,11 @@ def get_bounds(host, prefix):
     url = 'http://%s/metrics/expand' % host
     json_url = requests.get(url, params=params)
     json_results = json_url.json()
-    bounds = [int(bound.replace(prefix + '.', '')) for bound in json_results['results'] if bound.isdigit()]
+    bounds = []
+    for bound in json_results['results']:
+        x = bound.replace(prefix + '.', '')
+        if x.isdigit():
+            bounds.append(int(x))
 
     return (min(bounds), max(bounds))
 
@@ -40,7 +44,10 @@ def get_max_metric(host, metric, start, end):
     url = 'http://%s/render' % host
     json_url = requests.get(url, params=params)
     json_results = json_url.json()
-    return max([point[0] for point in json_results[0]['datapoints']])
+    if not json_results:
+        return None
+    else:
+        return max([point[0] for point in json_results[0]['datapoints']])
 
     
 def get_tree(host, prefix, start, end):
@@ -50,7 +57,9 @@ def get_tree(host, prefix, start, end):
 
     results = {}
     for leaf in leaves:
-        results[leaf] = get_max_metric(host, leaf, start, end)
+        leafmetric = get_max_metric(host, leaf, start, end)
+        if leafmetric is not None:
+            results[leaf] = get_max_metric(host, leaf, start, end)
 
     return results
 
@@ -64,7 +73,8 @@ def format_metric(metric, prefix):
     
 def format_output(prefix, results):
     for metric, value in results.iteritems():
-        print '%s %d' % (format_metric(metric, prefix), value)
+        if value is not None:
+            print '%s %d' % (format_metric(metric, prefix), value)
 
         
 if __name__ == '__main__':
