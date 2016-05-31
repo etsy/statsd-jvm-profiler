@@ -125,5 +125,5 @@ function formatMetric(metric, prefix) {
 	return frame.substring(0, lineNumSepIndex) + ':' + frame.substring(lineNumSepIndex+1);
     });
 
-    return lineNumFrames.join(',').replace(/-/g, '.');
+    return lineNumFrames.join(';').replace(/-/g, '.');
 }

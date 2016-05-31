@@ -49,6 +49,7 @@ exports.cpu = function(req, res) {
     var prefix = req.params['prefix'];
     influx.getFlameGraphData(user, job, flow, stage, phase, jvmName, prefix, function(metrics) {
 	flamegraph.getFlameGraph(metrics, function(data) {
+	    res.setHeader('content-type', 'image/svg+xml');
 	    res.send(data);
 	})
     });

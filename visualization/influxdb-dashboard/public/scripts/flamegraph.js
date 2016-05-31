@@ -1,11 +1,7 @@
-var stackvis = require('stackvis');
-var bunyan = require('bunyan');
-var memorystream = require('memory-streams');
-var resumer = require('resumer');
+var path = require('path')
+var spawn = require('child_process').spawnSync
 
 exports.getFlameGraph = function(metrics, callback) {
-    var reader = stackvis.readerLookup('collapsed');
-    var writer = stackvis.writerLookup('flamegraph-d3');
     if (Object.keys(metrics).length === 0) {
 	callback('Unable to retrieve CPU metrics');
 	return;
@@ -16,14 +12,7 @@ exports.getFlameGraph = function(metrics, callback) {
     }).map(function(metric) {
 	return metric.metric + " " + Math.round(metric.value);
     });
-
-    // We must use resumer here instead of memory-streams so the
-    // "end" event is emitted properly
-    var metricStream = resumer().queue(collapsedMetrics.join('\n')).end();
-    metricStream.setEncoding = function(enc) { };
-    var outputStream = new memorystream.WritableStream();
-    var log = new bunyan({'name': 'flamegraph', 'stream': outputStream});
-    stackvis.pipeStacks(log, metricStream, reader, writer, outputStream, function() {
-	callback(outputStream.toString());
-    });
+    var flamegraphScriptPath = path.join(__dirname, 'flamegraph.pl')
+    var child = spawn(flamegraphScriptPath, ['--title', 'Flame Graph', '--width', '1800'],  {'input': collapsedMetrics.join('\n')});
+    callback(child.stdout)
 }

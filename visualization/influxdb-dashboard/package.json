@@ -2,10 +2,6 @@
     "name": "statsd-jvm-profiler-dash",
     "version": "0.0.1",
     "dependencies": {
-	"resumer": "*",
-	"memory-streams": "*",
-	"stackvis": "*",
-	"bunyan": "*",
 	"request-json": "*",
 	"express": "*",
 	"jade": "*",
