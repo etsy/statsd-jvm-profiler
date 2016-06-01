@@ -56,23 +56,26 @@ exports.getOptions = function(prefix, callback) {
     client.getSeries("heap.total.max", function(err, seriesNames) {
 	var result = {};
 	if (seriesNames !== undefined) {
-	    var series = seriesNames[0];
-	    var columns = series.columns;
-
-	    var userIndex = columns.indexOf('username');
-	    var jobIndex = columns.indexOf('job');
-	    var flowIndex = columns.indexOf('flow');
-	    var stageIndex = columns.indexOf('stage');
-	    var phaseIndex = columns.indexOf('phase');
-	    var jvmNameIndex = columns.indexOf('jvmName');
+	    var series = seriesNames[0]
+	    var columns = series.values.map(function(value) {
+		var tokens = value[0].split(',');
+		column = {}
+		tokens.forEach(function(token) {
+		    if (token.indexOf("=") != -1) {
+			var split = token.split("=");
+			column[split[0]] = split[1];
+		    }
+		})
+		return column;
+	    });
 	    
-	    series.values.map(function(values) {
-		var user = values[userIndex];
-		var job = values[jobIndex];
-		var flow = values[flowIndex];
-		var stage = values[stageIndex];
-		var phase = values[phaseIndex];
-		var jvmName = values[jvmNameIndex];
+	    columns.map(function(values) {
+		var user = values['username'];
+		var job = values['job'];
+		var flow = values['flow'];
+		var stage = values['stage'];
+		var phase = values['phase'];
+		var jvmName = values['jvmName'];
 
 		var userVal = result[user]
     		if (!userVal) {

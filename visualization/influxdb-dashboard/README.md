@@ -3,6 +3,7 @@ A dashboard to visualize the metrics produced by
 [statsd-jvm-profiler](https://github.com/etsy/statsd-jvm-profiler).
 
 This dashboard only supports the InfluxDB backend for the profiler.
+InfluxDB 0.13 is required, older versions are not supported.
 
 ## Configuration
 Configuration is done with the dashboard-config.json file in the
