@@ -59,4 +59,5 @@ $(document).ready(function() {
     $('#jobs').change(getFlows);
     $('#flows').change(getStages);
     $('#stages').change(getPhases);
+    $('#phases').change(getJvms);
 });
