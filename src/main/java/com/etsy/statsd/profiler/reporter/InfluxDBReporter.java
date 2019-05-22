@@ -100,11 +100,15 @@ public class InfluxDBReporter extends Reporter<InfluxDB> {
      */
     @Override
     protected InfluxDB createClient(String server, int port, String prefix) {
-        String protocol = useHttps ? "https" : "http";
-        String url = String.format("%s://%s:%d", protocol, server, port);
+        String url = resolveUrl(server, port);
         logInfo(String.format("Connecting to influxDB at %s", url));
 
         return InfluxDBFactory.connect(url, username, password);
+    }
+
+    public String resolveUrl(String server, int port) {
+        String protocol = useHttps ? "https" : "http";
+        return String.format("%s://%s:%d", protocol, server, port);
     }
 
     private void logInfo(String message) {
