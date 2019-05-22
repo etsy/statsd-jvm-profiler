@@ -11,6 +11,8 @@ import org.influxdb.dto.Point;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Reporter that sends data to InfluxDB
@@ -18,16 +20,20 @@ import java.util.concurrent.TimeUnit;
  * @author Andrew Johnson
  */
 public class InfluxDBReporter extends Reporter<InfluxDB> {
+    private static final Logger LOGGER = Logger.getLogger(InfluxDBReporter.class.getName());
+
     public static final String VALUE_COLUMN = "value";
     public static final String USERNAME_ARG = "username";
     public static final String PASSWORD_ARG = "password";
     public static final String DATABASE_ARG = "database";
     public static final String TAG_MAPPING_ARG = "tagMapping";
+    public static final String USE_HTTPS_ARG = "useHttps";
 
     private String username;
     private String password;
     private String database;
     private String tagMapping;
+    private Boolean useHttps;
     private final Map<String, String> tags;
 
     public InfluxDBReporter(Arguments arguments) {
@@ -94,7 +100,17 @@ public class InfluxDBReporter extends Reporter<InfluxDB> {
      */
     @Override
     protected InfluxDB createClient(String server, int port, String prefix) {
-        return InfluxDBFactory.connect(String.format("http://%s:%d", server, port), username, password);
+        String protocol = useHttps ? "https" : "http";
+        String url = String.format("%s://%s:%d", protocol, server, port);
+        logInfo(String.format("Connecting to influxDB at %s", url));
+
+        return InfluxDBFactory.connect(url, username, password);
+    }
+
+    private void logInfo(String message) {
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.info(message);
+        }
     }
 
     /**
@@ -108,6 +124,13 @@ public class InfluxDBReporter extends Reporter<InfluxDB> {
         password = arguments.remainingArgs.get(PASSWORD_ARG);
         database = arguments.remainingArgs.get(DATABASE_ARG);
         tagMapping = arguments.remainingArgs.get(TAG_MAPPING_ARG);
+        if (arguments.remainingArgs.containsKey(USE_HTTPS_ARG)) {
+            useHttps = Boolean.parseBoolean(arguments.remainingArgs.get(USE_HTTPS_ARG));
+        } else {
+            useHttps = false;
+        }
+
+        logInfo(String.format("Received arguments: username = %s, password = XXXXX, database = %s, tagMapping= %s, useHttps = %s", username, database, tagMapping, useHttps));
 
         Preconditions.checkNotNull(username);
         Preconditions.checkNotNull(password);
