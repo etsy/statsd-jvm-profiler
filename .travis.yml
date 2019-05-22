@@ -2,4 +2,3 @@ sudo: false
 language: java
 jdk:
     - openjdk8
-    - openjdk9
