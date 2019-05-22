@@ -90,6 +90,7 @@ username    | The username with which to connect to InfluxDB (required)
 password    | The password with which to connect to InfluxDB (required)
 database    | The database to which to write metrics (required)
 tagMapping  | A mapping of tag names from the metric prefix (optional, defaults to no mapping)
+useHttps    | A flag indicating if https connecition should be used (optional, defaults to false)
 
 ##### Tag Mapping
 InfluxDB 0.9 supports tagging measurements and querying based on those tags.  statsd-jvm-profilers uses these tags to support richer querying of the produced data.  For compatibility with other metric backends, the tags are extracted from the metric prefix.
