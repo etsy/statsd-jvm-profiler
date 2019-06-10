@@ -57,4 +57,22 @@ public class InfluxDBReporterTest extends BaseReporterTest<InfluxDBReporter> {
         Mockito.doAnswer(answer).when(client).write(Matchers.any(BatchPoints.class));
         reporter.recordGaugeValue("fake", 100L);
     }
+
+    @Test
+    public void testHttpsUrlResolution() {
+        Arguments arguments = MockArguments.createArgs("localhost", 443, "influxdb.reporter.test",
+                ImmutableMap.of("username", "user", "password", "password", "database", "database", "useHttps", "true"));
+        InfluxDBReporter reporter  = new InfluxDBReporter(arguments);
+
+        assertEquals(reporter.resolveUrl("localhost", 443), "https://localhost:443");
+    }
+
+    @Test
+    public void testHttpUrlResolution() {
+        Arguments arguments = MockArguments.createArgs("localhost", 8888, "influxdb.reporter.test",
+                ImmutableMap.of("username", "user", "password", "password", "database", "database", "useHttps", "false"));
+        InfluxDBReporter reporter  = new InfluxDBReporter(arguments);
+
+        assertEquals(reporter.resolveUrl("localhost", 8888), "http://localhost:8888");
+    }
 }
