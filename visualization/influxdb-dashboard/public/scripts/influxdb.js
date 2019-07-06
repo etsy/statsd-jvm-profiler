@@ -1,9 +1,9 @@
-var influx = require('influx')
+var Influx = require('influx')
 var config = require('./config.js')
 
 var client = null;
 config.getConfig(function(conf) {
-    client = influx(conf['influxdb']);
+    client = new Influx.InfluxDB(conf['influxdb']);
 });
 
 // This measurement will always exist and can be used to query for valid tags
@@ -12,8 +12,8 @@ var canaryMeasurement = "heap.total.max";
 exports.getData = function(user, job, flow, stage, phase, jvmName, metric, callback) {
     var optionalJvmName = jvmName ? "' and jvmName = '" + jvmName + "'": "'";
     var query = "select value from /^" + metric + ".*/ where username = '" + user + "' and job = '" + job + "' and flow = '" + flow + "' and stage = '" + stage + "' and phase = '" + phase + optionalJvmName;
-    client.queryRaw(query, function(err, res) {
-	var series = res[0].series;
+    client.queryRaw(query).then(rawData => {
+	var series = rawData['results'][0]['series'];
 	var results = {};
 	if (series) {
 	    results = series.map(function(series) {
@@ -33,8 +33,8 @@ exports.getData = function(user, job, flow, stage, phase, jvmName, metric, callb
 exports.getFlameGraphData = function(user, job, flow, stage, phase, jvmName, prefix, callback) {
     var optionalJvmName = jvmName ? "' and jvmName = '" + jvmName + "'": "'";
     var query = "select value from /^" + prefix + ".*/ where username = '" + user + "' and job = '" + job + "' and flow = '" + flow + "' and stage = '" + stage + "' and phase = '" + phase + optionalJvmName;
-    client.queryRaw(query, function(err, res) {
-	var series = res[0].series;
+    client.queryRaw(query).then(rawData => {
+        var series = rawData['results'][0]['series'];
 	var results = {};
 	if (series) {
     	    results = series.map(function(series) {
@@ -53,12 +53,13 @@ exports.getFlameGraphData = function(user, job, flow, stage, phase, jvmName, pre
 }
 
 exports.getOptions = function(prefix, callback) {
-    client.getSeries("heap.total.max", function(err, seriesNames) {
+    var options = [];
+    options['measurement'] = 'heap.total.max';
+    client.getSeries(options).then(seriesNames => {
 	var result = {};
 	if (seriesNames !== undefined) {
-	    var series = seriesNames[0]
-	    var columns = series.values.map(function(value) {
-		var tokens = value[0].split(',');
+	    var columns = seriesNames.map(function(value) {
+		var tokens = value.split(',');
 		column = {}
 		tokens.forEach(function(token) {
 		    if (token.indexOf("=") != -1) {
